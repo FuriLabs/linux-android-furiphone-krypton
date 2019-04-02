@@ -267,7 +267,7 @@ static int __init thermal_register_governors(void)
 	return thermal_gov_power_allocator_register();
 }
 
-static void thermal_unregister_governors(void)
+static void __init thermal_unregister_governors(void)
 {
 	thermal_gov_backward_compatible_unregister();
 	thermal_gov_step_wise_unregister();
@@ -1552,19 +1552,4 @@ error:
 	mutex_destroy(&poweroff_lock);
 	return result;
 }
-
-static void __exit thermal_exit(void)
-{
-	unregister_pm_notifier(&thermal_pm_nb);
-	of_thermal_destroy_zones();
-	genetlink_exit();
-	class_unregister(&thermal_class);
-	thermal_unregister_governors();
-	ida_destroy(&thermal_tz_ida);
-	ida_destroy(&thermal_cdev_ida);
-	mutex_destroy(&thermal_list_lock);
-	mutex_destroy(&thermal_governor_lock);
-}
-
 fs_initcall(thermal_init);
-module_exit(thermal_exit);
