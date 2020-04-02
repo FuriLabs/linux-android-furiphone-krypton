@@ -55,6 +55,7 @@
 struct thermal_zone_device;
 struct thermal_cooling_device;
 struct thermal_instance;
+struct thermal_attr;
 
 enum thermal_trend {
 	THERMAL_TREND_STABLE, /* temperature is stable */
@@ -134,11 +135,6 @@ struct thermal_cooling_device {
 	struct list_head node;
 	unsigned long sysfs_cur_state_req;
 	unsigned long sysfs_min_state_req;
-};
-
-struct thermal_attr {
-	struct device_attribute attr;
-	char name[THERMAL_NAME_LENGTH];
 };
 
 /**
