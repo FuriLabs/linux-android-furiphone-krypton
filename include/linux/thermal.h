@@ -354,21 +354,6 @@ struct thermal_zone_of_device_ops {
 	int (*get_trip_temp)(void *, int, int *);
 };
 
-/**
- * struct thermal_trip - representation of a point in temperature domain
- * @np: pointer to struct device_node that this trip point was created from
- * @temperature: temperature value in miliCelsius
- * @hysteresis: relative hysteresis in miliCelsius
- * @type: trip point type
- */
-
-struct thermal_trip {
-	struct device_node *np;
-	int temperature;
-	int hysteresis;
-	enum thermal_trip_type type;
-};
-
 /* Different aggregation logic supported for virtual sensors */
 enum aggregation_logic {
 	VIRT_WEIGHTED_AVG,
