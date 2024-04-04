@@ -664,7 +664,7 @@ lcm_dcs_write_seq_static(ctx,0xE0,0x05);      //60_t8_de_tp
 lcm_dcs_write_seq_static(ctx,0xE2,0x07);      //60_t9_de_tp
 lcm_dcs_write_seq_static(ctx,0xE3,0x2F);      //60_t7_de_tp
 lcm_dcs_write_seq_static(ctx,0xE5,0x07);      //60_SDT_tp
-//*********** 90 HZ TABLE**************
+// *********** 90 HZ TABLE**************
 lcm_dcs_write_seq_static(ctx,0xFF,0x78,0x07,0x1E);
 lcm_dcs_write_seq_static(ctx,0xBD,0x01);     	//90_tpt_fr_sel	
 lcm_dcs_write_seq_static(ctx,0xB1,0x1F);     	//LAT2_OFFSET	
@@ -917,7 +917,7 @@ static struct drm_display_mode performance_mode_90 = {
 	.vrefresh = 90,
 };
 
-static struct drm_display_mode default_mode = {
+/*static struct drm_display_mode default_mode = {
 	.clock = 850000,
 	.hdisplay = 1080,
 	.hsync_start = 1080 + HFP,
@@ -928,6 +928,19 @@ static struct drm_display_mode default_mode = {
 	.vsync_end = 2412 + 2500 + VSA,
 	.vtotal = 2412 + 2500 + VSA + VBP,//3732
 	.vrefresh = 60,
+};*/
+
+static struct drm_display_mode default_mode = {
+        .clock = 850000,
+        .hdisplay = 1080,
+        .hsync_start = 1080 + HFP,
+        .hsync_end = 1080 + HFP + HSA,
+        .htotal = 1080 + HFP + HSA + HBP,//1136 //1133
+        .vdisplay = 2412,
+        .vsync_start = 2412 + VFP,
+        .vsync_end = 2412 + VFP + VSA,
+        .vtotal = 2412 + VFP + VSA + VBP,//3732
+        .vrefresh = 120,
 };
 
 #if defined(CONFIG_MTK_PANEL_EXT)
@@ -1090,7 +1103,7 @@ struct drm_display_mode *ili_get_mode_by_id(struct drm_panel *panel,
 	}
 	return NULL;
 }
-static int current_fps = 60;
+static int current_fps = 120;
 
 static int ili_mtk_panel_ext_param_set(struct drm_panel *panel,
 			 unsigned int mode)
@@ -1242,7 +1255,7 @@ static int ili_lcm_get_modes(struct drm_panel *panel)
 	}
 	drm_mode_set_name(mode_120);
 	//FIXME:prize-Solve the problem of 120hz boot, reboot boot lag-pengzhipeng-20220907-start
-	mode_120->type = DRM_MODE_TYPE_DRIVER;
+	mode_120->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
 	//FIXME:prize-Solve the problem of 120hz boot, reboot boot lag-pengzhipeng-20220907-end
 	drm_mode_probed_add(panel->connector, mode_120);
 
@@ -1257,7 +1270,7 @@ static int ili_lcm_get_modes(struct drm_panel *panel)
 	}
 
 	drm_mode_set_name(mode_60);
-	mode_60->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+	mode_60->type = DRM_MODE_TYPE_DRIVER;
 	drm_mode_probed_add(panel->connector, mode_60);
 //FIXME:prize-Resolving screen size display errors-pengzhipeng-20220726-start
 	panel->connector->display_info.width_mm = 68;

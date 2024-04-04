@@ -702,7 +702,7 @@ static struct drm_display_mode performance_mode_90 = {
 	.vrefresh = 90,
 };
 
-static struct drm_display_mode default_mode = {
+/*static struct drm_display_mode default_mode = {
 	.clock = 840000,
 	.hdisplay = 1080,
 	.hsync_start = 1080 + HFP,
@@ -713,6 +713,19 @@ static struct drm_display_mode default_mode = {
 	.vsync_end = 2412 + 2540 + VSA,
 	.vtotal = 2412 + 2540 + VSA + VBP,//3732
 	.vrefresh = 60,
+}; */
+
+static struct drm_display_mode default_mode = {
+        .clock = 840000,
+        .hdisplay = 1080,
+        .hsync_start = 1080 + HFP,
+        .hsync_end = 1080 + HFP + HSA,
+        .htotal = 1080 + HFP + HSA + HBP,//1136 //1133
+        .vdisplay = 2412,
+        .vsync_start = 2412 + VFP,
+        .vsync_end = 2412 + VFP + VSA,
+        .vtotal = 2412 + VFP + VSA + VBP,//3732
+        .vrefresh = 120,
 };
 
 #if defined(CONFIG_MTK_PANEL_EXT)
@@ -892,7 +905,7 @@ struct drm_display_mode *get_mode_by_id(struct drm_panel *panel,
 	}
 	return NULL;
 }
-static int current_fps = 60;
+static int current_fps = 120;
 
 static int mtk_panel_ext_param_set(struct drm_panel *panel,
 			 unsigned int mode)
@@ -1027,7 +1040,7 @@ static int lcm_get_modes(struct drm_panel *panel)
 	}
 
 	drm_mode_set_name(mode_60);
-	mode_60->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+	mode_60->type = DRM_MODE_TYPE_DRIVER;
 	drm_mode_probed_add(panel->connector, mode_60);
 
 
@@ -1039,7 +1052,7 @@ static int lcm_get_modes(struct drm_panel *panel)
 		return -ENOMEM;
 	}
 	drm_mode_set_name(mode_90);
-	mode_90->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+	mode_90->type = DRM_MODE_TYPE_DRIVER;
 	drm_mode_probed_add(panel->connector, mode_90);
 	
 	
