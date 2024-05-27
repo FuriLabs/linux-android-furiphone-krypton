@@ -349,8 +349,8 @@ lcm_dcs_write_seq_static(ctx,0x76,0x1F);		//save power SRC bias through rate
 lcm_dcs_write_seq_static(ctx,0x80,0x35);		//save power SRC bias current	
 lcm_dcs_write_seq_static(ctx,0x06,0x6A);     	//BIST RTN=6.688us	
 lcm_dcs_write_seq_static(ctx,0x08,0x00);     	//BIST RTN[10:8]	
-lcm_dcs_write_seq_static(ctx,0x0E,0x27);     	//BIST VBP	
-lcm_dcs_write_seq_static(ctx,0x0F,0x28);     	//BIST VFP	
+lcm_dcs_write_seq_static(ctx,0x0E,0x04);     	//BIST VBP	
+lcm_dcs_write_seq_static(ctx,0x0F,0x04);     	//BIST VFP	
 lcm_dcs_write_seq_static(ctx,0xFF,0x78,0x07,0x12);
 lcm_dcs_write_seq_static(ctx,0x48,0x05);     	//90_t8_de
 lcm_dcs_write_seq_static(ctx,0x49,0x00);     	//90_t7p_de
@@ -361,8 +361,8 @@ lcm_dcs_write_seq_static(ctx,0x52,0x1F);		//save power SRC bias through rate
 lcm_dcs_write_seq_static(ctx,0x53,0x25);		//save power SRC bias current
 lcm_dcs_write_seq_static(ctx,0xC8,0x47);     	//BIST RTN=4.5us	
 lcm_dcs_write_seq_static(ctx,0xC9,0x00);     	//BIST RTN[10:8]	
-lcm_dcs_write_seq_static(ctx,0xCA,0x20);     	//BIST VBP	
-lcm_dcs_write_seq_static(ctx,0xCB,0x20);     	//BIST VFP	
+lcm_dcs_write_seq_static(ctx,0xCA,0x04);     	//BIST VBP	
+lcm_dcs_write_seq_static(ctx,0xCB,0x04);     	//BIST VFP	
 lcm_dcs_write_seq_static(ctx,0x10,0x05);     	//120_t8_de
 lcm_dcs_write_seq_static(ctx,0x11,0x00);     	//120_t7p_de     
 lcm_dcs_write_seq_static(ctx,0x12,0x08);     	//120_t9_de 
@@ -373,8 +373,8 @@ lcm_dcs_write_seq_static(ctx,0x1A,0x1F);		//save power SRC bias through rate
 lcm_dcs_write_seq_static(ctx,0x1B,0x25);		//save power SRC bias current
 lcm_dcs_write_seq_static(ctx,0xC0,0x35);     	//BIST RTN=3.375us	
 lcm_dcs_write_seq_static(ctx,0xC1,0x00);     	//BIST RTN[10:8]	
-lcm_dcs_write_seq_static(ctx,0xC2,0x29);     	//BIST VBP	
-lcm_dcs_write_seq_static(ctx,0xC3,0x20);     	//BIST VFP	
+lcm_dcs_write_seq_static(ctx,0xC2,0x04);     	//BIST VBP	
+lcm_dcs_write_seq_static(ctx,0xC3,0x04);     	//BIST VFP	
 lcm_dcs_write_seq_static(ctx,0xFF,0x78,0x07,0x05);
 lcm_dcs_write_seq_static(ctx,0x1B,0x00);		
 lcm_dcs_write_seq_static(ctx,0x1C,0x87);		//120_VCOM=-0.1V
@@ -881,22 +881,22 @@ static int ili_lcm_enable(struct drm_panel *panel)
 #define VAC (2412)
 #define HAC (1080)
 #define HFP (22)
-#define HSA (4)
+#define HSA (2)
 #define HBP (22)
-#define VFP (36)
-#define VSA (4)
-#define VBP (35)
+#define VFP (16)
+#define VSA (3)
+#define VBP (26)
 
 static u32 fake_heigh = 2412;
 static u32 fake_width = 1080;
 static bool need_fake_resolution;
 
 static struct drm_display_mode performance_mode_120 = {
-	.clock = 850000,
+	.clock = 350000,
 	.hdisplay = 1080,
-	.hsync_start = 1080 + HFP,
-	.hsync_end = 1080 + HFP + HSA,
-	.htotal = 1080 + HFP + HSA + HBP,//1136 //1133
+	.hsync_start = HAC + HFP,
+	.hsync_end = HAC + HFP + HSA,
+	.htotal = HAC + HFP + HSA + HBP,//1136 //1133
 	.vdisplay = 2412,
 	.vsync_start = 2412 + VFP,
 	.vsync_end = 2412 + VFP + VSA,
@@ -904,58 +904,19 @@ static struct drm_display_mode performance_mode_120 = {
 	.vrefresh = 120,
 };
 
-static struct drm_display_mode performance_mode_90 = {
-	.clock = 850000,
-	.hdisplay = 1080,
-	.hsync_start = 1080 + HFP,
-	.hsync_end = 1080 + HFP + HSA,
-	.htotal = 1080 + HFP + HSA + HBP,//1136 //1133
-	.vdisplay = 2412,
-	.vsync_start = 2412 + 850,
-	.vsync_end = 2412 + 850 + VSA,
-	.vtotal = 2412 + 850 + VSA + VBP,//3732
-	.vrefresh = 90,
-};
-
-/*static struct drm_display_mode default_mode = {
-	.clock = 850000,
-	.hdisplay = 1080,
-	.hsync_start = 1080 + HFP,
-	.hsync_end = 1080 + HFP + HSA,
-	.htotal = 1080 + HFP + HSA + HBP,//1136 //1133
-	.vdisplay = 2412,
-	.vsync_start = 2412 + 2500,
-	.vsync_end = 2412 + 2500 + VSA,
-	.vtotal = 2412 + 2500 + VSA + VBP,//3732
-	.vrefresh = 60,
-};*/
-
-static struct drm_display_mode default_mode = {
-        .clock = 850000,
-        .hdisplay = 1080,
-        .hsync_start = 1080 + HFP,
-        .hsync_end = 1080 + HFP + HSA,
-        .htotal = 1080 + HFP + HSA + HBP,//1136 //1133
-        .vdisplay = 2412,
-        .vsync_start = 2412 + VFP,
-        .vsync_end = 2412 + VFP + VSA,
-        .vtotal = 2412 + VFP + VSA + VBP,//3732
-        .vrefresh = 120,
-};
-
 #if defined(CONFIG_MTK_PANEL_EXT)
 static struct mtk_panel_params ili_ext_params_120 = {
 //FIXME:prize-Solve the problem that after turning on the 120Hz refresh rate and then turning off and on again it is lk set to 60hz-pengzhipeng-20220818-start
-	//.vfp_low_power = 2500,//60hz
+	.vfp_low_power = VFP, // 2500,//60hz
 //FIXME:prize-Solve the problem that after turning on the 120Hz refresh rate and then turning off and on again it is lk set to 60hz-pengzhipeng-20220818-end
 
-	.pll_clk = 425,
+	.pll_clk = 400,
 	.cust_esd_check = 1,
 	.esd_check_enable = 1,
 	.lcm_esd_check_table[0] = {
 		.cmd = 0x0A, .count = 1, .para_list[0] = 0x9C,
 	},
-	.data_rate = 850,
+	.data_rate = 800,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
 	.dsc_params = {
 		.enable = 1,
@@ -992,102 +953,6 @@ static struct mtk_panel_params ili_ext_params_120 = {
 		.rc_tgt_offset_hi = 3,
 		.rc_tgt_offset_lo = 3,
 		},
-};
-static struct mtk_panel_params ili_ext_params_90 = {
-//FIXME:prize-Solve the problem that after turning on the 120Hz refresh rate and then turning off and on again it is lk set to 60hz-pengzhipeng-20220818-start
-	//.vfp_low_power = 2500,//60hz
-//FIXME:prize-Solve the problem that after turning on the 120Hz refresh rate and then turning off and on again it is lk set to 60hz-pengzhipeng-20220818-end
-	.pll_clk = 425,
-	.cust_esd_check = 1,
-	.esd_check_enable = 1,
-	.lcm_esd_check_table[0] = {
-		.cmd = 0x0A, .count = 1, .para_list[0] = 0x9C,
-	},
-	.data_rate = 850,
-	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
-	.dsc_params = {
-		.enable = 1,
-		.ver = 17,
-		.slice_mode = 1,
-		.rgb_swap = 0,
-		.dsc_cfg = 34,
-		.rct_on = 1,
-		.bit_per_channel = 8,
-		.dsc_line_buf_depth = 9,
-		.bp_enable = 1,
-		.bit_per_pixel = 128,
-		.pic_height = 2412,
-		.pic_width = 1080,
-		.slice_height = 12,
-		.slice_width = 540,
-		.chunk_size = 540,
-		.xmit_delay = 170,
-		.dec_delay = 526,
-		.scale_value = 32,
-		.increment_interval = 67,
-		.decrement_interval = 7,
-		.line_bpg_offset = 12,
-		.nfl_bpg_offset = 2235,
-		.slice_bpg_offset = 2170,
-		.initial_offset = 6144,
-		.final_offset = 7072,
-		.flatness_minqp = 3,
-		.flatness_maxqp = 12,
-		.rc_model_size = 8192,
-		.rc_edge_factor = 6,
-		.rc_quant_incr_limit0 = 11,
-		.rc_quant_incr_limit1 = 11,
-		.rc_tgt_offset_hi = 3,
-		.rc_tgt_offset_lo = 3,
-		},
-
-};
-static struct mtk_panel_params ili_ext_params_60 = {
-	//.vfp_low_power = 2540,//60hz
-	.pll_clk = 425,
-	.cust_esd_check = 1,
-	.esd_check_enable = 1,
-	.lcm_esd_check_table[0] = {
-		.cmd = 0x0A, .count = 1, .para_list[0] = 0x9C,
-	},
-	.data_rate = 850,
-	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
-	.dsc_params = {
-		.enable = 1,
-		.ver = 17,
-		.slice_mode = 1,
-		.rgb_swap = 0,
-		.dsc_cfg = 34,
-		.rct_on = 1,
-		.bit_per_channel = 8,
-		.dsc_line_buf_depth = 9,
-		.bp_enable = 1,
-		.bit_per_pixel = 128,
-		.pic_height = 2412,
-		.pic_width = 1080,
-		.slice_height = 12,
-		.slice_width = 540,
-		.chunk_size = 540,
-		.xmit_delay = 170,
-		.dec_delay = 526,
-		.scale_value = 32,
-		.increment_interval = 67,
-		.decrement_interval = 7,
-		.line_bpg_offset = 12,
-		.nfl_bpg_offset = 2235,
-		.slice_bpg_offset = 2170,
-		.initial_offset = 6144,
-		.final_offset = 7072,
-		.flatness_minqp = 3,
-		.flatness_maxqp = 12,
-		.rc_model_size = 8192,
-		.rc_edge_factor = 6,
-		.rc_quant_incr_limit0 = 11,
-		.rc_quant_incr_limit1 = 11,
-		.rc_tgt_offset_hi = 3,
-		.rc_tgt_offset_lo = 3,
-		},
-
 };
 
 struct drm_display_mode *ili_get_mode_by_id(struct drm_panel *panel,
@@ -1113,16 +978,9 @@ static int ili_mtk_panel_ext_param_set(struct drm_panel *panel,
 	struct drm_display_mode *m = ili_get_mode_by_id(panel, mode);
 
 
-	if (m->vrefresh == 60)
-		ext->params = &ili_ext_params_60;
-	else if (m->vrefresh == 90)
-		ext->params = &ili_ext_params_90;
-	else if (m->vrefresh == 120)
-		ext->params = &ili_ext_params_120;
-	else
-		ret = 1;
-	if (!ret)
-		current_fps = m->vrefresh;
+	ext->params = &ili_ext_params_120;
+	current_fps = m->vrefresh;
+
 	return ret;
 }
 
@@ -1223,29 +1081,10 @@ static void ili_change_drm_disp_mode_params(struct drm_display_mode *mode)
 
 static int ili_lcm_get_modes(struct drm_panel *panel)
 {
-	struct drm_display_mode *mode_60;
-	struct drm_display_mode *mode_90;
 	struct drm_display_mode *mode_120;
 	if (need_fake_resolution)
-		ili_change_drm_disp_mode_params(&default_mode);
+		ili_change_drm_disp_mode_params(&performance_mode_120);
 
-	
-
-
-	mode_90 = drm_mode_duplicate(panel->drm, &performance_mode_90);
-	if (!mode_90) {
-		dev_info(panel->drm->dev, "failed to add mode_90 %ux%ux@%u\n",
-			performance_mode_90.hdisplay, performance_mode_90.vdisplay,
-			performance_mode_90.vrefresh);
-		return -ENOMEM;
-	}
-	drm_mode_set_name(mode_90);
-	//FIXME:prize-Solve the problem of 120hz boot, reboot boot lag-pengzhipeng-20220907-start
-	mode_90->type = DRM_MODE_TYPE_DRIVER;
-	//FIXME:prize-Solve the problem of 120hz boot, reboot boot lag-pengzhipeng-20220907-end
-	drm_mode_probed_add(panel->connector, mode_90);
-	
-	
 	mode_120 = drm_mode_duplicate(panel->drm, &performance_mode_120);
 	if (!mode_120) {
 		dev_info(panel->drm->dev, "failed to add mode_120 %ux%ux@%u\n",
@@ -1259,25 +1098,12 @@ static int ili_lcm_get_modes(struct drm_panel *panel)
 	//FIXME:prize-Solve the problem of 120hz boot, reboot boot lag-pengzhipeng-20220907-end
 	drm_mode_probed_add(panel->connector, mode_120);
 
-	
-
-	mode_60 = drm_mode_duplicate(panel->drm, &default_mode);
-	if (!mode_60) {
-		dev_info(panel->drm->dev, "failed to add mode_60 %ux%ux@%u\n",
-			default_mode.hdisplay, default_mode.vdisplay,
-			default_mode.vrefresh);
-		return -ENOMEM;
-	}
-
-	drm_mode_set_name(mode_60);
-	mode_60->type = DRM_MODE_TYPE_DRIVER;
-	drm_mode_probed_add(panel->connector, mode_60);
 //FIXME:prize-Resolving screen size display errors-pengzhipeng-20220726-start
 	panel->connector->display_info.width_mm = 68;
 	panel->connector->display_info.height_mm = 157;
 //FIXME:prize-Resolving screen size display errors-pengzhipeng-20220726-end
 //FIXME:prize-Solve the problem that after turning on the 120Hz refresh rate and then turning off and on again it is lk set to 60hz-pengzhipeng-20220818-start
-	return 3;
+	return 1;
 //FIXME:prize-Solve the problem that after turning on the 120Hz refresh rate and then turning off and on again it is lk set to 60hz-pengzhipeng-20220818-end
 }
 
@@ -1340,10 +1166,11 @@ static int ili_lcm_probe(struct mipi_dsi_device *dsi)
 	dsi->lanes = 4;
 	dsi->format = MIPI_DSI_FMT_RGB888;
 	dsi->mode_flags = MIPI_DSI_MODE_VIDEO
-					| MIPI_DSI_MODE_VIDEO_SYNC_PULSE
-					| MIPI_DSI_MODE_LPM
-					| MIPI_DSI_MODE_EOT_PACKET
-					| MIPI_DSI_CLOCK_NON_CONTINUOUS;
+					| MIPI_DSI_MODE_VIDEO_BURST
+					//| MIPI_DSI_MODE_VIDEO_SYNC_PULSE
+					//| MIPI_DSI_MODE_LPM
+					| MIPI_DSI_MODE_EOT_PACKET;
+					//| MIPI_DSI_CLOCK_NON_CONTINUOUS;
 
 	backlight = of_parse_phandle(dev->of_node, "backlight", 0);
 	if (backlight) {
@@ -1403,7 +1230,7 @@ static int ili_lcm_probe(struct mipi_dsi_device *dsi)
 
 #if defined(CONFIG_MTK_PANEL_EXT)
 	mtk_panel_tch_handle_reg(&ctx->panel);
-	ret = mtk_panel_ext_create(dev, &ili_ext_params_60, &ili_ext_funcs, &ctx->panel);
+	ret = mtk_panel_ext_create(dev, &ili_ext_params_120, &ili_ext_funcs, &ctx->panel);
 	if (ret < 0)
 		return ret;
 #endif
