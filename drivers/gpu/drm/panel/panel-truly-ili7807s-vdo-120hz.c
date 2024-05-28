@@ -747,14 +747,19 @@ static int ili_lcm_unprepare(struct drm_panel *panel)
 
 	if (!ctx->prepared)
 		return 0;
+
+	if (ctx->backlight) {
+		backlight_device_set_brightness(ctx->backlight, 0);
+	}
+
 //prize-Solve TP leakage problem-pengzhipeng-20220805-start
 	prize_ili_sleep_handler();
-	mdelay(10);
+	mdelay(5);
 	pr_info("%s\n", __func__);
 	lcm_dcs_write_seq_static(ctx, 0x28);
-	mdelay(10);
+	mdelay(5);
 	lcm_dcs_write_seq_static(ctx, 0x10);
-	mdelay(120);
+	mdelay(30);
 //prize-Solve TP leakage problem-pengzhipeng-20220805-end
 	ctx->error = 0;
 	ctx->prepared = false;
@@ -885,14 +890,14 @@ static int ili_lcm_enable(struct drm_panel *panel)
 #define HBP (22)
 #define VFP (16)
 #define VSA (3)
-#define VBP (26)
+#define VBP (18)
 
 static u32 fake_heigh = 2412;
 static u32 fake_width = 1080;
 static bool need_fake_resolution;
 
 static struct drm_display_mode performance_mode_120 = {
-	.clock = 350000,
+	.clock = 342000,
 	.hdisplay = 1080,
 	.hsync_start = HAC + HFP,
 	.hsync_end = HAC + HFP + HSA,
