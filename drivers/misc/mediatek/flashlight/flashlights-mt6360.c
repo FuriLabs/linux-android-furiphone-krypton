@@ -50,6 +50,10 @@
 #define MT6360_WDT_TIMEOUT 1248 /* ms */
 #define MT6360_HW_TIMEOUT 400 /* ms */
 
+/*prize add by zhuzhengjiang for led1&led2 is same start*/
+#define MT6360_LED1_LED2_SAME 1
+/*prize add by zhuzhengjiang for led1&led2 is same end*/
+
 /* define mutex, work queue and timer */
 static DEFINE_MUTEX(mt6360_mutex);
 static struct work_struct mt6360_work_ch1;
@@ -78,7 +82,8 @@ struct mt6360_platform_data {
 };
 
 #if defined(CONFIG_MACH_MT6877) || defined(CONFIG_MACH_MT6833) \
-|| defined(CONFIG_MACH_MT6893)
+|| defined(CONFIG_MACH_MT6893) || defined(CONFIG_MACH_MT6785) \
+|| defined(CONFIG_MACH_MT6885) || defined(CONFIG_MACH_MT6873)
 /* define charger consumer */
 static struct charger_consumer *flashlight_charger_consumer;
 #define CHARGER_SUPPLY_NAME "charger_port1"
@@ -183,6 +188,29 @@ static int mt6360_enable(void)
 
 	pr_debug("enable(%d,%d), mode:%d.\n",
 		mt6360_en_ch1, mt6360_en_ch2, mode);
+#if MT6360_LED1_LED2_SAME
+if (mt6360_en_ch1 != MT6360_DISABLE && mt6360_en_ch2 != MT6360_DISABLE) {
+	pr_info("dual flash mode mode=%d\n",mode);
+	if (mode == FLASHLIGHT_MODE_TORCH) {
+		ret |= flashlight_set_mode(
+			flashlight_dev_ch1, FLASHLIGHT_MODE_DUAL_TORCH);
+		ret |= flashlight_set_mode(
+			flashlight_dev_ch2, FLASHLIGHT_MODE_DUAL_TORCH);
+	}
+	else {
+		ret |= flashlight_set_mode(
+			flashlight_dev_ch1, FLASHLIGHT_MODE_DUAL_FLASH);
+		ret |= flashlight_set_mode(
+			flashlight_dev_ch2, FLASHLIGHT_MODE_DUAL_FLASH);
+	}
+} else {
+		pr_info("set off\n");
+		ret |= flashlight_set_mode(
+			flashlight_dev_ch1, FLASHLIGHT_MODE_OFF);
+		ret |= flashlight_set_mode(
+			flashlight_dev_ch2, FLASHLIGHT_MODE_OFF);
+}
+#else
 
 	/* enable channel 1 and channel 2 */
 	if (mt6360_decouple_mode == FLASHLIGHT_SCENARIO_COUPLE &&
@@ -209,6 +237,7 @@ static int mt6360_enable(void)
 			ret |= flashlight_set_mode(
 				flashlight_dev_ch2, FLASHLIGHT_MODE_OFF);
 	}
+#endif
 	if (ret < 0)
 		pr_info("Failed to enable.\n");
 
@@ -335,6 +364,16 @@ static int mt6360_set_level_ch2(int level)
 
 static int mt6360_set_level(int channel, int level)
 {
+#if	MT6360_LED1_LED2_SAME
+	if (channel == MT6360_CHANNEL_ALL) {
+		mt6360_set_level_ch1(level);
+		mt6360_set_level_ch2(level);
+	}
+	else {
+		pr_info("Error channel\n");
+		return -1;
+	}
+#else
 	if (channel == MT6360_CHANNEL_CH1)
 		mt6360_set_level_ch1(level);
 	else if (channel == MT6360_CHANNEL_CH2)
@@ -343,7 +382,7 @@ static int mt6360_set_level(int channel, int level)
 		pr_info("Error channel\n");
 		return -1;
 	}
-
+#endif
 	return 0;
 }
 
@@ -358,7 +397,8 @@ static int mt6360_set_scenario(int scenario)
 		if (!is_decrease_voltage) {
 			pr_info("Decrease voltage level.\n");
 #if defined(CONFIG_MACH_MT6877) || defined(CONFIG_MACH_MT6833) \
-|| defined(CONFIG_MACH_MT6893)
+|| defined(CONFIG_MACH_MT6893) || defined(CONFIG_MACH_MT6785) \
+|| defined(CONFIG_MACH_MT6885) || defined(CONFIG_MACH_MT6873)
 			charger_manager_enable_high_voltage_charging(
 				flashlight_charger_consumer, false);
 #else
@@ -370,7 +410,8 @@ static int mt6360_set_scenario(int scenario)
 		if (is_decrease_voltage) {
 			pr_info("Increase voltage level.\n");
 #if defined(CONFIG_MACH_MT6877) || defined(CONFIG_MACH_MT6833) \
-|| defined(CONFIG_MACH_MT6893)
+|| defined(CONFIG_MACH_MT6893) || defined(CONFIG_MACH_MT6785) \
+|| defined(CONFIG_MACH_MT6885) || defined(CONFIG_MACH_MT6873)
 			charger_manager_enable_high_voltage_charging(
 				flashlight_charger_consumer, true);
 #else
@@ -486,6 +527,22 @@ static int mt6360_operate(int channel, int enable)
 	unsigned int ns;
 
 	/* setup enable/disable */
+/*prize add by zhuzhengjiang for led1&led2 is same start*/
+#if MT6360_LED1_LED2_SAME
+	pr_debug("mt6360_operate channel:%d, enable:%d\n",channel, enable);
+	if (channel == MT6360_CHANNEL_ALL) {
+		mt6360_en_ch1 = enable;
+		if (mt6360_en_ch1) {
+			if (mt6360_is_torch(mt6360_level_ch1))
+				mt6360_en_ch1 = MT6360_ENABLE_FLASH;
+			mt6360_en_ch2 = enable;
+		}
+		if (mt6360_en_ch2) {
+			if (mt6360_is_torch(mt6360_level_ch2))
+				mt6360_en_ch2 = MT6360_ENABLE_FLASH;
+		}
+	}
+#else
 	if (channel == MT6360_CHANNEL_CH1) {
 		mt6360_en_ch1 = enable;
 		if (mt6360_en_ch1)
@@ -500,7 +557,8 @@ static int mt6360_operate(int channel, int enable)
 		pr_info("Error channel\n");
 		return -1;
 	}
-
+#endif
+#ifndef MT6360_LED1_LED2_SAME
 	/* decouple mode */
 	if (mt6360_decouple_mode) {
 		if (channel == MT6360_CHANNEL_CH1) {
@@ -511,11 +569,43 @@ static int mt6360_operate(int channel, int enable)
 			mt6360_timeout_ms[MT6360_CHANNEL_CH1] = 0;
 		}
 	}
-
+#endif
+/*prize add by zhuzhengjiang for led1&led2 is same end*/
 	pr_debug("en_ch(%d,%d), decouple:%d\n",
 		mt6360_en_ch1, mt6360_en_ch2, mt6360_decouple_mode);
 
 	/* operate flashlight and setup timer */
+#if MT6360_LED1_LED2_SAME
+	if ((mt6360_en_ch1 != MT6360_NONE) && (mt6360_en_ch2 != MT6360_NONE)) {
+		if ((mt6360_en_ch1 == MT6360_DISABLE) &&
+				(mt6360_en_ch2 == MT6360_DISABLE)) {
+			mt6360_disable(MT6360_CHANNEL_ALL);
+			mt6360_timer_cancel(MT6360_CHANNEL_CH1);
+			mt6360_timer_cancel(MT6360_CHANNEL_CH2);
+			}
+		else {
+			if (mt6360_timeout_ms[MT6360_CHANNEL_CH1] &&
+				mt6360_en_ch1 != MT6360_DISABLE) {
+				s = mt6360_timeout_ms[MT6360_CHANNEL_CH1] /
+					1000;
+				ns = mt6360_timeout_ms[MT6360_CHANNEL_CH1] %
+					1000 * 1000000;
+				ktime = ktime_set(s, ns);
+				mt6360_timer_start(MT6360_CHANNEL_CH1, ktime);
+			}
+			if (mt6360_timeout_ms[MT6360_CHANNEL_CH2] &&
+				mt6360_en_ch2 != MT6360_DISABLE) {
+				s = mt6360_timeout_ms[MT6360_CHANNEL_CH2] /
+					1000;
+				ns = mt6360_timeout_ms[MT6360_CHANNEL_CH2] %
+					1000 * 1000000;
+				ktime = ktime_set(s, ns);
+				mt6360_timer_start(MT6360_CHANNEL_CH2, ktime);
+			}
+			mt6360_enable();
+		}
+	}
+#else
 	if ((mt6360_en_ch1 != MT6360_NONE) && (mt6360_en_ch2 != MT6360_NONE)) {
 		if ((mt6360_en_ch1 == MT6360_DISABLE) &&
 				(mt6360_en_ch2 == MT6360_DISABLE)) {
@@ -558,7 +648,7 @@ static int mt6360_operate(int channel, int enable)
 		mt6360_en_ch1 = MT6360_NONE;
 		mt6360_en_ch2 = MT6360_NONE;
 	}
-
+#endif
 	return 0;
 }
 
@@ -583,13 +673,22 @@ static int mt6360_ioctl(unsigned int cmd, unsigned long arg)
 	case FLASH_IOC_SET_TIME_OUT_TIME_MS:
 		pr_debug("FLASH_IOC_SET_TIME_OUT_TIME_MS(%d): %d\n",
 				channel, (int)fl_arg->arg);
+	#if MT6360_LED1_LED2_SAME
+		mt6360_timeout_ms[MT6360_CHANNEL_CH1] = fl_arg->arg;
+		mt6360_timeout_ms[MT6360_CHANNEL_CH2] = fl_arg->arg;
+	#else
 		mt6360_timeout_ms[channel] = fl_arg->arg;
+	#endif
 		break;
 
 	case FLASH_IOC_SET_DUTY:
 		pr_debug("FLASH_IOC_SET_DUTY(%d): %d\n",
 				channel, (int)fl_arg->arg);
+	#if MT6360_LED1_LED2_SAME
+		mt6360_set_level(MT6360_CHANNEL_ALL, fl_arg->arg);
+	#else
 		mt6360_set_level(channel, fl_arg->arg);
+	#endif
 		break;
 
 	case FLASH_IOC_SET_SCENARIO:
@@ -601,7 +700,11 @@ static int mt6360_ioctl(unsigned int cmd, unsigned long arg)
 	case FLASH_IOC_SET_ONOFF:
 		pr_debug("FLASH_IOC_SET_ONOFF(%d): %d\n",
 				channel, (int)fl_arg->arg);
+	#if MT6360_LED1_LED2_SAME
+		mt6360_operate(MT6360_CHANNEL_NUM, fl_arg->arg);
+	#else
 		mt6360_operate(channel, fl_arg->arg);
+	#endif
 		break;
 
 	case FLASH_IOC_IS_CHARGER_READY:
@@ -661,7 +764,8 @@ static int mt6360_release(void)
 	if (fd_use_count == 0 && is_decrease_voltage) {
 		pr_info("Increase voltage level.\n");
 #if defined(CONFIG_MACH_MT6877) || defined(CONFIG_MACH_MT6833) \
-|| defined(CONFIG_MACH_MT6893)
+|| defined(CONFIG_MACH_MT6893) || defined(CONFIG_MACH_MT6785) \
+|| defined(CONFIG_MACH_MT6885) || defined(CONFIG_MACH_MT6873)
 			charger_manager_enable_high_voltage_charging(
 				flashlight_charger_consumer, true);
 #else
@@ -852,7 +956,8 @@ static int mt6360_probe(struct platform_device *pdev)
 				MT6360_HW_TIMEOUT, MT6360_HW_TIMEOUT + 200) < 0)
 		pr_info("Failed to set strobe timeout.\n");
 #if defined(CONFIG_MACH_MT6877) || defined(CONFIG_MACH_MT6833) \
-|| defined(CONFIG_MACH_MT6893)
+|| defined(CONFIG_MACH_MT6893) || defined(CONFIG_MACH_MT6785) \
+|| defined(CONFIG_MACH_MT6885) || defined(CONFIG_MACH_MT6873)
 	/* get charger consumer manager */
 	flashlight_charger_consumer = charger_manager_get_by_name(
 			&flashlight_dev_ch1->dev, CHARGER_SUPPLY_NAME);

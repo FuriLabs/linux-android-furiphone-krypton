@@ -71,6 +71,20 @@ const struct flashlight_device_id flashlight_id[] = {
 	{0, 0, 0, "flashlights-mt6370", 0, 0},
 	{0, 1, 0, "flashlights-mt6370", 1, 0},
 };
+#elif defined(mt6768)
+	#if defined(CONFIG_MTK_FLASHLIGHT_OCP81375)
+	const struct flashlight_device_id flashlight_id[] = {
+		/* {TYPE, CT, PART, "NAME", CHANNEL, DECOUPLE} */
+		{0, 0, 0, "flashlights-ocp81375", 1, 1},
+		{1, 0, 0, "flashlights-ocp81375", 0, 1},
+	};
+	#else
+	const struct flashlight_device_id flashlight_id[] = {
+		/* {TYPE, CT, PART, "NAME", CHANNEL, DECOUPLE} */
+		{0, 0, 0, "flashlights-mt6370", 0, 0},
+		{0, 1, 0, "flashlights-mt6370", 1, 0},
+	};
+	#endif
 #elif defined(mt6799)
 const struct flashlight_device_id flashlight_id[] = {
 	/* {TYPE, CT, PART, "NAME", CHANNEL, DECOUPLE} */
@@ -87,10 +101,34 @@ const struct flashlight_device_id flashlight_id[] = {
 	/* {TYPE, CT, PART, "NAME", CHANNEL, DECOUPLE} */
 	{0, 0, 0, "flashlights-sywt78", 0, 0},
 };
+/* prize add by zhuzhengjiang for flash ocp8111a 20211223 start*/
+#elif defined(CONFIG_MTK_FLASHLIGHT_AW36515)
+	const struct flashlight_device_id flashlight_id[] = {
+		/* {TYPE, CT, PART, "NAME", CHANNEL, DECOUPLE} */
+		{0, 0, 0, "flashlights_aw36515", 0, 1},
+		//{0, 1, 0, "flashlights_aw36515", 1, 0},
+	};
+#elif defined(CONFIG_MTK_FLASHLIGHT_AW36518)
+	const struct flashlight_device_id flashlight_id[] = {
+		/* {TYPE, CT, PART, "NAME", CHANNEL, DECOUPLE} */
+		{0, 0, 0, "flashlights_aw36518", 0, 1},
+	};
+#elif defined(CONFIG_MTK_FLASHLIGHT_OCP8111A_GPIO)
+	const struct flashlight_device_id flashlight_id[] = {
+		/* {TYPE, CT, PART, "NAME", CHANNEL, DECOUPLE} */
+		{0, 0, 0, "flashlights-ocp8111a-gpio", 0, 1},
+	};
+#elif defined(CONFIG_MTK_FLASHLIGHT_MT6370)
+	const struct flashlight_device_id flashlight_id[] = {
+	/* {TYPE, CT, PART, "NAME", CHANNEL, DECOUPLE} */
+	{0, 0, 0, "flashlights-mt6370", 0, 1},
+//	{0, 1, 0, "flashlights-mt6370", 1, 0},
+};
+/* prize add by zhuzhengjiang for flash ocp8111a 20211223 end*/
 #else
 const struct flashlight_device_id flashlight_id[] = {
 	/* {TYPE, CT, PART, "NAME", CHANNEL, DECOUPLE} */
-	{0, 0, 0, "flashlights-none", -1, 0},
+	{0, 0, 0, "flashlights-mt6360", 0, 1},
 	{0, 1, 0, "flashlights-none", -1, 0},
 	{1, 0, 0, "flashlights-none", -1, 0},
 	{1, 1, 0, "flashlights-none", -1, 0},

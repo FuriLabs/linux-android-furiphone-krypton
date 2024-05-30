@@ -54,8 +54,8 @@
 			ichg = <2000000>;		/* uA */
 			aicr = <500000>;		/* uA */
 			mivr = <4400000>;		/* uV */
-			cv = <4350000>;			/* uA */
-			ieoc = <150000>;		/* uA */
+			cv = <4400000>;			/* uA */
+			ieoc = <480000>;		/* uA */
 			safety_timer = <12>;		/* hour */
 			ircmp_resistor = <25000>;	/* uohm */
 			ircmp_vclamp = <32000>;		/* uV */
@@ -65,6 +65,7 @@
 			aicc_once = <1>;
 			post_aicc = <1>;
 			batoc_notify = <0>;
+			otgen-gpio = <&pio 23 0x0>;	/* prize pengzhipeng add otg 20210417 */
 			charger = <&mt6360_chg>;
 			bc12_sel = <0>;
 #if !defined (CONFIG_MACH_MT6833)
@@ -111,7 +112,7 @@
 		};
 		rgbled {
 			compatible = "mediatek,mt6360_pmu_rgbled";
-			mt,led_name = "mt6360_pmu_led1", "mt6360_pmu_led2",
+			mt,led_name = "green", "mt6360_pmu_led2",
 				      "mt6360_pmu_led3", "mt6360_pmu_led4";
 			mt,led_default_trigger = "cc_mode", "cc_mode",
 						 "cc_mode", "none";

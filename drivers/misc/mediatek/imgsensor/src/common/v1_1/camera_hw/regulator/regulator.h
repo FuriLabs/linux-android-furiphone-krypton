@@ -27,7 +27,19 @@ enum REGULATOR_VOLTAGE {
 	REGULATOR_VOLTAGE_2800 = 2800000,
 	REGULATOR_VOLTAGE_2900 = 2900000,
 };
-
+/*prize add by zhuzhengjiang for camera ldo start*/
+#ifdef CONFIG_PRIZE_CAMERA_LDO_WL2868C
+enum wl2868c_ldo_num {
+	WL2868C_LDO1 = 1,
+	WL2868C_LDO2 = 2,
+	WL2868C_LDO3 = 3,
+	WL2868C_LDO4 = 4,
+	WL2868C_LDO5 = 5,
+	WL2868C_LDO6 = 6,
+	WL2868C_LDO7 = 7,
+};
+#endif
+/*prize add by zhuzhengjiang for camera ldo end*/
 enum REGULATOR_TYPE {
 	REGULATOR_TYPE_VCAMA,
 #ifdef CONFIG_REGULATOR_RT5133

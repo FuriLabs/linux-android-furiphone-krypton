@@ -132,6 +132,62 @@ obj-$(CONFIG_CHARGER_TPS65090)	+= tps65090-charger.o
 obj-$(CONFIG_CHARGER_TPS65217)	+= tps65217_charger.o
 obj-$(CONFIG_AXP288_FUEL_GAUGE) += axp288_fuel_gauge.o
 obj-$(CONFIG_AXP288_CHARGER)	+= axp288_charger.o
+obj-$(CONFIG_CHARGER_CROS_USBPD)	+= cros_usbpd-charger.o
+obj-$(CONFIG_CHARGER_BQ25601) += bq25601.o
+obj-$(CONFIG_CHARGER_RT9458) += rt9458.o
+obj-$(CONFIG_CHARGER_RT9465) += rt9465.o
+obj-$(CONFIG_CHARGER_RT9466) += rt9466.o
+obj-$(CONFIG_CHARGER_RT9467) += rt9467.o
+obj-$(CONFIG_CHARGER_RT9471) += rt9471.o
+obj-$(CONFIG_CHARGER_MT6360) += mt6360_charger.o
+obj-$(CONFIG_BATTERY_MT6357) += mt6357_battery.o
+obj-$(CONFIG_MTK_CW2015_SUPPORT) += cw2015_fuel_gauge_v3.4.o
+obj-$(CONFIG_MTK_CW2217_SUPPORT) += cw2217_fuel_gauge.o
+mt6357_battery-objs := mtk_battery_coulomb_service.o mtk_battery.o mtk_battery_algo.o  mt6357-gauge.o mtk_battery_daemon.o
+obj-$(CONFIG_BATTERY_MT6359) += mt6359_battery.o
+mt6359_battery-objs := mtk_battery_coulomb_service.o mtk_battery.o mtk_battery_algo.o mtk_battery_daemon.o mt6359-gauge.o
+obj-$(CONFIG_CHARGER_TYPE_MT6357) += mt6357-charger-type.o
+#obj-$(CONFIG_MTK_CHARGER) += charger_class.o mtk_basic_charger.o mtk_charger.o mtk_charger_algorithm_class.o mtk_charger_intf.o adapter_class.o mtk_pd_adapter.o mtk_pd.o mtk_pd_hal.o mtk_pulse_charger.o
+# prize-add-pengzhipeng-20220515-start
+ifneq ($(CONFIG_MACH_MT6877),y)
+#else ifneq ($(CONFIG_MACH_MT6768),y)
+obj-$(CONFIG_MTK_PUMP_EXPRESS_PLUS_20_SUPPORT) += mtk_pe2.o mtk_pe2_hal.o
+# drv-add-liuhai-20240313-start
+ifneq ($(CONFIG_MACH_MT6877),y)
+obj-$(CONFIG_MTK_PUMP_EXPRESS_PLUS_SUPPORT) += mtk_pe.o mtk_pe_hal.o
+endif
+# drv-add-liuhai-20240313-start
+obj-$(CONFIG_MTK_PUMP_EXPRESS_40_SUPPORT) += mtk_pe4.o mtk_pe4_hal.o
+endif
+# prize-add-pengzhipeng-20220515-end
+
+obj-$(CONFIG_CHARGER_MT6357) += mt6357-pulse-charger.o
+
+#prize added by chenjiaxi, aw32207 drivers, 20220409-start
+obj-$(CONFIG_CHARGER_AW32207) += aw32207.o
+#prize added by chenjiaxi, aw32207 drivers, 20220409-end
+#prize add by zhaopengge 20211215 start-----	
+obj-$(CONFIG_CHARGER_SGM41512) += sgm41512.o
+obj-$(CONFIG_CHARGER_ETA6953) += eta6953.o
+#prize add by zhaopengge 20211215 end-----	
+# prize add by zhaopengge----20201030---start
+obj-$(CONFIG_HL7005ALL_CHARGER_SUPPORT) += hl7005all.o
+# prize add by zhaopengge----20201030---end
+#//prize added by sunshuai, charge support, 20200507-start
+# prize-add-pengzhipeng-20220515-start
+ifneq ($(CONFIG_MACH_MT6877),y)
+obj-$(CONFIG_PRIZE_MT5725_SUPPORT_15W) += mt5725_wireless_driver-15w.o
+endif
+# prize-add-pengzhipeng-20220515-end
+#//prize added by sunshuai, charge support, 20200507-end
+# begin, prize-pengzhipeng-20210707, add fuel gauge cw2017
+obj-$(CONFIG_MTK_CW2017_SUPPORT_OF) += cw2017_fuel_gauge_base.o
+# end, prize-pengzhipeng-20210707, add fuel gauge cw2017
+
+# prize-add by sunshuai for Vsmart customer power limit 20201207 start
+obj-$(CONFIG_PRIZE_CHARGE_CTRL_VSMART) += prize_charge_limit.o
+# prize-add by sunshuai for Vsmart customer power limit 20201207 end
+
 
 ifeq ($(CONFIG_CUSTOM_BATTERY_EXTERNAL_CHANNEL),y)
 	obj-y += k6885v1_64_alpha/

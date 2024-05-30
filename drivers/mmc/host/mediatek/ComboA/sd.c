@@ -193,7 +193,7 @@ void msdc_dump_register_core(char **buff, unsigned long *size,
 	char buffer[PRINTF_REGISTER_BUFFER_SIZE + 1];
 	char *buffer_cur_ptr = buffer;
 
-	memset(buffer, 0, PRINTF_REGISTER_BUFFER_SIZE);
+	memset(buffer, 0, PRINTF_REGISTER_BUFFER_SIZE + 1);
 	SPREAD_PRINTF(buff, size, m, "MSDC%d normal register\n", id);
 	for (i = 0; msdc_offsets[i] != (u16)0xFFFF; i++) {
 		offset = msdc_offsets[i];
@@ -276,7 +276,7 @@ void msdc_dump_dbg_register(char **buff, unsigned long *size,
 	char buffer[PRINTF_REGISTER_BUFFER_SIZE + 1];
 	char *buffer_cur_ptr = buffer;
 
-	memset(buffer, 0, PRINTF_REGISTER_BUFFER_SIZE);
+	memset(buffer, 0, PRINTF_REGISTER_BUFFER_SIZE + 1);
 	SPREAD_PRINTF(buff, size, m, "MSDC debug register [set:out]\n");
 	for (i = 0; i < MSDC_DEBUG_REGISTER_COUNT + 1; i++) {
 		msg_size += ONE_REGISTER_STRING_SIZE;
@@ -4604,6 +4604,7 @@ static struct mmc_host_ops mt_msdc_ops = {
 	.hw_reset                      = msdc_card_reset,
 	.card_busy                     = msdc_card_busy,
 	.prepare_hs400_tuning          = msdc_prepare_hs400_tuning,
+	.remove_bad_sdcard             = msdc_ops_set_bad_card_and_remove,
 };
 
 static void msdc_irq_cmd_complete(struct msdc_host *host)
@@ -5008,7 +5009,12 @@ static int msdc_drv_probe(struct platform_device *pdev)
 		mmc->caps |= MMC_CAP_CMD23;
 #endif
 	if (host->hw->host_function == MSDC_SD)
+	{
 		mmc->caps |= MMC_CAP_AGGRESSIVE_PM;
+		//FIXME:prize-Solve the bad card in suspend process detect failure causes stuck dead reboot problem;If MMC_PM_IGNORE_PM_NOTIFY is set, it will not register mmc_pm_notify(), and then when system suspend, it will not block in mmc_rescan() function.-pengzhipeng-20221228-start
+		mmc->flags |=  MMC_PM_IGNORE_PM_NOTIFY;
+		//FIXME:prize-Solve the bad card in suspend process detect failure causes stuck dead reboot problem;If MMC_PM_IGNORE_PM_NOTIFY is set, it will not register mmc_pm_notify(), and then when system suspend, it will not block in mmc_rescan() function.-pengzhipeng-20221228-end
+	}
 
 	mmc->caps |= MMC_CAP_ERASE;
 

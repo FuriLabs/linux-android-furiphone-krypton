@@ -4,8 +4,11 @@
  */
 
 #include "regulator.h"
-
-
+/*prize add by zhuzhengjiang for camera ldo start*/
+#ifdef CONFIG_PRIZE_CAMERA_LDO_WL2868C
+extern int wl2868c_voltage_output(unsigned int ldo_num,unsigned int vol);
+#endif
+/*prize add by zhuzhengjiang for camera ldo end*/
 static const int regulator_voltage[] = {
 	REGULATOR_VOLTAGE_0,
 	REGULATOR_VOLTAGE_1000,
@@ -33,6 +36,56 @@ struct REGULATOR_CTRL regulator_control[REGULATOR_TYPE_MAX_NUM] = {
 };
 
 static struct REGULATOR reg_instance;
+/*prize add by zhuzhengjiang for sham dual camera  20201208 start*/
+#ifdef CONFIG_PRIZE_DUAL_CAMERA_ENABLE
+static struct regulator *g_avdd_pregulator;
+static struct regulator *g_dvdd_pregulator;
+void set_avdd_regulator(int status)
+{
+	PK_INFO("set_avdd_regulator status=%d\n",status);
+	if(g_avdd_pregulator!=NULL){
+		if(status ==1)
+		{
+		if (regulator_set_voltage(g_avdd_pregulator,REGULATOR_VOLTAGE_2800,REGULATOR_VOLTAGE_2800)){
+			PK_INFO("[regulator]fail to regulator_set_voltage avdd\n");
+		}
+		if (regulator_enable(g_avdd_pregulator)) {
+			PK_INFO("[regulator]fail to regulator_enable, powertype\n");
+		}
+	}else{
+		if (regulator_disable(g_avdd_pregulator)) {
+			PK_INFO("[regulator]fail to avdd regulator_disable, powertype:\n");
+		}
+	}
+	}else{
+		PK_INFO("prize linchong g_avdd_pregulator is NULL\n");
+	}
+	
+}
+void set_dvdd_regulator(int status)
+{
+	PK_INFO("set_dvdd_regulator  status=%d\n",status);
+	if(g_dvdd_pregulator!=NULL){
+		if(status ==1)
+		{
+		if (regulator_set_voltage(g_dvdd_pregulator,REGULATOR_VOLTAGE_1800,REGULATOR_VOLTAGE_1800)){
+			PK_INFO("[regulator]fail to regulator_set_voltage avdd\n");
+		}
+		if (regulator_enable(g_dvdd_pregulator)) {
+			PK_INFO("[regulator]fail to regulator_enable, powertype\n");
+		}
+	}else{
+		if (regulator_disable(g_dvdd_pregulator)) {
+			PK_INFO("[regulator]fail to avdd regulator_disable, powertype:\n");
+		}
+	}
+	}else{
+		PK_INFO("prize linchong g_dvdd_pregulator is NULL\n");
+	}
+	
+}
+#endif
+/*prize add by zhuzhengjiang for sham dual camera  20201208 end*/
 
 static enum IMGSENSOR_RETURN regulator_init(
 	void *pinstance,
@@ -115,7 +168,28 @@ static enum IMGSENSOR_RETURN regulator_set(
 		return IMGSENSOR_RETURN_ERROR;
 
 	reg_type_offset = REGULATOR_TYPE_VCAMA;
+/*prize add by zhuzhengjiang for camera ldo start*/
+#ifdef CONFIG_PRIZE_CAMERA_LDO_WL2868C
+	if(pin ==IMGSENSOR_HW_PIN_DOVDD) {
+		wl2868c_voltage_output(WL2868C_LDO6,regulator_voltage[pin_state - IMGSENSOR_HW_PIN_STATE_LEVEL_0]/1000);
+		mdelay(10);
+		return IMGSENSOR_RETURN_SUCCESS;
+	}
+	else if(pin ==IMGSENSOR_HW_PIN_AVDD) {
+		wl2868c_voltage_output(WL2868C_LDO3 + sensor_idx,regulator_voltage[pin_state - IMGSENSOR_HW_PIN_STATE_LEVEL_0]/1000);// main:ldo3 sub:ldo4 main2:ldo5
+		if(sensor_idx == 0) {
 
+			PK_DBG("prize add regulator_set af");
+			wl2868c_voltage_output(WL2868C_LDO7,regulator_voltage[pin_state - IMGSENSOR_HW_PIN_STATE_LEVEL_0]/1000);// af:ldo7
+		}
+		return IMGSENSOR_RETURN_SUCCESS;
+	}
+	else  if(pin ==IMGSENSOR_HW_PIN_DVDD) {
+		wl2868c_voltage_output(WL2868C_LDO1 + sensor_idx,regulator_voltage[pin_state - IMGSENSOR_HW_PIN_STATE_LEVEL_0]/1000);// main:ldo1 sub:ldo2
+		return IMGSENSOR_RETURN_SUCCESS;
+	}
+#endif
+/*prize add by zhuzhengjiang for camera ldo end*/
 	pregulator = preg->pregulator[(unsigned int)sensor_idx][
 		reg_type_offset + pin - IMGSENSOR_HW_PIN_AVDD];
 

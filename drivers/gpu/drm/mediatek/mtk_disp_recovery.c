@@ -323,7 +323,7 @@ static int mtk_drm_request_eint(struct drm_crtc *crtc)
 	struct mtk_ddp_comp *output_comp;
 	struct device_node *node;
 	u32 ints[2] = {0, 0};
-	char *compat_str;
+	char *compat_str = NULL;
 	int ret = 0;
 
 	if (unlikely(!esd_ctx)) {
@@ -488,7 +488,14 @@ done:
 
 	return 0;
 }
-
+//prize-ldo1.8v off when esd-pengzhipeng-20220822-start
+static esd_status;
+int prize_esd_check_status(void)
+{
+	printk("pzp prize_esd_check_status\n");
+	return esd_status;
+}
+//prize-ldo1.8v off when esd-pengzhipeng-20220822-end
 static int mtk_drm_esd_check_worker_kthread(void *data)
 {
 	struct sched_param param = {.sched_priority = 87};
@@ -546,7 +553,9 @@ static int mtk_drm_esd_check_worker_kthread(void *data)
 		i = 0; /* repeat */
 		do {
 			ret = mtk_drm_esd_check(crtc);
-
+			//prize-ldo1.8v off when esd-pengzhipeng-20220822-start
+			esd_status = ret;
+			//prize-ldo1.8v off when esd-pengzhipeng-20220822-end
 			if (!ret) /* success */
 				break;
 
@@ -561,12 +570,18 @@ static int mtk_drm_esd_check_worker_kthread(void *data)
 			DDPPR_ERR(
 				"[ESD]after esd recovery %d times, still fail, disable esd check\n",
 				ESD_TRY_CNT);
+				//prize-ldo1.8v off when esd-pengzhipeng-20220822-start
+			esd_status   = 0;
+			//prize-ldo1.8v off when esd-pengzhipeng-20220822-end
 			mtk_disp_esd_check_switch(crtc, false);
 			DDP_MUTEX_UNLOCK(&mtk_crtc->lock, __func__, __LINE__);
 			mutex_unlock(&private->commit.lock);
 			break;
 		} else if (recovery_flg) {
 			DDPINFO("[ESD] esd recovery success\n");
+			//prize-ldo1.8v off when esd-pengzhipeng-20220822-start
+			esd_status   = 0;
+			//prize-ldo1.8v off when esd-pengzhipeng-20220822-end
 			recovery_flg = 0;
 		}
 		mtk_drm_trace_end();

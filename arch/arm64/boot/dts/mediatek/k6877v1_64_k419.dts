@@ -18,7 +18,7 @@
 	atag,videolfb-fps= <6000>;
 	atag,videolfb-vramSize= <0x1be0000>;
 	atag,videolfb-lcmname=
-		"td4330_fhdp_dsi_cmd_auo_rt4831_drv";
+		"gc7302_fhdp_dsi_vdo_auo_120hz_lcm_drv";
 };
 
 /* IRTX GPIO Start */
@@ -67,7 +67,7 @@
 &pio {
 	mtkfb_pins_lcm_led_en1: lcm_led_en1_gpio {
 		pins_cmd_dat {
-			pinmux = <PINMUX_GPIO107__FUNC_GPIO107>;
+			pinmux = <PINMUX_GPIO113__FUNC_GPIO113>;
 			slew-rate = <1>;
 			output-high;
 		};
@@ -75,7 +75,7 @@
 
 	mtkfb_pins_lcm_led_en0: lcm_led_en0_gpio {
 		pins_cmd_dat {
-			pinmux = <PINMUX_GPIO107__FUNC_GPIO107>;
+			pinmux = <PINMUX_GPIO113__FUNC_GPIO113>;
 			slew-rate = <1>;
 			output-low;
 		};
@@ -83,7 +83,7 @@
 
 	mtkfb_pins_lcd_bias_enp1: lcd_bias_enp1_gpio {
 		pins_cmd_dat {
-			pinmux = <PINMUX_GPIO108__FUNC_GPIO108>;
+			pinmux = <PINMUX_GPIO110__FUNC_GPIO110>;
 			slew-rate = <1>;
 			output-high;
 		};
@@ -91,7 +91,7 @@
 
 	mtkfb_pins_lcd_bias_enp0: lcd_bias_enp0_gpio {
 		pins_cmd_dat {
-			pinmux = <PINMUX_GPIO108__FUNC_GPIO108>;
+			pinmux = <PINMUX_GPIO110__FUNC_GPIO110>;
 			slew-rate = <1>;
 			output-low;
 		};
@@ -99,7 +99,7 @@
 
 	mtkfb_pins_lcd_bias_enn1: lcd_bias_enn1_gpio {
 		pins_cmd_dat {
-			pinmux = <PINMUX_GPIO111__FUNC_GPIO111>;
+			pinmux = <PINMUX_GPIO109__FUNC_GPIO109>;
 			slew-rate = <1>;
 			output-high;
 		};
@@ -107,7 +107,7 @@
 
 	mtkfb_pins_lcd_bias_enn0: lcd_bias_enn0_gpio {
 		pins_cmd_dat {
-			pinmux = <PINMUX_GPIO111__FUNC_GPIO111>;
+			pinmux = <PINMUX_GPIO109__FUNC_GPIO109>;
 			slew-rate = <1>;
 			output-low;
 		};
@@ -135,6 +135,151 @@
 	};
 };
 
+/* prize-add-pengzhipeng-20191011-start */
+&spi5{
+	#address-cells = <1>;
+	#size-cells = <0>;
+	fingerprint: fingerprint@spi5{
+		compatible = "focaltech,fingerprint-spidev";
+		reg = <0>;
+		spi-max-frequency = <1000000>;
+		status = "okay";
+	};
+};
+
+&fpc {
+	interrupt-parent = <&pio>;
+	interrupts = <22 IRQ_TYPE_EDGE_RISING 22 0>;
+	VFP-supply = <&mt_pmic_vfp_ldo_reg>;
+	pinctrl-names = "default",
+		"fpc_eint_as_int",
+		"fpc_pins_rst_high", "fpc_pins_rst_low",
+		"fpc_pins_pwr_high", "fpc_pins_pwr_low",
+		"fpc_mode_as_cs", "fpc_mode_as_ck",
+		"fpc_mode_as_mi", "fpc_mode_as_mo",
+		"fpc_miso_pull_up", "fpc_miso_pull_down",
+		"fpc_mosi_pull_up", "fpc_mosi_pull_down";
+	pinctrl-0 = <&fpc_pins_default>;
+	pinctrl-1 = <&fpc_pins_eint_as_int>;
+	pinctrl-2 = <&fpc_pins_rst_high>;
+	pinctrl-3 = <&fpc_pins_rst_low>;
+	pinctrl-4 = <&fpc_pins_pwr_high>;
+	pinctrl-5 = <&fpc_pins_pwr_low>;
+	pinctrl-6 = <&fpc_mode_as_cs>;
+	pinctrl-7 = <&fpc_mode_as_ck>;
+	pinctrl-8= <&fpc_mode_as_mi>;
+	pinctrl-9 = <&fpc_mode_as_mo>;
+	pinctrl-10 = <&fpc_miso_pull_up>;
+	pinctrl-11 = <&fpc_miso_pull_down>;
+	pinctrl-12 = <&fpc_mosi_pull_up>;
+	pinctrl-13 = <&fpc_mosi_pull_down>;
+	status = "okay";
+};
+&pio {
+	fpc_pins_default: fpcdefault {
+	};
+
+	fpc_pins_eint_as_int: fpceint@0 {
+		pins_cmd_dat {
+			pinmux = <PINMUX_GPIO22__FUNC_GPIO22>;
+			slew-rate = <0>;
+			bias-disable;
+		};
+	};
+	fpc_pins_rst_high: fpcrsthigh {
+		pins_cmd_dat {
+			pinmux = <PINMUX_GPIO21__FUNC_GPIO21>;
+			slew-rate = <1>;
+			output-high;
+		};
+	};
+	fpc_pins_rst_low: fpcrstlow {
+		pins_cmd_dat {
+			pinmux = <PINMUX_GPIO21__FUNC_GPIO21>;
+			slew-rate = <1>;
+			output-low;
+		};
+	};
+	fpc_pins_pwr_high: fpcpwrhigh {
+		pins_cmd_dat {
+			pinmux = <PINMUX_GPIO20__FUNC_GPIO20>;
+			slew-rate = <1>;
+			output-high;
+		};
+	};
+	fpc_pins_pwr_low: fpcpwrlow {
+		pins_cmd_dat {
+			pinmux = <PINMUX_GPIO20__FUNC_GPIO20>;
+			slew-rate = <1>;
+			output-low;
+		};
+	};	
+	fpc_mode_as_cs: fpccs {
+		pins_cmd_dat {
+			pinmux = <PINMUX_GPIO99__FUNC_SPI5_CSB>;
+			bias-pull-up = <00>;
+		};
+	};
+	fpc_mode_as_ck: fpcck {
+		pins_cmd_dat {
+			pinmux = <PINMUX_GPIO98__FUNC_SPI5_CLK>;
+			bias-pull-up = <00>;
+		};
+	};
+	fpc_mode_as_mi: fpcmi {
+		pins_cmd_dat {
+			pinmux = <PINMUX_GPIO100__FUNC_SPI5_MI>;
+			bias-pull-up = <00>;
+		};
+	};
+	fpc_mode_as_mo: fpcmo {
+		pins_cmd_dat {
+			pinmux = <PINMUX_GPIO101__FUNC_SPI5_MO>;
+			bias-pull-down = <00>;
+		};
+	};
+	fpc_miso_pull_up: fpcmisoup {
+		pins_cmd_dat {
+			pinmux = <PINMUX_GPIO100__FUNC_GPIO100>;
+			slew-rate = <1>;
+			output-high;
+		};
+	};
+	fpc_miso_pull_down: fpcmisolow {
+		pins_cmd_dat {
+			pinmux = <PINMUX_GPIO100__FUNC_GPIO100>;
+			slew-rate = <1>;
+			output-low;
+		};
+	};
+	fpc_mosi_pull_up: fpcmosiup {
+		pins_cmd_dat {
+			pinmux = <PINMUX_GPIO101__FUNC_GPIO101>;
+			slew-rate = <1>;
+			output-high;
+		};
+	};
+	fpc_mosi_pull_down: fpcmosilow {
+		pins_cmd_dat {
+			pinmux = <PINMUX_GPIO101__FUNC_GPIO101>;
+			slew-rate = <1>;
+			output-low;
+		};
+	};
+};
+/* prize-add-pengzhipeng-20191011-end */
+/* prize-add nfc-pengzhipeng-20220316-start */
+/*******************************************
+* nfc st21
+*******************************************/
+&i2c3 {
+	nfc_st:nfc@08 {
+		compatible = "mediatek,nfc";
+		reg = <0x08>;
+		status = "okay";
+	};
+};
+/* prize-add nfc-pengzhipeng-20220316-end */
 &mtkfb {
 	pinctrl-names = "lcm_led_en1_gpio", "lcm_led_en0_gpio",
 		"lcd_bias_enp1_gpio", "lcd_bias_enp0_gpio",
@@ -167,10 +312,13 @@
 	#address-cells = <1>;
 	#size-cells = <0>;
 	panel1@0 {
-		compatible = "truly,ft8756,vdo";
+		compatible = "truly,gc7302,vdo";
 		reg = <0>;
 		pm-enable-gpios = <&pio 107 0>;
 		reset-gpios = <&pio 40 0>;
+		ldo18-gpios = <&pio 184 0>;
+		bias-gpios = <&pio 110 0>,
+			<&pio 109 0>;
 		pinctrl-names = "default";
 		port {
 			panel_in1: endpoint {
@@ -179,25 +327,16 @@
 		};
 	};
 	panel2@0 {
-		compatible = "nt36672a,rt4801,vdo";
+		compatible = "truly,ili7807s,vdo";
 		reg = <1>;
 		pm-enable-gpios = <&pio 107 0>;
 		reset-gpios = <&pio 40 0>;
+		ldo18-gpios = <&pio 184 0>;
+		bias-gpios = <&pio 110 0>,
+			<&pio 109 0>;
 		pinctrl-names = "default";
 		port {
 			panel_in2: endpoint {
-				remote-endpoint = <&dsi_out>;
-			};
-		};
-	};
-	panel3@0 {
-		compatible = "truly,td4330,cmd";
-		reg = <2>;
-		pm-enable-gpios = <&pio 107 0>;
-		reset-gpios = <&pio 40 0>;
-		pinctrl-names = "default";
-		port {
-			panel_in3: endpoint {
 				remote-endpoint = <&dsi_out>;
 			};
 		};
@@ -250,15 +389,15 @@
 	};
 	led6:led@6 {
 		compatible = "mediatek,lcd-backlight";
-		led_mode = <6>;
+		led_mode = <5>;
 		data = <1>;
 		led_config = <8 11>;
 	};
 	vibrator0:vibrator@0 {
 		compatible = "mediatek,vibrator";
 		vib_timer = <25>;
-		vib_limit = <9>;
-		vib_vol= <9>;
+		vib_limit = <11>;
+		vib_vol= <11>;
 	};
 };
 
@@ -320,6 +459,13 @@
 };
 /* GPS GPIO standardization end */
 
+/* prize pengzhipeng add fm, 20220316 start */
+
+&fmradio {
+	fm_lna_gpio = <&pio 108 0x0>;
+	status = "okay";
+};
+/* prize pengzhipeng add fm, 20220316 end */
 &accdet {
 	/* accdet micbias voltage: 0x09:2.85v 0x08:2.8v 0x07,
 	 * 2.7v;0x05,2.5v;0x02,1.9v
@@ -336,7 +482,7 @@
 				0x5 0x3 0x3 0x5 0xe>;
 	accdet-plugout-debounce = <1>;
 	/*1:ACC mode, 2:low cost without in bias, 6:low cost with in bias*/
-	accdet-mic-mode = <2>;
+	accdet-mic-mode = <1>;
 	/*0--MD_MAX--UP_MAX--DW_MAX*/
 	headset-three-key-threshold = <0 80 220 400>;
 	headset-three-key-threshold-CDD = <0 121 192 600>;
@@ -348,6 +494,96 @@
 	status = "okay";
 };
 
+//prize add by lipengpeng wireless  start
+&pio {
+        charger_otg_pins_default: charger_otg_default {
+        };
+        charger_otg_off:  charger_otg_off {
+            pins_cmd_dat {
+                        pinmux = <PINMUX_GPIO23__FUNC_GPIO23>;
+                        slew-rate = <1>;
+                        output-low;
+                };
+        };
+        charger_otg_on:  charger_otg_on {
+            pins_cmd_dat {
+                        pinmux = <PINMUX_GPIO23__FUNC_GPIO23>;
+                        slew-rate = <1>;
+                        output-high;
+                };
+        };
+      wireless_5725_off:  wireless_5725_off {
+            pins_cmd_dat {
+                        pinmux = <PINMUX_GPIO6__FUNC_GPIO6>;
+                        slew-rate = <1>;
+                        output-high;
+                };
+        };
+        wireless_5725_on:  wireless_5725_on {
+            pins_cmd_dat {
+                        pinmux = <PINMUX_GPIO6__FUNC_GPIO6>;
+                        slew-rate = <1>;
+                        output-low;
+                };
+        };
+		charger_otg_mode_on:  charger_otg_mode_on {
+            pins_cmd_dat {
+                        pinmux = <PINMUX_GPIO7__FUNC_GPIO7>;
+                        slew-rate = <1>;
+                        output-high;
+                };
+        };
+        charger_otg_mode_off:  charger_otg_mode_off {
+            pins_cmd_dat {
+                        pinmux = <PINMUX_GPIO7__FUNC_GPIO7>;
+                        slew-rate = <1>;
+                        output-low;
+                };
+        };
+//prize add by lipengpeng 20210416 start BPI_BUS4  GPIO90
+		charger_test_on:  charger_test_on {
+            pins_cmd_dat {
+                        pinmux = <PINMUX_GPIO138__FUNC_GPIO138>;
+                        slew-rate = <1>;
+                        output-high;
+                };
+        };
+        charger_test_off:  charger_test_off {
+            pins_cmd_dat {
+                        pinmux = <PINMUX_GPIO138__FUNC_GPIO138>;
+                        slew-rate = <1>;
+                        output-low;
+                };
+        };
+//prize add by lipengpeng 20210416 start BPI_BUS4  GPIO90
+};
+&i2c3 {
+	wireless_chg_rx@2b {
+		compatible = "maxictech,mt5725-15w";
+		reg = <0x2b>;
+		irq-gpio = <&pio 8 0>;//W_CHARGE_INT
+		//trxset_gpio = <&pio 88 0>;//DC_EN
+		//otgen_gpio = <&pio 87 0>;
+		statu_gpio = <&pio 9 0>;//WRX_EN
+		chipen_gpio = <&pio 7 0>;//CHARGE_EN
+		//rx_power_capability = <10>;
+		//one_pin_ctl = <1>;
+		rx_power_capability = <15>;
+	   one_pin_ctl = <0>;
+	   pinctrl-names = "default", "charger_otg_off", "charger_otg_on",
+				 "wireless_5725_off", "wireless_5725_on","charger_otg_mode_on","charger_otg_mode_off","test_gpio","test_off";
+	   pinctrl-0 = <&charger_otg_pins_default>;
+	   pinctrl-1 = <&charger_otg_off>;//WPC_OTG_EN
+	   pinctrl-2 = <&charger_otg_on>;//WPC_OTG_EN
+	   pinctrl-3 = <&wireless_5725_off>;//WPC_OTG_EN2
+	   pinctrl-4 = <&wireless_5725_on>;//WPC_OTG_EN2
+	   pinctrl-5 = <&charger_otg_mode_on>;//WPC_OTG_mode_on
+	   pinctrl-6 = <&charger_otg_mode_off>;//WPC_OTG_mode_off
+	   pinctrl-7 = <&charger_test_on>;//WPC_OTG_mode_on
+	   pinctrl-8 = <&charger_test_off>;//WPC_OTG_mode_off
+	};
+};
+//prize add by lipengpeng wireless  end
 /* keypad start */
 &keypad {
 	pinctrl-names = "default";
@@ -365,51 +601,44 @@
 	};
 };
 /* keypad end */
-
-&ps5169{
-	pinctrl-names = "enable", "disable";
-	pinctrl-0 = <&ps_enable>;
-	pinctrl-1 = <&ps_disable>;
-	status = "okay";
-};
-
-&fusb340 {
+//FIXME:prize-add-pengzhipeng-20220802-start
+&ptn36043a {
 	pinctrl-names = "sel_up", "sel_down";
 	pinctrl-0 = <&sel_up>;
 	pinctrl-1 = <&sel_down>;
 	status = "okay";
 };
-
 &pio {
-	ps_enable: ps_enable {
-		pins_cmd_dat {
-			pinmux = <PINMUX_GPIO121__FUNC_GPIO121>;
-			output-high;
-		};
-	};
-
-	ps_disable: ps_disable {
-		pins_cmd_dat {
-			pinmux = <PINMUX_GPIO121__FUNC_GPIO121>;
-			output-low;
-		};
-	};
-
 	sel_up: sel_up {
 		pins_cmd_dat {
-			pinmux = <PINMUX_GPIO6__FUNC_GPIO6>;
-			output-high;
+			pinmux = <PINMUX_GPIO185__FUNC_GPIO185>;
+			slew-rate = <1>;
+			output-low;
 		};
 	};
 
 	sel_down: sel_down {
 		pins_cmd_dat {
-			pinmux = <PINMUX_GPIO6__FUNC_GPIO6>;
-			output-low;
+			pinmux = <PINMUX_GPIO185__FUNC_GPIO185>;
+			slew-rate = <1>;
+			output-high;
 		};
 	};
 };
+//FIXME:prize-add-pengzhipeng-20220802-end
 
+/*prize add by zhuzhengjiang for camera ldo wl2868c  start*/ 
+&i2c5 {
+    status = "ok";
+	wl2868c: wl2868c@2f {
+		compatible = "ovti,wl2868c-i2c";
+		reg = <0x2f>;
+		id_reg = <0x00>;
+		id_val = <0x82>;
+		en-gpios = <&pio 162 0>;
+	};
+};
+/*prize add by zhuzhengjiang for camera ldo wl2868c  end*/
 #include "k6877v1_64_k419/cust.dtsi"
 #include "mediatek/cust_mt6877_touch_1080x2300.dtsi"
 #include "mediatek/cust_mt6877_camera.dtsi"

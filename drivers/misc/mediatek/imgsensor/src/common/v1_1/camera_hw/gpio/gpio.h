@@ -27,6 +27,10 @@ enum GPIO_CTRL_STATE_CAM {
 	GPIO_CTRL_STATE_LDO_VCAMA1_H,
 	GPIO_CTRL_STATE_LDO_VCAMA1_L,
 #endif
+/*prize add by zhuzhengjiang for ois_vdd start*/
+	GPIO_CTRL_STATE_LDO_OISVDD_H,
+	GPIO_CTRL_STATE_LDO_OISVDD_L,
+/*prize add by zhuzhengjiang for ois_vdd end*/
 	GPIO_CTRL_STATE_LDO_VCAMD_H,
 	GPIO_CTRL_STATE_LDO_VCAMD_L,
 	GPIO_CTRL_STATE_LDO_VCAMIO_H,

@@ -149,7 +149,7 @@ static struct imgsensor_struct imgsensor = {
 	.dummy_line = 0,
 	.current_fps = 300,
 	.autoflicker_en = KAL_FALSE,
-	.test_pattern = KAL_FALSE,
+	.test_pattern = 0,
 	.current_scenario_id = MSDK_SCENARIO_ID_CAMERA_PREVIEW,
 	.ihdr_en = 0,
 	.i2c_write_id = 0x6e,
@@ -1695,19 +1695,23 @@ static void slim_video_setting(void)
 	write_cmos_sensor(0x3e, 0x91);
 }
 
-static kal_uint32 set_test_pattern_mode(kal_bool enable)
+static kal_uint32 set_test_pattern_mode(kal_uint8 modes,
+	struct SET_SENSOR_PATTERN_SOLID_COLOR *pdata)
 {
-	cam_pr_debug("enable: %d\n", enable);
+	pr_debug("enable: %d\n", modes);
 
-	write_cmos_sensor(0xfe, 0x01);
-	if (enable)
+	if (modes) {
+		write_cmos_sensor(0xfe, 0x01);
 		write_cmos_sensor(0x8c, 0x11);
-	else
-		write_cmos_sensor(0x8c, 0x10);
-	write_cmos_sensor(0xfe, 0x00);
+		if (modes == 5 && (pdata != NULL)) { //black Color
+			write_cmos_sensor(0x8d, 0x0c);
+		}
+	} else {
+		write_cmos_sensor(0xfe, 0x00);
+	}/*No pattern*/
 
 	spin_lock(&imgsensor_drv_lock);
-	imgsensor.test_pattern = enable;
+	imgsensor.test_pattern = modes;
 	spin_unlock(&imgsensor_drv_lock);
 
 	return ERROR_NONE;
@@ -1720,16 +1724,18 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 
 	cam_pr_debug("E\n");
 
+        printk("[gc5035_camera_sensor ] imgsensor_info.sensor_id:%x\n",imgsensor_info.sensor_id);
 	while (imgsensor_info.i2c_addr_table[i] != 0xff) {
 		spin_lock(&imgsensor_drv_lock);
+                printk("[gc5035_camera_sensor ] imgsensor_info.i2c_addr_table[i]:%x\n",imgsensor_info.i2c_addr_table[i]);
 		imgsensor.i2c_write_id = imgsensor_info.i2c_addr_table[i];
 		spin_unlock(&imgsensor_drv_lock);
 		do {
 			*sensor_id = return_sensor_id();
+                        printk("[gc5035_camera_sensor ] get_imgsensor_id :%x\n",*sensor_id);
 			if (*sensor_id == imgsensor_info.sensor_id) {
 				gc5035_otp_identify();
-				cam_pr_debug("i2c write id: 0x%x, sensor id: 0x%x\n",
-					imgsensor.i2c_write_id, *sensor_id);
+                                printk("[gc5035_camera_sensor]i2c write id: 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id, *sensor_id);
 				return ERROR_NONE;
 			}
 			cam_pr_debug("Read sensor id fail, write id: 0x%x, id: 0x%x\n",
@@ -1799,7 +1805,7 @@ static kal_uint32 open(void)
 	imgsensor.dummy_pixel = 0;
 	imgsensor.dummy_line = 0;
 	imgsensor.ihdr_en = 0;
-	imgsensor.test_pattern = KAL_FALSE;
+	imgsensor.test_pattern = 0;
 	imgsensor.current_fps = imgsensor_info.pre.max_framerate;
 	spin_unlock(&imgsensor_drv_lock);
 	return ERROR_NONE;
@@ -2386,7 +2392,8 @@ static kal_uint32 feature_control(
 			(MUINT32 *) (uintptr_t) (*(feature_data + 1)));
 		break;
 	case SENSOR_FEATURE_SET_TEST_PATTERN:
-		set_test_pattern_mode((BOOL) * feature_data);
+	set_test_pattern_mode((UINT32)*feature_data,
+		(struct SET_SENSOR_PATTERN_SOLID_COLOR *)(uintptr_t)(*(feature_data + 1)));
 		break;
 	case SENSOR_FEATURE_GET_TEST_PATTERN_CHECKSUM_VALUE:
 		*feature_return_para_32 = imgsensor_info.checksum_value;

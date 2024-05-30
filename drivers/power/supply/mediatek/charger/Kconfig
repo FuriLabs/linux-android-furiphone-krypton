@@ -162,6 +162,16 @@ config CHARGER_RT9759
 	  It is mainly used as divider charger for
 	  direct charge
 	  It depends on config MTK_CHARGER
+#add by liaojie 20210305  for sc8551 30w start	  
+config CHARGER_SC8551
+	bool "Richtek SC8551 Divider Charger Driver"
+	depends on MTK_CHARGER
+	help
+	  Say Y here to enable support of SC8551 divider charger
+	  It is mainly used as divider charger for
+	  direct charge
+	  It depends on config MTK_CHARGER
+#add by liaojie 20210305  for sc8551 30w end
 
 config RT_PROP_CHGALGO
 	bool "Richtek Proprietary Charging Algorithm"
@@ -170,6 +180,14 @@ config RT_PROP_CHGALGO
 	  Richtek Proprietary charging algorithm
 	  Say N to disable
 	  Richtek Proprietary charging algorithm
+
+# prize add by sunshuai for A-C 30w charge 20201109-start
+config  PRIZE_ATOC_TYPEC_CHARGE
+	bool "A-C 30w charge"
+	default n
+	help
+	  Set to Yes if A-C 30w charge is used.
+# prize add by sunshuai for A-C 30w charge 20201109-end
 
 config MTK_CHARGER_UNLIMITED
 	bool "MediaTek Charger Unlimited"
@@ -212,6 +230,15 @@ config CHARGER_SGM41511
 	  and config MTK_SWCHR_SUPPORT
 	  Set to Yes if SGM41511 is used.
 
+config CHARGER_SGM41516D
+        bool "CHARGER_SGM41516D"
+        depends on MTK_CHARGER
+	help
+	  This is to enable MediaTek supports to BQ25601.
+	  It depends on config MTK_SMART_BATTERY
+	  and config MTK_SWCHR_SUPPORT
+	  Set to Yes if SGM41516D is used.
+
 config LOAD_SWITCH_RT9750
 	bool "Load Switch Driver for Richtek RT9750"
 	depends on MTK_CHARGER
@@ -227,3 +254,46 @@ config CHARGER_MM8013
 	  Say Y to enable
 	  mm8013 driver.
 	  Set to Yes if MM8013 is used.
+#//prize added by sunshuai, mt5725-15W support, 20200507-start
+config PRIZE_MT5725_SUPPORT_15W
+	bool "PRIZE_MT5725_SUPPORT_15W"
+	default n
+	help
+	  Set to Yes if mt5725_15W is used.
+#//prize added by sunshuai, mt5725-15W support, 20200507-end
+# prize-add by sunshuai for German customers Charging restrictions  20200604 start
+config  PRIZE_GIGASET_CHARGE_RESTRICTION
+        bool "Charging restrictions"
+        default n
+        help
+           This is used to PRIZE_GIGASET_CHARGE_RESTRICTION
+# prize-add by sunshuai for  German customers Charging restrictions 20200604 end
+config PRIZE_MT5725_SUPPORT_15W_NEW
+	bool "PRIZE_MT5725_SUPPORT_15W_NEW"
+	default n
+	help
+	  Set to Yes if mt5725_15W is used.
+
+config PRIZE_ONLY5W_DISPLAY_15W
+	bool "PRIZE_ONLY5W_DISPLAY_15W"
+	default n
+	help
+	  Set to Yes if mt5725_15W is used.
+
+
+#prize add by lipengpeng 20210416 end 
+
+#prize added by liuhai, sgm41512 support, 20231225-start
+config CHARGER_V1_SGM41512
+	bool "CHARGER_SGM41512"
+	default n
+	help
+	  This is used to CHARGER_SGM41512
+
+config CHARGER_V1_ETA6953
+        bool "CHARGER_ETA6953"
+        default n
+        help
+          This is used to CHARGER_ETA6953
+
+#//prize added by liuhai, sgm41512 support, 20231225-end

@@ -35,3 +35,10 @@ config MTK_ADDITIONAL_BATTERY_TABLE
 	  Table number is five.
 	  Set No to disable the fifth battery table
 	  Table number is four.
+
+
+config PRIZE_BATTERY_HIGTEMP_CTRL
+	bool "Charger Driver for fg"
+	default n
+	help
+	  Say Y to enable charge driver.

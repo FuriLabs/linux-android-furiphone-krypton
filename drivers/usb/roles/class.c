@@ -49,7 +49,10 @@ int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role)
 
 	ret = sw->set(sw->dev.parent, role);
 	if (!ret)
+	{
 		sw->role = role;
+		kobject_uevent(&sw->dev.kobj, KOBJ_CHANGE);	//add MTK patch for Micro USB otg to typec device
+	}
 
 	mutex_unlock(&sw->lock);
 

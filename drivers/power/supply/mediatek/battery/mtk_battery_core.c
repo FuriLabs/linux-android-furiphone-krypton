@@ -73,7 +73,16 @@
 #include "simulator_kernel.h"
 #endif
 
-
+/* prize added by chenjiaxi, battery info, 20190115-start */
+#if defined(CONFIG_PRIZE_HARDWARE_INFO_BAT)
+#include "../../../misc/mediatek/hardware_info/hardware_info.h"
+extern struct hardware_info current_battery_info;
+unsigned char s_Q_MAX_50[32] = "0";
+unsigned char s_Q_MAX_25[32] = "0";
+unsigned char s_Q_MAX_0[32] = "0";
+unsigned char s_Q_MAX_10[32] = "0";
+#endif
+/* prize added by chenjiaxi, battery info, 20190115-end */
 
 /* ============================================================ */
 /* global variable */
@@ -1181,6 +1190,25 @@ static void fg_custom_parse_table(const struct device_node *np,
 
 		idx = idx + column;
 	}
+	
+/* prize added by chenjiaxi, battery info, 20190115-start */
+#if defined(CONFIG_PRIZE_HARDWARE_INFO_BAT)
+	strcpy(current_battery_info.batt_versions, "V0.0.0");
+    if (!strcmp(node_srting, "battery0_profile_t0")) {
+        sprintf(s_Q_MAX_50,"%d",profile_p->mah);
+        strcpy(current_battery_info.Q_MAX_50, s_Q_MAX_50);
+    } else if (!strcmp(node_srting, "battery0_profile_t1")) {
+        sprintf(s_Q_MAX_25,"%d",profile_p->mah);
+        strcpy(current_battery_info.Q_MAX_25, s_Q_MAX_25);
+    } else if (!strcmp(node_srting, "battery0_profile_t3")) {
+        sprintf(s_Q_MAX_0,"%d",profile_p->mah);
+        strcpy(current_battery_info.Q_MAX_0, s_Q_MAX_0);
+    } else if (!strcmp(node_srting, "battery0_profile_t4")) {
+        sprintf(s_Q_MAX_10,"%d",profile_p->mah);
+        strcpy(current_battery_info.Q_MAX_10, s_Q_MAX_10);
+    }
+#endif
+/* prize added by chenjiaxi, battery info, 20190115-end */
 }
 
 /* struct FUELGAUGE_TEMPERATURE Fg_Temperature_Table[21]; */
@@ -3378,7 +3406,9 @@ void bmd_ctrl_cmd_from_user(void *nl_data, struct fgd_nl_msg_t *ret_msg)
 		{
 			int is_charger_exist = 0;
 
-#if defined(CONFIG_MACH_MT6877)
+#if defined(CONFIG_MACH_MT6877) || defined(CONFIG_MACH_MT6885) || defined(CONFIG_MACH_MT6853) \
+	|| defined(CONFIG_MACH_MT6893) || defined(CONFIG_MACH_MT6873)                         \
+	|| defined(CONFIG_MACH_MT6771) || defined(CONFIG_MACH_MT6785)
 			if (battery_main.BAT_STATUS == POWER_SUPPLY_STATUS_CHARGING)
 				is_charger_exist = true;
 			else

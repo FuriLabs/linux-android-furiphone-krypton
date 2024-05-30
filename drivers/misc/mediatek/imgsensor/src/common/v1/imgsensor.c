@@ -54,6 +54,14 @@
 static int current_mmsys_clk = MMSYS_CLK_MEDIUM;
 #endif
 
+/*prize add by zhaopengge-20201113----start*/
+#if defined(CONFIG_PRIZE_HARDWARE_INFO)
+#include "../../../../hardware_info/hardware_info.h"
+extern struct hardware_info current_camera_info[5];
+
+#endif
+/*prize add by zhaopengge-20201113----end*/
+
 /* Test Only!! Open this define for temperature meter UT */
 /* Temperature workqueue */
 /* #define CONFIG_CAM_TEMPERATURE_WORKQUEUE */
@@ -83,6 +91,11 @@ struct mutex imgsensor_mutex;
 DEFINE_MUTEX(pinctrl_mutex);
 DEFINE_MUTEX(oc_mutex);
 
+//prize-huangzhanbin-20190319-add for dualcam-start
+#ifdef CONFIG_DUALCAM_CALI_RW
+struct device *gimgsensor_device;
+#endif
+//prize-huangzhanbin-20190319-add for dualcam-end
 
 /************************************************************************
  * Profiling
@@ -181,7 +194,7 @@ imgsensor_sensor_open(struct IMGSENSOR_SENSOR *psensor)
 		if (pgimgsensor->imgsensor_oc_irq_enable != NULL)
 			pgimgsensor->imgsensor_oc_irq_enable(
 					psensor->inst.sensor_idx, false);
-
+		imgsensor_mutex_lock(psensor_inst); // prize add by zhuzhengjiang for dual camera open failed 20210421
 		ret = imgsensor_hw_power(&pgimgsensor->hw,
 		    psensor,
 		    psensor_inst->psensor_name,
@@ -189,6 +202,7 @@ imgsensor_sensor_open(struct IMGSENSOR_SENSOR *psensor)
 
 		if (ret != IMGSENSOR_RETURN_SUCCESS) {
 			PK_DBG("[%s]", __func__);
+			imgsensor_mutex_unlock(psensor_inst);// prize add by zhuzhengjiang for dual camera open failed 20210421
 			return -EIO;
 		}
 		/* wait for power stable */
@@ -197,7 +211,7 @@ imgsensor_sensor_open(struct IMGSENSOR_SENSOR *psensor)
 		IMGSENSOR_PROFILE(&psensor_inst->profile_time,
 		    "kdCISModulePowerOn");
 
-		imgsensor_mutex_lock(psensor_inst);
+		//imgsensor_mutex_lock(psensor_inst);// prize remove by zhuzhengjiang for dual camera open failed 20210421
 
 		psensor_func->psensor_inst = psensor_inst;
 		ret = psensor_func->SensorOpen();
@@ -462,6 +476,42 @@ static inline int imgsensor_check_is_alive(struct IMGSENSOR_SENSOR *psensor)
 		pr_info("Fail to get sensor ID %x\n", sensorID);
 		err = ERROR_SENSOR_CONNECT_FAIL;
 	} else {
+/*prize add by zhaopengge-20201113----start*/
+	#if defined(CONFIG_PRIZE_HARDWARE_INFO)
+
+		if(psensor->inst.sensor_idx >= 0 && psensor->inst.sensor_idx < 5)
+		{
+			if (sensorID == 0x30a) {
+				strcpy(current_camera_info[3].chip,psensor_inst->psensor_name);
+				sprintf(current_camera_info[3].id,"0x%04x",sensorID);
+				strcpy(current_camera_info[3].vendor,"unknow");
+
+			}else if (sensorID == 0x6513) {
+				strcpy(current_camera_info[3].chip,psensor_inst->psensor_name);
+				sprintf(current_camera_info[3].id,"0x%04x",sensorID);
+				strcpy(current_camera_info[3].vendor,"unknow");
+
+			}else{
+				strcpy(current_camera_info[psensor->inst.sensor_idx].chip,psensor_inst->psensor_name);
+    			sprintf(current_camera_info[psensor->inst.sensor_idx].id,"0x%04x",sensorID);
+    			strcpy(current_camera_info[psensor->inst.sensor_idx].vendor,"unknow");
+			}
+			if (1){
+				MSDK_SENSOR_RESOLUTION_INFO_STRUCT sensorResolution;
+				imgsensor_sensor_get_resolution(psensor,&sensorResolution);
+				if (sensorID == 0x30a){
+					sprintf(current_camera_info[3].more,"%d*%d",sensorResolution.SensorFullWidth,sensorResolution.SensorFullHeight);
+
+				}else if (sensorID == 0x6513){
+					sprintf(current_camera_info[3].more,"%d*%d",sensorResolution.SensorFullWidth,sensorResolution.SensorFullHeight);
+
+				}else{
+					sprintf(current_camera_info[psensor->inst.sensor_idx].more,"%d*%d",sensorResolution.SensorFullWidth,sensorResolution.SensorFullHeight);
+				}
+			}
+		}
+#endif
+/*prize add by zhaopengge-20201113----end*/
 		pr_info(" Sensor found ID = 0x%x\n", sensorID);
 		err = ERROR_NONE;
 	}
@@ -2861,6 +2911,164 @@ static const struct file_operations gimgsensor_file_operations = {
 #endif
 };
 
+//prize-huangzhanbin-20190319-add for dualcam-start
+#ifdef CONFIG_DUALCAM_CALI_RW
+
+static uint32_t cali_value = 0;
+#if defined(OV16A10_MIPI_RAW)  
+extern int store_dualcam_cali_data_ov16a10(void);
+extern int dump_dualcam_cali_data_ov16a10(void);
+#endif
+//extern int store_dualcam_cali_data_ov13855_tianshi(void);
+//extern int dump_dualcam_cali_data_ov13855_tianshi(void);
+
+
+#define ARCSOFT_CALIBRATION_NUM    2048
+
+int CALI_DATA_NUM = ARCSOFT_CALIBRATION_NUM; //arcsoft 2k for default
+
+static ssize_t calibration_dump_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+    printk(" func: %s", __func__);
+    return sprintf(buf, "%d\n", cali_value);
+}
+
+static ssize_t calibration_dump_store(struct device *dev,  struct device_attribute *attr, const char *buf, size_t count)
+{
+	//struct IMGSENSOR *pimgsensor = &gimgsensor;
+    MINT32 ret = ERROR_NONE;
+    enum IMGSENSOR_SENSOR_IDX curCamId = IMGSENSOR_SENSOR_IDX_MAIN;
+    struct IMGSENSOR_SENSOR *psensor = NULL;
+    int write_enable = 0;
+
+    printk("%s dump cali data\n", __func__);
+
+
+    sscanf(buf, "%d", &write_enable);
+	printk("calibration_cmd :dump %d", write_enable);
+    if(0x1 == write_enable) { //arcsoft for 0x1
+        curCamId = IMGSENSOR_SENSOR_IDX_MAIN;		
+    } else if(0x2 == write_enable) { //arcsoft for 2  
+        curCamId = IMGSENSOR_SENSOR_IDX_SUB;
+    }
+
+
+    psensor = imgsensor_sensor_get_inst(curCamId);
+    if (psensor == NULL) {
+        pr_err("psensor is NULL!\n");
+        return ret;
+    }
+	
+    pr_err(" index: %d : name\n", psensor->inst.sensor_idx);
+	ret = imgsensor_hw_power(&pgimgsensor->hw, psensor,"ov16a10_mipi_raw", IMGSENSOR_HW_POWER_STATUS_ON);
+    if (ret != ERROR_NONE) {
+        pr_err("[%s] failed to power on\n", __func__);
+        return ret;
+    }
+    mDELAY(5);
+    imgsensor_mutex_lock(&psensor->inst);
+    if (IMGSENSOR_SENSOR_IDX_MAIN == curCamId) {
+		if(1)//(!strcmp(camera_b_name,"ov16a10_mipi_raw"))
+		{
+			#if defined(OV16A10_MIPI_RAW)  
+			dump_dualcam_cali_data_ov16a10();
+			#endif
+		}
+		else// if(!strcmp(camera_b_name,"ov13855_tianshi_mipi_raw"))
+		{
+			//dump_dualcam_cali_data_ov13855_tianshi();
+		}
+    } 
+    imgsensor_mutex_unlock(&psensor->inst);
+   ret = imgsensor_hw_power(&pgimgsensor->hw, psensor,"ov16a10_mipi_raw",  IMGSENSOR_HW_POWER_STATUS_OFF);
+
+   if (ret != ERROR_NONE) {
+        pr_err("[%s] failed to power off\n", __func__);
+        return ret;
+    }
+    pr_err("[%s] X\n", __func__);
+
+    return count;
+}
+
+static DEVICE_ATTR(calibration_dump, S_IWUSR | S_IRUGO, calibration_dump_show, calibration_dump_store);
+
+
+
+static ssize_t calibration_save_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+   return sprintf(buf, "%d\n", cali_value);
+}
+
+static ssize_t calibration_save_store(struct device *dev,  struct device_attribute *attr, const char *buf, size_t count)
+{
+    int write_enable = 0;
+    int size = -1;
+
+    MINT32 ret = ERROR_NONE;
+    enum IMGSENSOR_SENSOR_IDX curCamId = IMGSENSOR_SENSOR_IDX_MAIN;
+    struct IMGSENSOR_SENSOR *psensor = NULL;
+
+    sscanf(buf, "%d", &write_enable);
+
+	printk("calibration_cmd :save %d", write_enable);
+
+    pr_err("%s store cali data\n", __func__);
+
+    if(0x1 == write_enable) { // arcsoft for 0x1 
+        curCamId = IMGSENSOR_SENSOR_IDX_MAIN;
+    } else if (0x2 == write_enable) { //arcsoft for 0x2
+        curCamId = IMGSENSOR_SENSOR_IDX_SUB;
+    }
+
+    psensor = imgsensor_sensor_get_inst(curCamId);
+    if (!psensor) {
+        pr_err("psensor is NULL!\n");
+        return ret;
+    }
+    cali_value = write_enable;
+    pr_err("%s start to store cali data\n", __func__);
+
+  /*ret = imgsensor_hw_power(&pgimgsensor->hw, psensor, psensor->inst.psensor_name, IMGSENSOR_HW_POWER_STATUS_ON);
+    if (ret != ERROR_NONE) {
+        pr_err("[%s] failed to power on", __func__);
+        return ret;
+    }*/
+
+    mDELAY(5);
+    imgsensor_mutex_lock(&psensor->inst);
+    if (IMGSENSOR_SENSOR_IDX_MAIN == curCamId) {
+		if(1)//(!strcmp(camera_b_name,"ov16a10_mipi_raw"))
+		{
+			#if defined(OV16A10_MIPI_RAW)  
+			size = store_dualcam_cali_data_ov16a10();
+			#endif
+		}
+		else// if(!strcmp(camera_b_name,"ov13855_tianshi_mipi_raw"))
+		{
+			//size = store_dualcam_cali_data_ov13855_tianshi();
+		}
+	
+	
+    } 
+    if (size < 0) {
+        pr_err("Fail to store new calibration data cur camid: %d\n", curCamId);
+    }
+    imgsensor_mutex_unlock(&psensor->inst);
+
+   /*ret = imgsensor_hw_power(&pgimgsensor->hw, psensor, psensor->inst.psensor_name, IMGSENSOR_HW_POWER_STATUS_OFF);
+    if (ret != ERROR_NONE) {
+        pr_err("[%s] failed to power off", __func__);
+        return ret;
+    }*/
+
+    return count;
+}
+
+
+static DEVICE_ATTR(calibration_save, S_IWUSR | S_IRUGO, calibration_save_show, calibration_save_store);
+#endif
+//prize-huangzhanbin-20190319-add for dualcam-end
 static inline int imgsensor_driver_register(void)
 {
 	dev_t dev_no = MKDEV(IMGSENSOR_DEVICE_NNUMBER, 0);
@@ -2906,6 +3114,22 @@ static inline int imgsensor_driver_register(void)
 		    dev_no,
 		    NULL,
 		    IMGSENSOR_DEV_NAME);
+			
+//prize-huangzhanbin-20190319-add for dualcam-start
+#ifdef CONFIG_DUALCAM_CALI_RW
+
+	//gimgsensor_device = pdevice;
+	if (gimgsensor_device != NULL){
+		device_create_file(gimgsensor_device, &dev_attr_calibration_dump);
+		pr_err("creat calibration dump sys node\n");
+	}
+	if (gimgsensor_device != NULL){
+		device_create_file(gimgsensor_device, &dev_attr_calibration_save);
+		pr_err("creat calibration save sys node\n");
+	} /* add calibration sys node end */
+#endif /* CONFIG_DUALCAM_CALI_RW */
+//prize-huangzhanbin-20190319-add for dualcam-end
+
 
 	return 0;
 }
@@ -2965,6 +3189,19 @@ static int imgsensor_remove(struct platform_device *pdev)
 {
 	imgsensor_i2c_delete();
 	imgsensor_driver_unregister();
+//prize-huangzhanbin-20190319-add for dualcam-start
+#ifdef CONFIG_DUALCAM_CALI_RW
+
+	if (gimgsensor_device != NULL){
+		device_remove_file(gimgsensor_device, &dev_attr_calibration_dump);
+		pr_err("remove calibration dump sys node\n");
+	}
+	if (gimgsensor_device != NULL){
+		device_remove_file(gimgsensor_device, &dev_attr_calibration_save);
+		pr_err("remove calibration save sys node\n");
+	} /* remove calibration sys node end */
+#endif /* CONFIG_DUALCAM_CALI_RW */
+//prize-huangzhanbin-20190319-add for dualcam-end
 
 	return 0;
 }

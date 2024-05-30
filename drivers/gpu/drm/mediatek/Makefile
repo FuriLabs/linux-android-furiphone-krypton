@@ -95,6 +95,7 @@ ccflags-y += -I$(srctree)/drivers/misc/mediatek/dramc/$(MTK_PLATFORM)	\
              -I$(srctree)/drivers/misc/mediatek/leds/			\
              -I$(srctree)/drivers/misc/mediatek/leds/$(MTK_PLATFORM)	\
              -I$(srctree)/drivers/misc/mediatek/cmdq/mailbox/		\
+			 -I$(srctree)/drivers/input/touchscreen/mediatek/galaxycore		\
 	     -I$(srctree)/drivers/misc/mediatek/cmdq/bridge
 ifeq (y, $(filter y, $(CONFIG_MACH_MT6833)))
 ccflags-y += -I$(srctree)/drivers/misc/mediatek/include/mt-plat/mt6833/include/mach/

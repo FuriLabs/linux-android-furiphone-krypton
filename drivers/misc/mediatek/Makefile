@@ -19,6 +19,12 @@ else ifeq ($(CONFIG_MACH_MT6885),y)
 subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/include/mt-plat/v1
 else ifeq ($(CONFIG_MACH_MT6893),y)
 subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/include/mt-plat/v1
+else ifeq ($(CONFIG_MACH_MT6853),y)
+subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/include/mt-plat/v1
+else ifeq ($(CONFIG_MACH_MT6873),y)
+subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/include/mt-plat/v1
+else ifeq ($(CONFIG_MACH_MT6785),y)
+subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/include/mt-plat/v1
 else
 obj-$(CONFIG_MTK_POWER_THROTTLING_COMMON) += power_throttling/
 endif
@@ -88,8 +94,10 @@ obj-$(CONFIG_MTK_CLK_BUFFER) += clkbuf/
 obj-$(CONFIG_MTK_QOS_FRAMEWORK) += qos/
 obj-$(CONFIG_MTK_SLBC) += slbc/
 ifneq ($(CONFIG_MACH_MT6893), y)
+ifneq ($(CONFIG_MACH_MT6885), y)
 ifneq ($(CONFIG_MACH_MT6771), y)
 obj-$(CONFIG_MTK_CM_MGR) += cm_mgr/
+endif
 endif
 endif
 ifneq ($(CONFIG_MTK_BASE_POWER), y)
@@ -199,3 +207,25 @@ obj-$(CONFIG_MTK_MDDP_SUPPORT) += mddp/
 obj-$(CONFIG_MTK_GATE_IC) += gate_ic/
 obj-$(CONFIG_MTK_FREQ_HOPPING) += freqhopping/
 obj-$(CONFIG_MTK_TASK_TURBO) += task_turbo/
+obj-$(CONFIG_AW862xx_HAPTIC) += aw862xx_haptic/
+#prize add by zhaopengge 20201113------start
+obj-$(CONFIG_PRIZE_HARDWARE_INFO) += hardware_info/
+#prize add by zhaopengge 20201113------end
+#/*prize add by zhuzhengjiang for sham dual camera  20201208 start*/
+obj-$(CONFIG_PRIZE_DUAL_CAMERA_ENABLE) += prize_dual_camera/
+#/*prize add by zhuzhengjiang for sham dual camera  20201208 end*/
+
+#prize-add prize-zhaopengge-20200827-start
+obj-$(CONFIG_PRIZE_AW9203) += aw9203/
+obj-$(CONFIG_PRIZE_DUAL_HALL_AS1800) += hall_as1800/
+obj-$(CONFIG_PRIZE_BASE_CHARGER) += base_charger/
+#prize-add prize-zhaopengge-20200827-end
+
+#prize add by wangyongsheng 20210104------start
+obj-$(CONFIG_PRIZE_UHF) += uhf/
+#prize add by wangyongsheng 20210104------end
+#prize add by lipengpeng 20211012 start
+obj-$(CONFIG_PRIZE_TTM) += ttm/
+obj-$(CONFIG_PRIZE_TTMDEV) += ttmdev/
+#prize add by lipengpeng 20211012 end 
+

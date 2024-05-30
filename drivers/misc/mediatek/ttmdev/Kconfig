@@ -1,0 +1,4 @@
+config PRIZE_TTMDEV
+	bool "TTM for TTMDEV"
+	help
+	  It support TTMDEV control.

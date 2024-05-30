@@ -532,7 +532,13 @@ int mtk_power_misc_psy_event(
 			psy, POWER_SUPPLY_PROP_TEMP, &val);
 		if (!ret) {
 			tmp = val.intval / 10;
-			if (tmp >= BATTERY_SHUTDOWN_TEMPERATURE) {
+		//prize add by lipengpeng 20210723 start 
+	#ifdef CONFIG_PRIZE_BATTERY_HIGTEMP_CTRL
+			if (tmp >= BATTERY_SHUTDOWN_TEMPERATURE || tmp <= BATTERY_SHUTDOWN_LOW_TEMPERATURE) {
+	#else
+	       if (tmp >= BATTERY_SHUTDOWN_TEMPERATURE) {
+    #endif
+		//prize add by lipengpeng 20210723 end 
 				bm_err(
 					"battery temperature >= %d,shutdown",
 					tmp);

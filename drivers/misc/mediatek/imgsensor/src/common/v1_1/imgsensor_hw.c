@@ -11,7 +11,8 @@
 
 #include "imgsensor_sensor.h"
 #include "imgsensor_hw.h"
-
+int curr_sensor_id;// prize add by zhuzhengjiang for camera 20220110 start
+extern int wl2868c_enable(unsigned int enable);	/*prize add by zhuzhengjiang for enable wl2868 start*/
 /*the index is consistent with enum IMGSENSOR_HW_PIN*/
 char * const imgsensor_hw_pin_names[] = {
 	"none",
@@ -176,7 +177,7 @@ static enum IMGSENSOR_RETURN imgsensor_hw_power_sequence(
 		return IMGSENSOR_RETURN_SUCCESS;
 	}
 #endif
-
+    curr_sensor_id = sensor_idx; // prize add by zhuzhengjiang for camera 20220110 start
 	while (ppwr_seq < ppower_sequence + IMGSENSOR_HW_SENSOR_MAX_NUM &&
 		ppwr_seq->name != NULL) {
 		if (!strcmp(ppwr_seq->name, PLATFORM_POWER_SEQ_NAME)) {
@@ -193,7 +194,12 @@ static enum IMGSENSOR_RETURN imgsensor_hw_power_sequence(
 		return IMGSENSOR_RETURN_ERROR;
 
 	ppwr_info = ppwr_seq->pwr_info;
-
+	/*prize add by zhuzhengjiang for enable wl2868 start*/
+	if (pwr_status == IMGSENSOR_HW_POWER_STATUS_ON) {
+		PK_DBG("prize add enable camera pmic wl2868");
+		wl2868c_enable(1);	
+	}
+	/*prize add by zhuzhengjiang for enable wl2868 end*/		
 	while (ppwr_info->pin != IMGSENSOR_HW_PIN_NONE &&
 	       ppwr_info->pin < IMGSENSOR_HW_PIN_MAX_NUM &&
 	       ppwr_info < ppwr_seq->pwr_info + IMGSENSOR_HW_POWER_INFO_MAX) {
@@ -249,6 +255,7 @@ static enum IMGSENSOR_RETURN imgsensor_hw_power_sequence(
 
 			mdelay(ppwr_info->pin_on_delay);
 		}
+		wl2868c_enable(0);	/*prize add by zhuzhengjiang for disable wl2868 start*/
 	}
 
 	return IMGSENSOR_RETURN_SUCCESS;

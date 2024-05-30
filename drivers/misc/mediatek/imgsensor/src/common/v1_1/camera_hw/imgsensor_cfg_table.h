@@ -24,11 +24,15 @@ enum IMGSENSOR_HW_PIN {
 #ifdef CONFIG_REGULATOR_RT5133
 	IMGSENSOR_HW_PIN_AVDD1,
 #endif
-#if defined(IMGSENSOR_MT6781) || defined(IMGSENSOR_MT6877)
+/*prize-del-pengzhipeng-20220514-start*/
+#if defined(IMGSENSOR_MT6781)
+/*prize-del-pengzhipeng-20220514-end*/
 	IMGSENSOR_HW_PIN_AFVDD,
 #endif
+	IMGSENSOR_HW_PIN_OISVDD,// prize add by zhuzhengjiang for ois
 	IMGSENSOR_HW_PIN_DVDD,
 	IMGSENSOR_HW_PIN_DOVDD,
+	IMGSENSOR_HW_PIN_AFVDD,
 #ifdef MIPI_SWITCH
 	IMGSENSOR_HW_PIN_MIPI_SWITCH_EN,
 	IMGSENSOR_HW_PIN_MIPI_SWITCH_SEL,
@@ -67,7 +71,7 @@ enum IMGSENSOR_HW_PIN_STATE {
 #define DVDD        IMGSENSOR_HW_PIN_DVDD
 #define DOVDD       IMGSENSOR_HW_PIN_DOVDD
 #define VDD_None    IMGSENSOR_HW_PIN_NONE
-
+#define VDD_OIS     IMGSENSOR_HW_PIN_OISVDD // prize add by zhuzhengjiang for ois
 	/* For backward compatible */
 #if defined(IMGSENSOR_MT6781) || defined(IMGSENSOR_MT6877)
 #define AFVDD       IMGSENSOR_HW_PIN_AFVDD

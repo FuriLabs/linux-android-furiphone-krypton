@@ -44,7 +44,15 @@
 #define SHUTDOWN_TIME 40
 #define AVGVBAT_ARRAY_SIZE 30
 #define INIT_VOLTAGE 3450
+//prize add by lipengpeng 20220112 start 
+#ifdef CONFIG_PRIZE_BATTERY_HIGTEMP_CTRL
+#define BATTERY_SHUTDOWN_TEMPERATURE 65
+#define BATTERY_SHUTDOWN_LOW_TEMPERATURE -27
+#else
 #define BATTERY_SHUTDOWN_TEMPERATURE 60
+//#define BATTERY_SHUTDOWN_LOW_TEMPERATURE -27
+#endif
+//prize add by lipengpeng 20220112 end 
 
 /* ============================================================ */
 /* typedef and Struct*/

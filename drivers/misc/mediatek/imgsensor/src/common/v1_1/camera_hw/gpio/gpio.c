@@ -18,6 +18,10 @@ struct GPIO_PINCTRL gpio_pinctrl_list_cam[
 	{"ldo_vcama1_1"},
 	{"ldo_vcama1_0"},
 #endif
+/*prize add by zhuzhengjiang for ois_vdd start*/
+	{"ldo_oisvdd_1"},
+	{"ldo_oisvdd_0"},
+/*prize add by zhuzhengjiang for ois_vdd end*/
 	{"ldo_vcamd_1"},
 	{"ldo_vcamd_0"},
 	{"ldo_vcamio_1"},

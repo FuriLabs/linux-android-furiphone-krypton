@@ -68,8 +68,13 @@ int mtk_pe50_deinit(struct charger_manager *chgmgr)
 bool mtk_pe50_is_ready(struct charger_manager *chgmgr)
 {
 	struct mtk_pe50 *pe50 = &chgmgr->pe5;
-
-	if (!chgmgr->enable_pe_5 || !chgmgr->enable_hv_charging)
+//prize-Solving the problem of 30w bright screen without current limit-pengzhipeng-20220823-start
+#if defined(CONFIG_PRIZE_CHARGE_CTRL_POLICY)
+	if (!chgmgr->enable_pe_5 || !chgmgr->enable_hv_charging|| !chgmgr->pe5.is_enabled)
+#else
+    if (!chgmgr->enable_pe_5 || !chgmgr->enable_hv_charging)
+#endif
+//prize-Solving the problem of 30w bright screen without current limit-pengzhipeng-20220823-end
 		return false;
 	return prop_chgalgo_is_algo_ready(pe50->pca_algo);
 }
