@@ -39,6 +39,7 @@ obj-y += subpmic/
 obj-$(CONFIG_MTK_TINYSYS_MCUPM_SUPPORT) += mcupm/
 obj-$(CONFIG_MTK_MET) += met_drv/
 obj-$(CONFIG_MTK_BASE_POWER) += base/
+obj-y += met_drv_v2/
 obj-$(CONFIG_MTK_SERIAL)	+= uart/
 obj-$(CONFIG_MTK_PWM)	    += pwm/
 obj-$(CONFIG_MTK_IRTX_PWM_SUPPORT) += irtx/
@@ -231,3 +232,4 @@ obj-$(CONFIG_PRIZE_TTM) += ttm/
 obj-$(CONFIG_PRIZE_TTMDEV) += ttmdev/
 #prize add by lipengpeng 20211012 end 
 
+obj-$(CONFIG_MTK_FPSGO_V3) += fpsgo_cus/
