@@ -7,10 +7,6 @@
 # Compile Options
 # ---------------------------------------------------
 
-ifndef TOP
-    TOP := $(srctree)/..
-endif
-
 ifneq ($(KERNEL_OUT),)
     ccflags-y += -imacros $(KERNEL_OUT)/include/generated/autoconf.h
 endif
@@ -67,9 +63,9 @@ ccflags-y += -D CONFIG_MP_WAKEUP_SOURCE_SYSFS_STAT=1
 # ---------------------------------------------------
 # Include Path
 # ---------------------------------------------------
-CONN_INFRA_SRC := $(TOP)/vendor/mediatek/kernel_modules/connectivity/conninfra
-CONNFEM_SRC := $(TOP)/vendor/mediatek/kernel_modules/connectivity/connfem
-WMT_SRC := $(TOP)/vendor/mediatek/kernel_modules/connectivity/common
+CONN_INFRA_SRC := $(srctree)/drivers/misc/mediatek/connectivity/conninfra
+CONNFEM_SRC := $(srctree)/drivers/misc/mediatek/connectivity/connfem
+WMT_SRC := $(srctree)/drivers/misc/mediatek/connectivity/common
 BTIF_SRC := $(srctree)/drivers/misc/mediatek/btif
 ccflags-y += -I$(srctree)/drivers/misc/mediatek/connectivity/common
 ccflags-y += -I$(srctree)/drivers/misc/mediatek/include/mt-plat/
