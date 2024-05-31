@@ -1,4 +1,3 @@
-
 /*
 * Copyright (C) 2019 MediaTek Inc.
 *
@@ -13,7 +12,6 @@
 * If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include <linux/module.h>
 #include <linux/uaccess.h>
 #include <linux/time.h>
@@ -21,10 +19,6 @@
 #include <linux/string.h>
 #include <linux/kthread.h>
 #include "wifi_pwr_on.h"
-
-
-
-
 
 MODULE_LICENSE("Dual BSD/GPL");
 
@@ -41,14 +35,9 @@ uint32_t DbgLevel = WIFI_FW_LOG_INFO;
 		if (DbgLevel >= WIFI_FW_LOG_DBG) \
 			pr_debug(PFX "%s[D]: " fmt, __func__, ##arg); \
 	} while (0)
-#define WIFI_DBG_FUNC(fmt, arg...)	\
-	do { \
-		if (DbgLevel >= WIFI_FW_LOG_INFO) \
-			pr_info(PFX "%s[I]: " fmt, __func__, ##arg); \
-	} while (0)
 #define WIFI_DBG_FUNC_LIMITED(fmt, arg...)	\
 	do { \
-		if (DbgLevel >= WIFI_FW_LOG_INFO) \
+		if (DbgLevel >= WIFI_FW_LOG_DBG) \
 			pr_info_ratelimited(PFX "%s[L]: " fmt, __func__, ##arg); \
 	} while (0)
 #define WIFI_WARN_FUNC(fmt, arg...)	\
@@ -61,10 +50,8 @@ uint32_t DbgLevel = WIFI_FW_LOG_INFO;
 		pr_err(PFX "%s[E]: " fmt, __func__, ##arg); \
 	} while (0)
 
-
 wlan_probe_cb mtk_wlan_probe_function;
 wlan_remove_cb mtk_wlan_remove_function;
-
 
 struct completion wlan_pendComp;
 
@@ -222,7 +209,3 @@ int mtk_wcn_wlan_func_ctrl(enum ENUM_WLAN_OPID opId)
 	return bRet;
 }
 EXPORT_SYMBOL(mtk_wcn_wlan_func_ctrl);
-
-
-
-
