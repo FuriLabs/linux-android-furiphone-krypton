@@ -123,7 +123,7 @@ FLASH_ENABLED = 1
 
 # If your device is treble-ized, but aonly, you should set the following to
 # 1 (yes).
-FLASH_IS_AONLY = 0
+FLASH_IS_AONLY = 1
 
 # `flash-bootimage` defaults are enough for most recent devices, but legacy
 # devices won't work out of the box.
