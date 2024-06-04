@@ -8,7 +8,6 @@ XS-FuriOS-Build-On: amd64
 Build-Depends: build-essential,
                dpkg-dev,
                findutils,
-               android-platform-prebuilts-python-linux-x86-2.7.5,
                debhelper-compat (= 13),
                bc,
                rsync,
