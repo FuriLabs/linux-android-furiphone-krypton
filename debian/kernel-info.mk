@@ -107,7 +107,7 @@ KERNEL_BOOTIMAGE_VERSION = 2
 # Whether to build a flashable vbmeta.img. Please note that currently
 # only empty vbmeta images (disabling verified boot) can be generated.
 # Use 0 (no) or 1 (default).
-DEVICE_VBMETA_REQUIRED = 1
+DEVICE_VBMETA_REQUIRED = 0
 
 # Samsung devices require a special flag. Enable the following if your
 # device is a Samsung device that requires flag 0 to be present
