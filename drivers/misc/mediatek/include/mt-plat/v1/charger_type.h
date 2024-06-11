@@ -6,6 +6,8 @@
 #ifndef __MTK_CHARGER_TYPE_H__
 #define __MTK_CHARGER_TYPE_H__
 
+#include <linux/device.h>
+
 enum charger_type {
 	CHARGER_UNKNOWN = 0,
 	STANDARD_HOST,		/* USB : 450mA */
