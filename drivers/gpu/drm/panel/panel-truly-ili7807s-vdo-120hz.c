@@ -349,8 +349,8 @@ lcm_dcs_write_seq_static(ctx,0x76,0x1F);		//save power SRC bias through rate
 lcm_dcs_write_seq_static(ctx,0x80,0x35);		//save power SRC bias current	
 lcm_dcs_write_seq_static(ctx,0x06,0x6A);     	//BIST RTN=6.688us	
 lcm_dcs_write_seq_static(ctx,0x08,0x00);     	//BIST RTN[10:8]	
-lcm_dcs_write_seq_static(ctx,0x0E,0x04);     	//BIST VBP	
-lcm_dcs_write_seq_static(ctx,0x0F,0x04);     	//BIST VFP	
+lcm_dcs_write_seq_static(ctx,0x0E,0x28);     	//BIST VBP	
+lcm_dcs_write_seq_static(ctx,0x0F,0x28);     	//BIST VFP	
 lcm_dcs_write_seq_static(ctx,0xFF,0x78,0x07,0x12);
 lcm_dcs_write_seq_static(ctx,0x48,0x05);     	//90_t8_de
 lcm_dcs_write_seq_static(ctx,0x49,0x00);     	//90_t7p_de
@@ -361,8 +361,8 @@ lcm_dcs_write_seq_static(ctx,0x52,0x1F);		//save power SRC bias through rate
 lcm_dcs_write_seq_static(ctx,0x53,0x25);		//save power SRC bias current
 lcm_dcs_write_seq_static(ctx,0xC8,0x47);     	//BIST RTN=4.5us	
 lcm_dcs_write_seq_static(ctx,0xC9,0x00);     	//BIST RTN[10:8]	
-lcm_dcs_write_seq_static(ctx,0xCA,0x04);     	//BIST VBP	
-lcm_dcs_write_seq_static(ctx,0xCB,0x04);     	//BIST VFP	
+lcm_dcs_write_seq_static(ctx,0xCA,0x20);     	//BIST VBP	
+lcm_dcs_write_seq_static(ctx,0xCB,0x20);     	//BIST VFP	
 lcm_dcs_write_seq_static(ctx,0x10,0x05);     	//120_t8_de
 lcm_dcs_write_seq_static(ctx,0x11,0x00);     	//120_t7p_de     
 lcm_dcs_write_seq_static(ctx,0x12,0x08);     	//120_t9_de 
@@ -373,8 +373,8 @@ lcm_dcs_write_seq_static(ctx,0x1A,0x1F);		//save power SRC bias through rate
 lcm_dcs_write_seq_static(ctx,0x1B,0x25);		//save power SRC bias current
 lcm_dcs_write_seq_static(ctx,0xC0,0x35);     	//BIST RTN=3.375us	
 lcm_dcs_write_seq_static(ctx,0xC1,0x00);     	//BIST RTN[10:8]	
-lcm_dcs_write_seq_static(ctx,0xC2,0x04);     	//BIST VBP	
-lcm_dcs_write_seq_static(ctx,0xC3,0x04);     	//BIST VFP	
+lcm_dcs_write_seq_static(ctx,0xC2,0x28);     	//BIST VBP	
+lcm_dcs_write_seq_static(ctx,0xC3,0x20);     	//BIST VFP	
 lcm_dcs_write_seq_static(ctx,0xFF,0x78,0x07,0x05);
 lcm_dcs_write_seq_static(ctx,0x1B,0x00);		
 lcm_dcs_write_seq_static(ctx,0x1C,0x87);		//120_VCOM=-0.1V
@@ -886,18 +886,18 @@ static int ili_lcm_enable(struct drm_panel *panel)
 #define VAC (2412)
 #define HAC (1080)
 #define HFP (22)
-#define HSA (2)
+#define HSA (4)
 #define HBP (22)
-#define VFP (16)
-#define VSA (3)
-#define VBP (18)
+#define VFP (36)
+#define VSA (4)
+#define VBP (34)
 
 static u32 fake_heigh = 2412;
 static u32 fake_width = 1080;
 static bool need_fake_resolution;
 
 static struct drm_display_mode performance_mode_120 = {
-	.clock = 342000,
+	.clock = 850000,
 	.hdisplay = 1080,
 	.hsync_start = HAC + HFP,
 	.hsync_end = HAC + HFP + HSA,
@@ -912,16 +912,16 @@ static struct drm_display_mode performance_mode_120 = {
 #if defined(CONFIG_MTK_PANEL_EXT)
 static struct mtk_panel_params ili_ext_params_120 = {
 //FIXME:prize-Solve the problem that after turning on the 120Hz refresh rate and then turning off and on again it is lk set to 60hz-pengzhipeng-20220818-start
-	.vfp_low_power = VFP, // 2500,//60hz
+	// .vfp_low_power = VFP, // 2500,//60hz
 //FIXME:prize-Solve the problem that after turning on the 120Hz refresh rate and then turning off and on again it is lk set to 60hz-pengzhipeng-20220818-end
 
-	.pll_clk = 400,
+	.pll_clk = 425,
 	.cust_esd_check = 1,
 	.esd_check_enable = 1,
 	.lcm_esd_check_table[0] = {
 		.cmd = 0x0A, .count = 1, .para_list[0] = 0x9C,
 	},
-	.data_rate = 800,
+	.data_rate = 850,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
 	.dsc_params = {
 		.enable = 1,
