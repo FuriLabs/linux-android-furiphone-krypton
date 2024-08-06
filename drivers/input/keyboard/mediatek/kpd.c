@@ -199,6 +199,10 @@ static void kpd_keymap_handler(unsigned long data)
 			linux_keycode = kpd_keymap[hw_keycode];
 			if (linux_keycode == 0U)
 				continue;
+
+                        if (linux_keycode == 102) // hw_keycode=1, keybit=1
+                            linux_keycode = 112;
+
 			input_report_key(kpd_input_dev, linux_keycode, pressed);
 			input_sync(kpd_input_dev);
 			kpd_print("report Linux keycode = %d\n", linux_keycode);
@@ -402,6 +406,9 @@ static int kpd_pdrv_probe(struct platform_device *pdev)
 
 	if (kpd_dts_data.kpd_sw_rstkey)
 		__set_bit(kpd_dts_data.kpd_sw_rstkey, kpd_input_dev->keybit);
+
+	__set_bit(112, kpd_input_dev->keybit);
+
 #ifdef KPD_KEY_MAP
 	__set_bit(KPD_KEY_MAP, kpd_input_dev->keybit);
 #endif
