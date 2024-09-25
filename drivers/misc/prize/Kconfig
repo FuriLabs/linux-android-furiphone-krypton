@@ -1,8 +1,36 @@
-#prize-add prize-wangyunqing-20181110-start
-source "drivers/misc/prize/hardware_info/Kconfig"
-#prize-add prize-wangyunqing-20181110-end
+# Hardware Info
+config PRIZE_HARDWARE_INFO
+    bool "HARDWARE_INFO"
+    default y
+    help
+      Dummy Lens Driver
+      This config is used to enable the corresponding
+      lens driver for the camera sensor module
+      Set as y if the driver is used in this project
 
-#/*prize add by zhuzhengjiang for camera ldo wl2868c 20220309  start*/ 
-source "drivers/misc/prize/wl2868c/Kconfig"
-#/*prize add by zhuzhengjiang for camera ldo wl2868c 20220309  end*/ 
+config PRIZE_HARDWARE_INFO_BAT
+    bool "PRIZE_HARDWARE_INFO_BAT"
+    depends on PRIZE_HARDWARE_INFO
+    default y
+    help
+      This config is used to enable battery info
+      displayed in hardware info.
 
+config PRIZE_CTS
+    bool "HARDWARE_EFUSE_INFO"
+    default n
+    help
+      Dummy EFUSE flown status info
+
+config PRIZE_TYPEC_POSITIVE_NEGATIVE
+    bool "HARDWARE_INFO"
+    default n
+    help
+      Prize Type C and OTG CC polarity detection
+
+# Camera LDO WL2868C
+config PRIZE_CAMERA_LDO_WL2868C
+    bool "Support camera pmic wl2868c function"
+    default n
+    help
+      Select Y to enable camera pmic wl2868c function
