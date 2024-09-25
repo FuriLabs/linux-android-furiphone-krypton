@@ -1,1 +1,0 @@
-obj-y	+= ir_camera_motor.o
