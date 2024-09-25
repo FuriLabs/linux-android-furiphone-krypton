@@ -247,7 +247,7 @@ endif
 
 # prize add start
 config TOUCHSCREEN_ILITEK9882_SPI 
-        tristate " ILITEK9882 touchscreen for Mediatek package"
+        tristate "ILITEK9882 touchscreen for Mediatek package"
         depends on I2C || SPI
         default n
         help

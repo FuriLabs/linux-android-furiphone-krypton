@@ -8,24 +8,24 @@ config TOUCHSCREEN_HIMAX_COMMON
 		help
 		This enables support for HIMAX CHIPSET touchscreens.
 
-choice
-	prompt "HIMAX touch IC types"
-	depends on TOUCHSCREEN_HIMAX_COMMON
-	default TOUCHSCREEN_HIMAX_INCELL
+#choice
+#	prompt "HIMAX touch IC types"
+#	depends on TOUCHSCREEN_HIMAX_COMMON
+#	default TOUCHSCREEN_HIMAX_INCELL
 
-config TOUCHSCREEN_HIMAX_ONCELL
-       bool "HIMAX chipset on-cell function"
-		depends on TOUCHSCREEN_HIMAX_COMMON
-		help
-		This enables support for HIMAX CHIPSET of on-cell function.
+#config TOUCHSCREEN_HIMAX_ONCELL
+#       bool "HIMAX chipset on-cell function"
+#		depends on TOUCHSCREEN_HIMAX_COMMON
+#		help
+#		This enables support for HIMAX CHIPSET of on-cell function.
 
-config TOUCHSCREEN_HIMAX_INCELL
-        bool "HIMAX chipset in-cell function"
-		depends on TOUCHSCREEN_HIMAX_COMMON
-		help
-		This enables support for HIMAX CHIPSET of in-cell function.
+#config TOUCHSCREEN_HIMAX_INCELL
+#        bool "HIMAX chipset in-cell function"
+#		depends on TOUCHSCREEN_HIMAX_COMMON
+#		help
+#		This enables support for HIMAX CHIPSET of in-cell function.
 
-endchoice
+#endchoice
 
 # ***************** On-cell Start *****************
 config TOUCHSCREEN_HIMAX_IC_HX852xH
