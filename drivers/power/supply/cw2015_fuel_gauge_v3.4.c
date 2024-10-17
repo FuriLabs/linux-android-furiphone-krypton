@@ -1190,7 +1190,7 @@ static int cw2015_probe(struct i2c_client *client, const struct i2c_device_id *i
 	
 	psy_cfg.drv_data = cw_bat;
 	psy_desc->name = CW_PROPERTIES;
-	psy_desc->type = POWER_SUPPLY_TYPE_BATTERY;
+	psy_desc->type = POWER_SUPPLY_TYPE_UNKNOWN;
 	psy_desc->properties = cw_battery_properties;
 	psy_desc->num_properties = ARRAY_SIZE(cw_battery_properties);
 	psy_desc->get_property = cw_battery_get_property;
