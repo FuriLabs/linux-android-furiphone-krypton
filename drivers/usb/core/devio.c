@@ -242,7 +242,7 @@ static int usbdev_mmap(struct file *file, struct vm_area_struct *vma)
 	INIT_LIST_HEAD(&usbm->memlist);
 
 	if (remap_pfn_range(vma, vma->vm_start,
-			virt_to_phys(usbm->mem) >> PAGE_SHIFT,
+			page_to_pfn(virt_to_page(dma_addr)),
 			size, vma->vm_page_prot) < 0) {
 		dec_usb_memory_use_count(usbm, &usbm->vma_use_count);
 		return -EAGAIN;
