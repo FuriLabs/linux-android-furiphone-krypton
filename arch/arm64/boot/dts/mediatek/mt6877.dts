@@ -4830,6 +4830,7 @@
 	vdec_gcon@16010000 {
 		compatible = "mediatek,vdec_gcon";
 		reg = <0 0x16010000 0 0x8000>;
+		mediatek,vcu = <&vcu>;
 	};
 
 	vdec@16020000 {
@@ -4860,6 +4861,7 @@
 	venc_gcon@17000000 {
 		compatible = "mediatek,venc_gcon";
 		reg = <0 0x17000000 0 0x10000>;
+		mediatek,vcu = <&vcu>;
 	};
 
 	venc@17000000 {
