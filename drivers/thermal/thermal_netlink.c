@@ -545,10 +545,13 @@ static int thermal_genl_cmd_dumpit(struct sk_buff *skb,
 				   struct netlink_callback *cb)
 {
 	struct param p = { .msg = skb };
-	const struct genl_dumpit_info *info = genl_dumpit_info(cb);
-	int cmd = info->ops->cmd;
+	struct genlmsghdr *genlh;
+	int cmd;
 	int ret;
 	void *hdr;
+
+	genlh = nlmsg_data(cb->nlh);
+	cmd = genlh->cmd;
 
 	hdr = genlmsg_put(skb, 0, 0, &thermal_gnl_family, 0, cmd);
 	if (!hdr)
@@ -605,28 +608,28 @@ out_free_msg:
 static const struct genl_ops thermal_genl_ops[] = {
 	{
 		.cmd = THERMAL_GENL_CMD_TZ_GET_ID,
-		.validate = GENL_DONT_VALIDATE_STRICT | GENL_DONT_VALIDATE_DUMP,
 		.dumpit = thermal_genl_cmd_dumpit,
+		.policy = thermal_genl_policy,
 	},
 	{
 		.cmd = THERMAL_GENL_CMD_TZ_GET_TRIP,
-		.validate = GENL_DONT_VALIDATE_STRICT | GENL_DONT_VALIDATE_DUMP,
 		.doit = thermal_genl_cmd_doit,
+		.policy = thermal_genl_policy,
 	},
 	{
 		.cmd = THERMAL_GENL_CMD_TZ_GET_TEMP,
-		.validate = GENL_DONT_VALIDATE_STRICT | GENL_DONT_VALIDATE_DUMP,
 		.doit = thermal_genl_cmd_doit,
+		.policy = thermal_genl_policy,
 	},
 	{
 		.cmd = THERMAL_GENL_CMD_TZ_GET_GOV,
-		.validate = GENL_DONT_VALIDATE_STRICT | GENL_DONT_VALIDATE_DUMP,
 		.doit = thermal_genl_cmd_doit,
+		.policy = thermal_genl_policy,
 	},
 	{
 		.cmd = THERMAL_GENL_CMD_CDEV_GET,
-		.validate = GENL_DONT_VALIDATE_STRICT | GENL_DONT_VALIDATE_DUMP,
 		.dumpit = thermal_genl_cmd_dumpit,
+		.policy = thermal_genl_policy,
 	},
 };
 
@@ -635,7 +638,6 @@ static struct genl_family thermal_gnl_family __ro_after_init = {
 	.name		= THERMAL_GENL_FAMILY_NAME,
 	.version	= THERMAL_GENL_VERSION,
 	.maxattr	= THERMAL_GENL_ATTR_MAX,
-	.policy		= thermal_genl_policy,
 	.ops		= thermal_genl_ops,
 	.n_ops		= ARRAY_SIZE(thermal_genl_ops),
 	.mcgrps		= thermal_genl_mcgrps,
