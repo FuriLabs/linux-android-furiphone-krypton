@@ -12,6 +12,8 @@
 #include <linux/device.h>
 #include <linux/thermal.h>
 
+#include "thermal_netlink.h"
+
 /* Initial state of a cooling device during binding */
 #define THERMAL_NO_TARGET -1UL
 
