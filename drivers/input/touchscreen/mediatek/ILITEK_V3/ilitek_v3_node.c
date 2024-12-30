@@ -2828,6 +2828,61 @@ static ssize_t ili_touch_glove_store(struct device *dev, struct device_attribute
 static DEVICE_ATTR(glovemode, 0664, ili_touch_glove_show, ili_touch_glove_store);
 #endif
 
+#if defined(CONFIG_FURILABS_ILITEK_PALMREJECTION)
+static ssize_t ili_touch_palmrejection_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	int count;
+	struct ilitek_ts_data *ts_data = ilits;
+	count = sprintf(buf, "%s\n", ts_data->palmrejection_mode ? "1" : "0");
+	return count;
+}
+
+static void ili_touch_palmrejection_set_state(struct ilitek_ts_data *ts_data, int enable)
+{
+	int i;
+
+	ILI_INFO("%s palm rejection mode\n", enable ? "Enable" : "Disable");
+
+	ts_data->edge_palm_para[0] = P5_X_EDGE_PLAM_CTRL_1;
+	ts_data->edge_palm_para[1] = P5_X_EDGE_PALM_TUNING_PARA;
+
+	for (i = 0; i < 14; i++) {
+		ts_data->edge_palm_para[i * 2 + 2] = enable ? 0x01 : 0x00;
+		ts_data->edge_palm_para[i * 2 + 3] = enable ? 0x01 : 0x00;
+	}
+
+	ts_data->edge_palm_para[30] = ili_calc_packet_checksum(ts_data->edge_palm_para, P5_X_EDGE_PALM_PARA_LENGTH - 1);
+
+	for (i = 0; i < P5_X_EDGE_PALM_PARA_LENGTH; i++) {
+		ILI_INFO("edge_palm_para[%d] = 0x%2x\n", i, ts_data->edge_palm_para[i]);
+	}
+
+	ili_ic_send_edge_palm_para();
+
+	ts_data->palmrejection_mode = enable;
+	ILI_INFO("Palm rejection status: %d\n", ts_data->palmrejection_mode);
+}
+
+static ssize_t ili_touch_palmrejection_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
+{
+	struct ilitek_ts_data *ts_data = ilits;
+	int s = (buf[0] - '0');
+
+	if ((s != 0) && (s != 1)) {
+		ILI_ERR("Invalid input value: %d\n", s);
+		return -EINVAL;
+	}
+
+	if ((!ts_data->palmrejection_mode && s) || (ts_data->palmrejection_mode && !s)) {
+		ili_touch_palmrejection_set_state(ts_data, s);
+	}
+
+	return count;
+}
+
+static DEVICE_ATTR(palmrejectionmode, 0664, ili_touch_palmrejection_show, ili_touch_palmrejection_store);
+#endif
+
 void ili_node_init(void)
 {
 	int i = 0, ret = 0, err = 0;
@@ -2836,6 +2891,16 @@ void ili_node_init(void)
 #if defined(CONFIG_PRIZE_SMART_COVER_COMMON_NODE)
 	static struct kobject *prize_sysfs_rootdir = NULL;
 	struct kobject *prize_glove = NULL;
+#endif
+
+#if defined(CONFIG_FURILABS_ILITEK_PALMREJECTION)
+	static struct kobject *furilabs_sysfs_rootdir = NULL;
+	struct kobject *furilabs_palmrejection = NULL;
+#endif
+
+#if defined(CONFIG_FURILABS_ILITEK_PALMREJECTION)
+	ilits->palmrejection_mode = false;
+	ili_touch_palmrejection_set_state(ilits, 0);
 #endif
 
 	proc_dir_ilitek = proc_mkdir("ilitek", NULL);
@@ -2874,5 +2939,26 @@ void ili_node_init(void)
 	}
 
 	ILI_INFO("prize fts sysfs_create_file sucess\n");
+#endif
+
+#if defined(CONFIG_FURILABS_ILITEK_PALMREJECTION)
+	if (!furilabs_sysfs_rootdir) {
+		furilabs_sysfs_rootdir = kobject_create_and_add("furilabs", kernel_kobj);
+	}
+
+	if (!furilabs_palmrejection) {
+		furilabs_palmrejection = kobject_create_and_add("palmrejectionmode", furilabs_sysfs_rootdir);
+	}
+
+	err = sysfs_create_link(furilabs_palmrejection, &client->dev.kobj, "common_node");
+	if (err) {
+		ILI_ERR("Failed to create sysfs link for palm rejection\n");
+	}
+
+	if (sysfs_create_file(&client->dev.kobj, &dev_attr_palmrejectionmode.attr)) {
+		ILI_ERR("Failed to create sysfs file for palm rejection\n");
+	}
+
+	ILI_INFO("Successfully created sysfs node for palm rejection\n");
 #endif
 }

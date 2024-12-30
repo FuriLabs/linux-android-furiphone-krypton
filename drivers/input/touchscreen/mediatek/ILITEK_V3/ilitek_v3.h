@@ -981,6 +981,7 @@ struct ilitek_ts_data {
 	bool proxmity_face;
 	bool eng_flow;
 	bool glove_mode;
+	bool palmrejection_mode;
 	/* module info */
 	int tp_module;
 	int md_fw_ili_size;
