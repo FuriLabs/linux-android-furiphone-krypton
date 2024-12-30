@@ -2782,78 +2782,62 @@ static int netlink_init(void)
 	}
 	return ret;
 }
-//prize-Add glove function-pengzhipeng-20220727-start
-#if defined(CONFIG_PRIZE_SMART_COVER_COMMON_NODE)
 
+#if defined(CONFIG_PRIZE_SMART_COVER_COMMON_NODE)
 static ssize_t ili_touch_glove_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
-    int count;
-   // u8 val = 1;
+	int count;
 	struct ilitek_ts_data *ts_data = ilits;
-   // mutex_lock(&input_dev->mutex);
-   // fts_read_reg(FTS_REG_GLOVE_MODE_EN, &val);
-	//ili_ice_mode_read(0x10600, &val, sizeof(u8));
-    count = sprintf(buf, "Glove Mode: %s\n", ts_data->glove_mode ? "On" : "Off");
-   // count += sprintf(buf + count, "Glove Reg(0xC0) = %d\n", val);
-    //mutex_unlock(&input_dev->mutex);
-
-    return count;
+	count = sprintf(buf, "%s\n", ts_data->glove_mode ? "1" : "0");
+	return count;
 }
 
 static ssize_t ili_touch_glove_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
 {
-    int ret;
-    struct ilitek_ts_data *ts_data = ilits;
+	int ret;
+	struct ilitek_ts_data *ts_data = ilits;
 	int s = (buf[0] - '0');
 
-    if (s)
-	{
-        if (!ts_data->glove_mode) 
-		{
-            printk("[Mode]enter glove mode");
+	if (s) {
+		if (!ts_data->glove_mode) {
+			ILI_INFO("Enter glove mode\n");
 			ret = ili_ic_func_ctrl("glove", 0x01);
-            if (ret < 0) {
-				//strcpy(current_tp_info.more,"Glove On fail");
+			if (ret < 0) {
+				ILI_ERR("Failed to enter glove mode\n");
 				return count;
-            }
-			//strcpy(current_tp_info.more,"Glove On");
-            ts_data->glove_mode = true;
-        }
-	}
-	else
-	{
-		if (ts_data->glove_mode) 
-		{
-			printk("[Mode]exit glove mode");
+			}
+
+			ts_data->glove_mode = true;
+		}
+	} else {
+		if (ts_data->glove_mode) {
+			ILI_INFO("Exit glove mode\n");
 			ret = ili_ic_func_ctrl("glove", 0x00);
 			if (ret < 0) {
-				//strcpy(current_tp_info.more,"Glove Off fail");
-				return count;	
+				ILI_ERR("Failed to exit glove mode\n");
+				return count;
 			}
-			//strcpy(current_tp_info.more,"Glove Off");
+
 			ts_data->glove_mode = false;
-        }
-    }
-    printk("[Mode]glove mode status:  %d", ts_data->glove_mode);
-    return count;
+		}
+	}
+	ILI_INFO("Glove mode status: %d\n", ts_data->glove_mode);
+	return count;
 }
 
-
-static DEVICE_ATTR(state,0664, ili_touch_glove_show, ili_touch_glove_store);
+static DEVICE_ATTR(glovemode, 0664, ili_touch_glove_show, ili_touch_glove_store);
 #endif
-//prize-Add glove function-pengzhipeng-20220727-end
 
 void ili_node_init(void)
 {
-	int i = 0, ret = 0;
-	//prize-Add glove function-pengzhipeng-20220727-start
+	int i = 0, ret = 0, err = 0;
+	struct spi_device *client = ilits->spi;
+
 #if defined(CONFIG_PRIZE_SMART_COVER_COMMON_NODE)
-		static struct kobject *sysfs_rootdir = NULL; 
-		struct kobject *prize_glove = NULL;
-		int err = 0;
-		struct spi_device *client = ilits->spi;
+	static struct kobject *prize_sysfs_rootdir = NULL;
+	struct kobject *prize_glove = NULL;
 #endif
-	//prize-Add glove function-pengzhipeng-20220727-end
+
 	proc_dir_ilitek = proc_mkdir("ilitek", NULL);
 
 	for (; i < ARRAY_SIZE(iliproc); i++) {
@@ -2869,28 +2853,26 @@ void ili_node_init(void)
 		}
 	}
 	netlink_init();
-//prize-Add glove function-pengzhipeng-20220727-start
-	#if defined(CONFIG_PRIZE_SMART_COVER_COMMON_NODE)  
-		
 
-		if (!sysfs_rootdir) {
-			// this kobject is shared between modules, do not free it when error occur
-			sysfs_rootdir = kobject_create_and_add("prize", kernel_kobj);
-		}
+#if defined(CONFIG_PRIZE_SMART_COVER_COMMON_NODE)
+	if (!prize_sysfs_rootdir) {
+		// this kobject is shared between modules, do not free it when error occur
+		prize_sysfs_rootdir = kobject_create_and_add("prize", kernel_kobj);
+	}
 
-		if (!prize_glove){
-			prize_glove = kobject_create_and_add("smartcover", sysfs_rootdir);
-		}
-		err = sysfs_create_link(prize_glove,&client->dev.kobj,"common_node");
-		if (err){
-			printk("prize fts sysfs_create_link fail\n");
-		}
-		if(sysfs_create_file(&client->dev.kobj, &dev_attr_state.attr))
-		{
-			printk("prize fts sysfs_create_file fail\n");
-		}
-		printk("prize fts sysfs_create_file sucess\n");
-			///return 0;
-	#endif
-//prize-Add glove function-pengzhipeng-20220727-end
+	if (!prize_glove) {
+		prize_glove = kobject_create_and_add("glovemode", prize_sysfs_rootdir);
+	}
+
+	err = sysfs_create_link(prize_glove, &client->dev.kobj,"common_node");
+	if (err) {
+		ILI_ERR("prize fts sysfs_create_link failed\n");
+	}
+
+	if (sysfs_create_file(&client->dev.kobj, &dev_attr_glovemode.attr)) {
+		ILI_ERR("prize fts sysfs_create_file failed\n");
+	}
+
+	ILI_INFO("prize fts sysfs_create_file sucess\n");
+#endif
 }
