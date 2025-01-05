@@ -28,6 +28,15 @@ Standards-Version: 4.5.0.3
 Vcs-Browser: https://github.com/furilabs/linux-android-furiphone-krypton
 Vcs-Git: https://github.com/furilabs/linux-android-furiphone-krypton.git
 
+
+Package: linux-bootimage-furiphone-krypton-configuration
+Architecture: arm64
+Depends: ${misc:Depends}
+Description: Linux kernel for FuriPhone FLX1 - flash-bootimage configuration
+ This package contains the Linux kernel for the FuriPhone FLX1 device.
+ .
+ Note: This package only ships the flash-bootimage version configuration file.
+
 Package: linux-image-4.19.325-furiphone-krypton
 Architecture: arm64
 Depends: ${misc:Depends}
@@ -40,9 +49,9 @@ Description: Linux kernel for FuriPhone FLX1
 
 Package: linux-bootimage-4.19.325-furiphone-krypton
 Architecture: arm64
-Pre-Depends: flash-bootimage (>= 4)
+Pre-Depends: flash-bootimage (>= 7), linux-bootimage-furiphone-krypton-configuration (= ${binary:Version}),
 Depends: ${misc:Depends},
-         linux-image-4.19.325-furiphone-krypton (= ${binary:Version})
+         linux-image-4.19.325-furiphone-krypton (= ${binary:Version}),
 Description: Linux kernel for FuriPhone FLX1 - Boot Image
  This package contains the Linux kernel for the FuriPhone FLX1 device.
  .
