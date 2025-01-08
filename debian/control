@@ -5,6 +5,7 @@ Maintainer: Bardia Moshiri <fakeshell@bardia.tech>
 Uploaders: Bardia Moshiri <fakeshell@bardia.tech>
 XS-FuriOS-Host-Arch: arm64
 XS-FuriOS-Build-On: amd64
+XS-FuriOS-Extra-Repos: deb http://furilabs-initramfs-tools-halium.repo.furios.io/trixie-bootman/ trixie main
 Build-Depends: build-essential,
                dpkg-dev,
                findutils,
