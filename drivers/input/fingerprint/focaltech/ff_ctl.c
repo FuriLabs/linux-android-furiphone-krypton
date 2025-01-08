@@ -343,7 +343,7 @@ static int ff_ctl_register_input(void)
     }
 
     /* Register the key event capabilities. */
-    /*if (g_config) {
+    if (g_config) {
         input_set_capability(g_context->input, EV_KEY, g_config->keycode_nav_left    );
         input_set_capability(g_context->input, EV_KEY, g_config->keycode_nav_right   );
         input_set_capability(g_context->input, EV_KEY, g_config->keycode_nav_up      );
@@ -352,7 +352,7 @@ static int ff_ctl_register_input(void)
         input_set_capability(g_context->input, EV_KEY, g_config->keycode_click       );
         input_set_capability(g_context->input, EV_KEY, g_config->keycode_long_press  );
         input_set_capability(g_context->input, EV_KEY, g_config->keycode_simulation  );
-    }*/
+    }
 
     /* Register the allocated input device. */
     g_context->input->name = "ff_key";
