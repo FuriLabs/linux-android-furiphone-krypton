@@ -377,7 +377,7 @@
 		compatible = "mediatek,disp-leds";
 			backlight {
 			label = "lcd-backlight";
-			max-brightness = <255>;
+			max-brightness = <355>;
 			led-bits = <8>;
 			trans-bits = <11>;
 			default-state = "on";
@@ -389,7 +389,7 @@
 		backlight {
 			label = "lcd-backlight";
 			pwms = <&disp_pwm 0 39385>;
-			max-brightness = <255>;/* prize-modify-pengzhipeng-20220531 */
+			max-brightness = <355>;/* prize-modify-pengzhipeng-20220531 */
 			led-bits = <8>;
 			trans-bits = <11>;
 			pwm-names = "lcd-backlight";
@@ -401,7 +401,7 @@
 		compatible = "mediatek,i2c-leds";
 		backlight {
 			label = "lcd-backlight";
-			max-brightness = <255>;
+			max-brightness = <355>;
 			led-bits = <8>;
 			trans-bits = <11>;
 			default-state = "on";
