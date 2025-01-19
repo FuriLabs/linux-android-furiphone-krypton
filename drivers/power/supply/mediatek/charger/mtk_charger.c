@@ -3163,7 +3163,7 @@ static ssize_t show_chg2_exist(struct device *dev, struct device_attribute *attr
 	}
 	return sprintf(buf, "%u\n", chg_cnt);
 }
-static DEVICE_ATTR(chg2_exist, 0664, show_chg2_exist, NULL);
+static DEVICE_ATTR(chg2_exist, 0444, show_chg2_exist, NULL);
 #endif
 //prize add by lipengpeng 20211013  end
 //prize added by sunshuai, 5725 Wireless charging type identification 20200805-start
