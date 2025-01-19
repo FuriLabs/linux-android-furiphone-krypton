@@ -226,7 +226,7 @@ static int spidev_message(struct spidev_data *spidev,
 	int			status = -EFAULT;
 	//int i=0;
 
-	printk("focal 1 '%s' enter. \n", __func__);
+	pr_debug("focal 1 '%s' enter. \n", __func__);
 	spi_message_init(&msg);
 	k_xfers = kcalloc(n_xfers, sizeof(*k_tmp), GFP_KERNEL);
 	if (k_xfers == NULL)
@@ -254,7 +254,7 @@ static int spidev_message(struct spidev_data *spidev,
 		 */
 		if (total > INT_MAX || k_tmp->len > INT_MAX) {
 			status = -EMSGSIZE;
-			printk("focal 2 '%s' enter. \n", __func__);
+			pr_debug("focal 2 '%s' enter. \n", __func__);
 			goto done;
 		}
 
@@ -270,7 +270,7 @@ static int spidev_message(struct spidev_data *spidev,
 						(uintptr_t) u_tmp->rx_buf,
 						u_tmp->len))
 						{
-							printk("focal 3 '%s' enter. \n", __func__);
+							pr_debug("focal 3 '%s' enter. \n", __func__);
 							goto done;
 						}
 			rx_buf += k_tmp->len;
@@ -280,7 +280,7 @@ static int spidev_message(struct spidev_data *spidev,
 			tx_total += k_tmp->len;
 			if (tx_total > bufsiz) {
 				status = -EMSGSIZE;
-				printk("focal 4 '%s' enter. tx_total = %d: %d \n", __func__, tx_total, bufsiz);
+				pr_debug("focal 4 '%s' enter. tx_total = %d: %d \n", __func__, tx_total, bufsiz);
 				goto done;
 			}
 			k_tmp->tx_buf = tx_buf;
@@ -288,12 +288,12 @@ static int spidev_message(struct spidev_data *spidev,
 						(uintptr_t) u_tmp->tx_buf,
 					u_tmp->len))
 					{
-						printk("focal 5 '%s' enter. \n", __func__);
+						pr_debug("focal 5 '%s' enter. \n", __func__);
 						
 						goto done;
 					}
 			//for(i=0;i<u_tmp->len;i++){
-							//printk("spidev_message tx buf%i: %x\n", i,tx_buf[i]);
+							//pr_debug("spidev_message tx buf%i: %x\n", i,tx_buf[i]);
 						//}
 			tx_buf += k_tmp->len;
 		}
@@ -320,9 +320,9 @@ static int spidev_message(struct spidev_data *spidev,
 		spi_message_add_tail(k_tmp, &msg);
 	}
 	
-	printk("focal 6 '%s' enter. \n", __func__);
+	pr_debug("focal 6 '%s' enter. \n", __func__);
 	status = spidev_sync(spidev, &msg);
-	printk("focal 7 '%s' enter. status = %d \n", __func__, status);
+	pr_debug("focal 7 '%s' enter. status = %d \n", __func__, status);
 	if (status < 0)
 		goto done;
 
@@ -338,13 +338,13 @@ static int spidev_message(struct spidev_data *spidev,
 				goto done;
 			}
 			//for(i=0;i<u_tmp->len;i++){
-					//printk("spidev_message rx buf%i: %x\n", i,rx_buf[i]);
+					//pr_debug("spidev_message rx buf%i: %x\n", i,rx_buf[i]);
 				//}
 			rx_buf += u_tmp->len;
 		}
 	}
 	status = total;
-	printk("focal 8 '%s' enter. status = %d \n", __func__, status);
+	pr_debug("focal 8 '%s' enter. status = %d \n", __func__, status);
 
 done:
 	kfree(k_xfers);
@@ -358,7 +358,7 @@ spidev_get_ioc_message(unsigned int cmd, struct spi_ioc_transfer __user *u_ioc,
 	struct spi_ioc_transfer	*ioc;
 	u32	tmp;
 
-	printk("focal 1 '%s' enter. \n", __func__);
+	pr_debug("focal 1 '%s' enter. \n", __func__);
 	/* Check type, command number and direction */
 	if (_IOC_TYPE(cmd) != SPI_IOC_MAGIC
 			|| _IOC_NR(cmd) != _IOC_NR(SPI_IOC_MESSAGE(0))
@@ -366,7 +366,7 @@ spidev_get_ioc_message(unsigned int cmd, struct spi_ioc_transfer __user *u_ioc,
 		return ERR_PTR(-ENOTTY);
 
 	tmp = _IOC_SIZE(cmd);
-	printk("focal 2 '%s' enter. cmd = %d : %d \n", __func__, cmd, tmp);
+	pr_debug("focal 2 '%s' enter. cmd = %d : %d \n", __func__, cmd, tmp);
 	if ((tmp % sizeof(struct spi_ioc_transfer)) != 0)
 		return ERR_PTR(-EINVAL);
 	*n_ioc = tmp / sizeof(struct spi_ioc_transfer);
@@ -374,19 +374,19 @@ spidev_get_ioc_message(unsigned int cmd, struct spi_ioc_transfer __user *u_ioc,
 		return NULL;
 
 	/* copy into scratch area */
-	printk("focal 3 '%s' enter.", __func__);
+	pr_debug("focal 3 '%s' enter.", __func__);
 	ioc = kmalloc(tmp, GFP_KERNEL);
 	if (!ioc)
 		return ERR_PTR(-ENOMEM);
 	
-	printk("focal 4 '%s' enter. \n", __func__);
+	pr_debug("focal 4 '%s' enter. \n", __func__);
 	
 	if (__copy_from_user(ioc, u_ioc, tmp)) {
 		kfree(ioc);
 		return ERR_PTR(-EFAULT);
 	}
 	
-	printk("focal 5 '%s' enter. \n", __func__);
+	pr_debug("focal 5 '%s' enter. \n", __func__);
 	
 	return ioc;
 }
@@ -402,7 +402,7 @@ spidev_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	unsigned		n_ioc;
 	struct spi_ioc_transfer	*ioc;
 
-	printk("focal 1 '%s' enter. \n", __func__);
+	pr_debug("focal 1 '%s' enter. \n", __func__);
 	/* Check type and command number */
 	if (_IOC_TYPE(cmd) != SPI_IOC_MAGIC)
 		return -ENOTTY;
@@ -412,7 +412,7 @@ spidev_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	 * from the kernel perspective; so they look reversed.
 	 */
 	 
-	printk("focal 2 '%s' enter. cmd = %d \n ", __func__, cmd);
+	pr_debug("focal 2 '%s' enter. cmd = %d \n ", __func__, cmd);
 	if (_IOC_DIR(cmd) & _IOC_READ)
 		err = !access_ok(VERIFY_WRITE,
 				(void __user *)arg, _IOC_SIZE(cmd));
@@ -425,7 +425,7 @@ spidev_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	/* guard against device removal before, or while,
 	 * we issue this ioctl.
 	 */
-	printk("focal 3 '%s' enter. \n", __func__);
+	pr_debug("focal 3 '%s' enter. \n", __func__);
 	spidev = filp->private_data;
 	spin_lock_irq(&spidev->spi_lock);
 	spi = spi_dev_get(spidev->spi);
@@ -442,7 +442,7 @@ spidev_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	 */
 	mutex_lock(&spidev->buf_lock);
 
-	printk("focal 4 '%s' enter. cmd = %d \n ", __func__, cmd);
+	pr_debug("focal 4 '%s' enter. cmd = %d \n ", __func__, cmd);
 	switch (cmd) {
 	/* read requests */
 	case SPI_IOC_RD_MODE:
@@ -536,7 +536,7 @@ spidev_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	default:
 		/* segmented and/or full-duplex I/O request */
 		/* Check message and copy into scratch area */
-		printk("focal 5 '%s' enter. \n", __func__);
+		pr_debug("focal 5 '%s' enter. \n", __func__);
 		ioc = spidev_get_ioc_message(cmd,
 				(struct spi_ioc_transfer __user *)arg, &n_ioc);
 		if (IS_ERR(ioc)) {
@@ -547,7 +547,7 @@ spidev_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 			break;	/* n_ioc is also 0 */
 
 		/* translate to spi_message, execute */
-		printk("focal 6 '%s' enter. \n", __func__);
+		pr_debug("focal 6 '%s' enter. \n", __func__);
 		retval = spidev_message(spidev, ioc, n_ioc);
 		kfree(ioc);
 		break;
@@ -555,7 +555,7 @@ spidev_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 
 	mutex_unlock(&spidev->buf_lock);
 	
-	printk("focal 5 '%s' enter. retval = %d \n ", __func__, retval);
+	pr_debug("focal 5 '%s' enter. retval = %d \n ", __func__, retval);
 	spi_dev_put(spi);
 	return retval;
 }
@@ -762,7 +762,7 @@ static int spidev_probe(struct spi_device *spi)
 
 	INIT_LIST_HEAD(&spidev->device_entry);
 	
-	printk("focal 1 '%s' enter. \n", __func__);
+	pr_debug("focal 1 '%s' enter. \n", __func__);
 
 	/* If we can allocate a minor number, hook up this device.
 	 * Reusing minors is fine so long as udev or mdev is working.
@@ -778,7 +778,7 @@ static int spidev_probe(struct spi_device *spi)
 				    spi->master->bus_num, spi->chip_select);
 		status = PTR_ERR_OR_ZERO(dev);
 		
-		printk("focal 2 '%s' enter. bus_num = %d: %d: %d \n", __func__, spi->master->bus_num, spi->chip_select, status);
+		pr_debug("focal 2 '%s' enter. bus_num = %d: %d: %d \n", __func__, spi->master->bus_num, spi->chip_select, status);
 	} else {
 		dev_info(&spi->dev, "no minor number available!\n");
 		status = -ENODEV;
@@ -798,7 +798,7 @@ static int spidev_probe(struct spi_device *spi)
 	g_spidev = spi;
 	bus_num  = spi->master->bus_num;
 	chip_select = spi->chip_select;
-//	printk("focal 3 '%s' leave. \n", __func__);
+//	pr_debug("focal 3 '%s' leave. \n", __func__);
 	
 	return status;
 }

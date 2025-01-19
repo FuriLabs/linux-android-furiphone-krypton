@@ -251,7 +251,7 @@ static int ff_spi_sync(struct spi_device *spidev, struct spi_message *message)
     DECLARE_COMPLETION_ONSTACK(done);
     int err = FF_SUCCESS;
     FF_LOGE("'%s' enter.", __func__);
-	printk("focal '%s' enter.", __func__);
+	pr_debug("focal '%s' enter.", __func__);
 
     message->complete = ff_spi_complete;
     message->context = &done;
@@ -275,7 +275,7 @@ int ff_spi_write_buf(const void *tx_buf, int tx_len)
     struct spi_transfer xfer;
     int err = FF_SUCCESS;
     FF_LOGE("'%s' enter.", __func__);
-	printk("focal '%s' enter.", __func__);
+	pr_debug("focal '%s' enter.", __func__);
 
     memset(&xfer, 0, sizeof(xfer));
     xfer.tx_buf = tx_buf;
@@ -310,7 +310,7 @@ int ff_spi_write_then_read_buf(const void *tx_buf, int tx_len, void *rx_buf, int
     int err = FF_SUCCESS, tx_rx_buf_len = tx_len + rx_len;
     void *tx_rx_buf = NULL;
     FF_LOGE("'%s' enter.", __func__);
-	printk("focal '%s' enter.", __func__);
+	pr_debug("focal '%s' enter.", __func__);
 
     FF_CHECK_PTR(g_spidev);
 

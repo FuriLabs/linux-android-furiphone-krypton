@@ -137,7 +137,7 @@ int ff_ctl_init_pins(int *irq_num)
     struct device_node *dev_node = NULL;
     struct platform_device *pdev = NULL;
 
-    printk("'%s' enter.", __func__);
+    pr_debug("'%s' enter.", __func__);
 
     /* Find device tree node. */
     dev_node = of_find_compatible_node(NULL, NULL, FF_COMPATIBLE_NODE_1);
@@ -148,7 +148,7 @@ int ff_ctl_init_pins(int *irq_num)
 
 	irq_num1 = irq_of_parse_and_map(dev_node, 0);
 	*irq_num = irq_num1;
-    printk("pzp irq number is %d.", irq_num1);
+    pr_debug("pzp irq number is %d.", irq_num1);
     /* Convert to platform device. */
     pdev = of_find_device_by_node(dev_node);
     if (!pdev) {
@@ -196,11 +196,11 @@ int ff_ctl_init_pins(int *irq_num)
             err = pinctrl_select_state(g_context->pinctrl, g_context->pin_states[i]);
 
             if (err) {
-                printk("%s() pinctrl_select_state(%s) failed.\n", __FUNCTION__, g_pinctrl_state_names[i]);
+                pr_debug("%s() pinctrl_select_state(%s) failed.\n", __FUNCTION__, g_pinctrl_state_names[i]);
                 break;
             }
 
-            printk("pinctrl_select_state(%s) ok.\n", g_pinctrl_state_names[i]);
+            pr_debug("pinctrl_select_state(%s) ok.\n", g_pinctrl_state_names[i]);
         }
         */
     /* Initialize the INT pin. */
@@ -209,11 +209,11 @@ int ff_ctl_init_pins(int *irq_num)
     /* Retrieve the irq number. 
     dev_node = of_find_compatible_node(NULL, NULL, FF_COMPATIBLE_NODE_2);
     if (!dev_node) {
-        printk("of_find_compatible_node(.., '%s') failed.", FF_COMPATIBLE_NODE_2);
+        pr_debug("of_find_compatible_node(.., '%s') failed.", FF_COMPATIBLE_NODE_2);
         return (-ENODEV);
     }
     *irq_num = irq_of_parse_and_map(dev_node, 0);
-    printk("irq number is %d.", *irq_num);*/
+    pr_debug("irq number is %d.", *irq_num);*/
 
     //pinctrl_select_state(g_context->pinctrl, g_context->pin_states[FF_PINCTRL_STATE_RST_ACT]);
 	
@@ -262,35 +262,35 @@ int ff_ctl_init_pins(int *irq_num)
 	pinctrl_select_state(g_context->pinctrl, g_context->pin_states[FF_PINCTRL_STATE_MI_SET]);
 	pinctrl_select_state(g_context->pinctrl, g_context->pin_states[FF_PINCTRL_STATE_MO_SET]);
 
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
     return err;
 }
 
 int ff_ctl_free_pins(void)
 {
     int err = 0;
-    printk("'%s' enter.", __func__);
+    pr_debug("'%s' enter.", __func__);
 
     // TODO:
 	if (g_context->pinctrl) {
         pinctrl_put(g_context->pinctrl);
         g_context->pinctrl = NULL;
     }
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
     return err;
 }
 
 int ff_ctl_enable_spiclk(bool on)
 {
     int err = 0;
-    printk("'%s' enter.", __func__);
+    pr_debug("'%s' enter.", __func__);
     FF_LOGD("clock: '%s'.", on ? "enable" : "disabled");
 
     if (unlikely(!g_context->spiclk)) {
         return (-ENOSYS);
     }
 	
-	printk("focal '%s' b_spiclk_enabled = %d. \n", __func__, g_context->b_spiclk_enabled);
+	pr_debug("focal '%s' b_spiclk_enabled = %d. \n", __func__, g_context->b_spiclk_enabled);
 
 #if !defined(CONFIG_MTK_CLKMGR)
     /* Prepare the clock source. */
@@ -319,14 +319,14 @@ int ff_ctl_enable_spiclk(bool on)
         g_context->b_spiclk_enabled = false;
     }
 
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
     return err;
 }
 
 int ff_ctl_enable_power(bool on)
 {
     int err = 0;
-    printk("'%s' enter.", __func__);
+    pr_debug("'%s' enter.", __func__);
     FF_LOGD("power: '%s'.", on ? "on" : "off");
 
     if (unlikely(!g_context->pinctrl)) {
@@ -338,7 +338,7 @@ int ff_ctl_enable_power(bool on)
 	if (!IS_ERR_OR_NULL(vdd_reg)){
 		err = regulator_enable(vdd_reg);
         if (err) {
-            printk("Regulator vdd enable failed err = %d\n", err);
+            pr_debug("Regulator vdd enable failed err = %d\n", err);
             return err;
         }
 	}
@@ -350,7 +350,7 @@ int ff_ctl_enable_power(bool on)
 	if (!IS_ERR_OR_NULL(vdd_reg)){
 		err = regulator_disable(vdd_reg);
 		if (err) {
-			printk("Regulator vdd disable failed err = %d\n", err);
+			pr_debug("Regulator vdd disable failed err = %d\n", err);
 			return err;
 		}
 	}
@@ -359,7 +359,7 @@ int ff_ctl_enable_power(bool on)
 #endif
     }
 
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
     return err;
 }
 
@@ -367,7 +367,7 @@ int ff_ctl_enable_power(bool on)
 //int ff_ctl_reset_device(void)
 //{
 //    int err = 0;
-//    printk("'%s' enter.", __func__);
+//    pr_debug("'%s' enter.", __func__);
 //
 //    if (unlikely(!g_context->pinctrl)) {
 //        return (-ENOSYS);
@@ -384,15 +384,15 @@ int ff_ctl_enable_power(bool on)
 //    /* Pull up RST pin. */
 //    err = pinctrl_select_state(g_context->pinctrl, g_context->pin_states[FF_PINCTRL_STATE_RST_ACT]);
 //
-//    printk("'%s' leave.", __func__);
+//    pr_debug("'%s' leave.", __func__);
 //    return err;
 //}
 
 int ff_ctl_reset_device(uint32_t reset_level)
 {
     int err = 0;
-    printk("'%s' enter.", __func__);
-	printk("[Test] '%s' reset_level = %d.", __func__, reset_level);
+    pr_debug("'%s' enter.", __func__);
+	pr_debug("[Test] '%s' reset_level = %d.", __func__, reset_level);
 
     if (unlikely(!g_context->pinctrl)) {
         return (-ENOSYS);
@@ -403,11 +403,11 @@ int ff_ctl_reset_device(uint32_t reset_level)
 	} else if (reset_level == 1) {
 		err = pinctrl_select_state(g_context->pinctrl, g_context->pin_states[FF_PINCTRL_STATE_RST_ACT]);
 	} else {
-        printk("'%s' reset_level = %d.", __func__, reset_level);
+        pr_debug("'%s' reset_level = %d.", __func__, reset_level);
 		return FF_ERR_BAD_PARAMS;
 	}
 	
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
     return err;
 }
 

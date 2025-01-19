@@ -203,7 +203,7 @@ extern int ff_chip_init(void);
 static int ff_ctl_enable_irq(bool on)
 {
     int err = 0;
-    printk("'%s' enter.", __func__);
+    pr_debug("'%s' enter.", __func__);
     FF_LOGD("irq: '%s'.", on ? "enable" : "disabled");
 
     if (unlikely(!g_context)) {
@@ -216,7 +216,7 @@ static int ff_ctl_enable_irq(bool on)
         disable_irq(g_context->irq_num);
     }
 
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
     return err;
 }
 
@@ -224,7 +224,7 @@ static void ff_ctl_device_event(struct work_struct *ws)
 {
     ff_ctl_context_t *ctx = container_of(ws, ff_ctl_context_t, work_queue);
     char *uevent_env[2] = {"FF_INTERRUPT", NULL};
-    printk("'%s' enter.", __func__);
+    pr_debug("'%s' enter.", __func__);
     
     FF_LOGD("%s(irq = %d, ..) toggled.", __func__, ctx->irq_num);
 #ifdef CONFIG_PM_WAKELOCKS
@@ -234,7 +234,7 @@ static void ff_ctl_device_event(struct work_struct *ws)
 #endif
     kobject_uevent_env(&ctx->miscdev.this_device->kobj, KOBJ_CHANGE, uevent_env);
 
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
 }
 
 static irqreturn_t ff_ctl_device_irq(int irq, void *dev_id)
@@ -257,12 +257,12 @@ static irqreturn_t ff_ctl_device_irq(int irq, void *dev_id)
 static int ff_ctl_report_key_event(struct input_dev *input, ff_key_event_t *kevent)
 {
     int err = 0;
-    printk("'%s' enter.", __func__);
+    pr_debug("'%s' enter.", __func__);
 
     input_report_key(input, kevent->code, kevent->value);
     input_sync(input);
 
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
     return err;
 }
 
@@ -276,7 +276,7 @@ static ff_spidev_info_t *ff_ctl_get_spidev_info(void)
 static const char *ff_ctl_get_version(void)
 {
     static char version[FF_DRV_VERSION_LEN] = {'\0', };
-    printk("'%s' enter.", __func__);
+    pr_debug("'%s' enter.", __func__);
 
     /* Version info. */
     version[0] = '\0';
@@ -292,7 +292,7 @@ static const char *ff_ctl_get_version(void)
     sprintf(version, "%s-%s", version, ff_ctl_arch_str());
     FF_LOGD("version: '%s'.", version);
 
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
     return (const char *)version;
 }
 
@@ -307,7 +307,7 @@ static int ff_ctl_fb_notifier_callback(struct notifier_block *nb, unsigned long 
 		return NOTIFY_DONE;
 	}
 
-	printk("'%s' enter.", __func__);
+	pr_debug("'%s' enter.", __func__);
 
 	event = (struct fb_event *)data;
 	blank = *(int *)event->data;
@@ -326,14 +326,14 @@ static int ff_ctl_fb_notifier_callback(struct notifier_block *nb, unsigned long 
 	uevent_env[1] = NULL;
 	kobject_uevent_env(&g_context->miscdev.this_device->kobj, KOBJ_CHANGE, uevent_env);
 
-	printk("'%s' leave.", __func__);
+	pr_debug("'%s' leave.", __func__);
 	return NOTIFY_OK;
 }
 
 static int ff_ctl_register_input(void)
 {
     int err = 0;
-    printk("'%s' enter.", __func__);
+    pr_debug("'%s' enter.", __func__);
 
     /* Allocate the input device. */
     g_context->input = input_allocate_device();
@@ -364,14 +364,14 @@ static int ff_ctl_register_input(void)
         return (-ENODEV);
     }
 
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
     return err;
 }
 
 static int ff_ctl_free_driver(void)
 {
     int err = 0;
-    printk("'%s' enter.", __func__);
+    pr_debug("'%s' enter.", __func__);
 
     /* Unregister framebuffer event notifier. */
     err = fb_unregister_client(&g_context->fb_notifier);
@@ -408,14 +408,14 @@ static int ff_ctl_free_driver(void)
     /* Release pins resource. */
     err = ff_ctl_free_pins();
 
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
     return err;
 }
 
 static int ff_ctl_init_driver(void)
 {
     int err = 0;
-    printk("'%s' enter.", __func__);
+    pr_debug("'%s' enter.", __func__);
 
     if (unlikely(!g_context)) {
         return (-ENOSYS);
@@ -478,7 +478,7 @@ static int ff_ctl_init_driver(void)
     err = fb_register_client(&g_context->fb_notifier);
 
     g_context->b_driver_inited = true;
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
     return err;
 }
 
@@ -488,12 +488,12 @@ static int ff_ctl_init_driver(void)
 static int ff_ctl_fasync(int fd, struct file *filp, int mode)
 {
     int err = 0;
-    printk("'%s' enter.", __func__);
+    pr_debug("'%s' enter.", __func__);
 
     FF_LOGD("%s: mode = 0x%08x.", __func__, mode);
     err = fasync_helper(fd, filp, mode, &g_context->async_queue);
 
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
     return err;
 }
 
@@ -502,7 +502,7 @@ static long ff_ctl_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
     int err = 0;
     struct miscdevice *dev = (struct miscdevice *)filp->private_data;
     ff_ctl_context_t *ctx = container_of(dev, ff_ctl_context_t, miscdev);
-    printk("'%s' enter.", __func__);
+    pr_debug("'%s' enter.", __func__);
 
 #if 1
     if (g_log_level <= FF_LOG_LEVEL_DBG) {
@@ -605,7 +605,7 @@ static long ff_ctl_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
         break;
     }
 
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
     return err;
 }
 
@@ -618,12 +618,12 @@ static int ff_ctl_open(struct inode *inode, struct file *filp)
 static int ff_ctl_release(struct inode *inode, struct file *filp)
 {
     int err = 0;
-    printk("'%s' enter.", __func__);
+    pr_debug("'%s' enter.", __func__);
 
     /* Remove this filp from the asynchronously notified filp's. */
     err = ff_ctl_fasync(-1, filp, 0);
 
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
     return err;
 }
 
@@ -631,11 +631,11 @@ static int ff_ctl_release(struct inode *inode, struct file *filp)
 static long ff_ctl_compat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 {
     int err = 0;
-    printk("focal '%s' enter.\n", __func__);
+    pr_debug("focal '%s' enter.\n", __func__);
 
     err = ff_ctl_ioctl(filp, cmd, (unsigned long)compat_ptr(arg));
 
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
     return err;
 }
 #endif
@@ -663,7 +663,7 @@ static ff_ctl_context_t ff_ctl_context = {
 static int __init ff_ctl_driver_init(void)
 {
     int err = 0;
-    printk("'%s' enter.", __func__);
+    pr_debug("'%s' enter.", __func__);
 
     /* Register as a miscellaneous device. */
     err = misc_register(&ff_ctl_context.miscdev);
@@ -709,14 +709,14 @@ static int __init ff_ctl_driver_init(void)
 	//	ff_ctl_enable_irq(0);
 	//}
     FF_LOGI("FocalTech fingerprint device control driver registered.");
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
     return err;
 }
 
 static void __exit ff_ctl_driver_exit(void)
 {
     int err = 0;
-    printk("'%s' enter.", __func__);
+    pr_debug("'%s' enter.", __func__);
 
     /* Release the HW resources if needs. */
     if (g_context->b_driver_inited) {
@@ -737,7 +737,7 @@ static void __exit ff_ctl_driver_exit(void)
     g_context = NULL;
 
     FF_LOGI("FocalTech fingerprint device control driver released.");
-    printk("'%s' leave.", __func__);
+    pr_debug("'%s' leave.", __func__);
 }
 
 module_init(ff_ctl_driver_init);
