@@ -137,7 +137,7 @@ static void led_debug_log(struct mtk_led_data *s_led,
 
 	if (level == 0 || s_led->debug.count >= 5 ||
 		(s_led->debug.current_t - s_led->debug.last_t) > 1000000000) {
-		pr_dbg("%s", s_led->debug.buffer);
+		pr_debug("%s", s_led->debug.buffer);
 		s_led->debug.count = 0;
 		s_led->debug.buffer[strlen("[Light] Set directly ") +
 			strlen(s_led->conf.cdev.name)] = '\0';
