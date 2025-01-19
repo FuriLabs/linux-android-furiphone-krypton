@@ -448,7 +448,6 @@ static int conninfra_thermal_query_cb(void)
 		pr_debug("[%s] rst is locking, return last temp ", __func__);
 		return last_thermal_value;
 	}
-	pr_debug("[%s] query thermal", __func__);
 	ret = conninfra_core_thermal_query(&g_temp_thermal_value);
 	if (ret == 0)
 		last_thermal_value = g_temp_thermal_value;

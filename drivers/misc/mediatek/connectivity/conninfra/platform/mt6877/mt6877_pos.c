@@ -501,7 +501,6 @@ int consys_polling_chipid_mt6877(void)
 	while (--retry > 0) {
 		consys_hw_ver = CONSYS_REG_READ(CONN_CFG_IP_VERSION_ADDR);
 		if (consys_hw_ver == CONN_HW_VER) {
-			pr_debug("Consys HW version id(0x%x)\n", consys_hw_ver);
 			ret = 0;
 			break;
 		}

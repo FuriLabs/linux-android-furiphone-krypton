@@ -413,10 +413,6 @@ static int calculate_thermal_temperature(int y)
 	t = (y - (data->thermal_b == 0 ? 0x36 : data->thermal_b)) *
 			((data->slop_molecule + 209) / 100) + (data->offset + const_offset);
 
-	pr_debug("y=[%d] b=[%d] constOffset=[%d] [%d] [%d] => t=[%d]\n",
-			y, data->thermal_b, const_offset, data->slop_molecule, data->offset,
-			t);
-
 	return t;
 }
 
@@ -481,9 +477,6 @@ int consys_thermal_query_mt6877(void)
 			CONSYS_REG_READ(CONN_REG_CONN_THERM_CTL_ADDR + thermal_dump_crs[i])) >= 0)
 			strncat(tmp_buf, tmp, strlen(tmp));
 	}
-	pr_debug("[%s] efuse:[0x%08x][0x%08x][0x%08x][0x%08x] thermal dump: %s",
-		__func__, efuse0, efuse1, efuse2, efuse3, tmp_buf);
-
 	res = calculate_thermal_temperature(cal_val);
 
 	/* GPT2 disable */

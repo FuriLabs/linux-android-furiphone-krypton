@@ -76,7 +76,6 @@ static void _consys_hw_conninfra_sleep(void);
  * 	0: No, the request is from sub-radio
  */
 static int _consys_hw_raise_voltage(enum consys_drv_type drv_type, bool raise, bool onoff);
-static void _consys_hw_conninfra_print_wakeup_record(void);
 
 /*******************************************************************************
 *                            P U B L I C   D A T A
@@ -544,20 +543,6 @@ static void _consys_hw_conninfra_add_wakeup_record(int count)
 	g_conninfra_wakeup_rec_sec[g_conninfra_wakeup_rec_idx] = sec;
 	g_conninfra_wakeup_rec_nsec[g_conninfra_wakeup_rec_idx] = nsec;
 	g_conninfra_wakeup_rec_idx++;
-
-	if (g_conninfra_wakeup_rec_idx == CONNINFRA_WAKEUP_RECORD_NUM)
-		_consys_hw_conninfra_print_wakeup_record();
-}
-
-static void _consys_hw_conninfra_print_wakeup_record(void)
-{
-	unsigned long long *sec = g_conninfra_wakeup_rec_sec;
-	unsigned long *nsec = g_conninfra_wakeup_rec_nsec;
-	int *cnt = g_conninfra_wakeup_rec_cnt;
-
-	pr_debug("conn_wakeup:%llu.%06lu:%d; %llu.%06lu:%d; %llu.%06lu:%d; %llu.%06lu:%d; %llu.%06lu:%d; %llu.%06lu:%d",
-		sec[0], nsec[0], cnt[0], sec[1], nsec[1], cnt[1], sec[2], nsec[2], cnt[2],
-		sec[3], nsec[3], cnt[3], sec[4], nsec[4], cnt[4], sec[5], nsec[5], cnt[5]);
 }
 
 static int _consys_hw_conninfra_wakeup(void)
@@ -595,7 +580,6 @@ static void _consys_hw_conninfra_sleep(void)
 #else
 		pr_debug("%s count %d is unexpected.", __func__, g_conninfra_wakeup_ref_cnt);
 #endif
-		_consys_hw_conninfra_print_wakeup_record();
 	} else
 		_consys_hw_conninfra_add_wakeup_record(g_conninfra_wakeup_ref_cnt);
 }
