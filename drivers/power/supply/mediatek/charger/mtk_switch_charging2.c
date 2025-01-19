@@ -586,7 +586,7 @@ static int mtk_switch_chr_pe50_run(struct charger_manager *info)
 //prize-After the end of the 30w fast charging, the main charge has no problem without work (MT6360)-pengzhipeng-20220518-end
 	
 	if (ret == 1) {
-		pr_info("retry pe5\n");
+		pr_debug("retry pe5\n");
 		goto retry;
 	}
 
@@ -1190,11 +1190,11 @@ static int charger_dev_event(struct notifier_block *nb,
 	switch (event) {
 	case CHARGER_DEV_NOTIFY_EOC:
 		charger_manager_notifier(info, CHARGER_NOTIFY_EOC);
-		pr_info("%s: end of charge\n", __func__);
+		pr_debug("%s: end of charge\n", __func__);
 		break;
 	case CHARGER_DEV_NOTIFY_RECHG:
 		charger_manager_notifier(info, CHARGER_NOTIFY_START_CHARGING);
-		pr_info("%s: recharge\n", __func__);
+		pr_debug("%s: recharge\n", __func__);
 		break;
 	case CHARGER_DEV_NOTIFY_SAFETY_TIMEOUT:
 		info->safety_timeout = true;

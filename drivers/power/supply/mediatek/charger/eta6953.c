@@ -574,21 +574,21 @@ static int __eta6953_is_chg_enabled(struct eta6953_chip *chip, bool *en)
 
 static int __eta6953_enable_shipmode(struct eta6953_chip *chip, bool en)
 {
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 	return (en ? eta6953_set_bit : eta6953_clr_bit)
 		(chip, ETA6953_REG_BATFETDIS, ETA6953_BATFETDIS_MASK);
 }
 
 static int __eta6953_enable_safe_tmr(struct eta6953_chip *chip, bool en)
 {
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 	return (en ? eta6953_set_bit : eta6953_clr_bit)
 		(chip, ETA6953_REG_SAFETMR_EN, ETA6953_SAFETMR_EN_MASK);
 }
 
 static int __eta6953_enable_te(struct eta6953_chip *chip, bool en)
 {
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 	return (en ? eta6953_set_bit : eta6953_clr_bit)
 		(chip, ETA6953_REG_TE, ETA6953_TE_MASK);
 }
@@ -597,7 +597,7 @@ static int __eta6953_enable_hz(struct eta6953_chip *chip, bool en)
 {
 	int ret = 0;
 
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 
 	if (ret < 0)
 		return ret;
@@ -611,14 +611,14 @@ static int __eta6953_enable_hz(struct eta6953_chip *chip, bool en)
 
 static int __eta6953_enable_otg(struct eta6953_chip *chip, bool en)
 {
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 	return (en ? eta6953_set_bit : eta6953_clr_bit)
 		(chip, ETA6953_REG_OTG_EN, ETA6953_OTG_EN_MASK);
 }
 
 static int __eta6953_set_otgcc(struct eta6953_chip *chip, u32 cc)
 {
-	dev_info(chip->dev, "%s cc = %d\n", __func__, cc);
+	dev_dbg(chip->dev, "%s cc = %d\n", __func__, cc);
 	return (cc <= eta6953_otgcc[0] ? eta6953_clr_bit : eta6953_set_bit)
 		(chip, ETA6953_REG_OTGCC, ETA6953_OTGCC_MASK);
 }
@@ -628,7 +628,7 @@ static int __eta6953_enable_chg(struct eta6953_chip *chip, bool en)
 	int ret = 0;
 	struct eta6953_desc *desc = chip->desc;
 
-	dev_info(chip->dev, "%s en = %d, chip_rev = %d\n",
+	dev_dbg(chip->dev, "%s en = %d, chip_rev = %d\n",
 			    __func__, en, chip->chip_rev);
 
 	if (chip->ceb_gpio != U32_MAX)
@@ -648,7 +648,7 @@ static int __eta6953_set_vac_ovp(struct eta6953_chip *chip, u32 vac_ovp)
 					    ARRAY_SIZE(eta6953_vac_ovp),
 					    vac_ovp);
 
-	dev_info(chip->dev, "%s vac_ovp = %d(0x%02X)\n",
+	dev_dbg(chip->dev, "%s vac_ovp = %d(0x%02X)\n",
 			    __func__, vac_ovp, regval);
 
 	return eta6953_i2c_update_bits(chip, ETA6953_REG_VAC_OVP,
@@ -663,7 +663,7 @@ static int __eta6953_set_mivr(struct eta6953_chip *chip, u32 mivr)
 	regval = eta6953_closest_reg(ETA6953_MIVR_MIN, ETA6953_MIVR_MAX,
 				    ETA6953_MIVR_STEP, mivr);
 
-	dev_info(chip->dev, "%s mivr = %d(0x%02X)\n", __func__, mivr, regval);
+	dev_dbg(chip->dev, "%s mivr = %d(0x%02X)\n", __func__, mivr, regval);
 
 	return eta6953_i2c_update_bits(chip, ETA6953_REG_MIVR,
 				      regval << ETA6953_MIVR_SHIFT,
@@ -680,7 +680,7 @@ static int __eta6953_set_aicr(struct eta6953_chip *chip, u32 aicr)
 	if (aicr < ETA6953_AICR_MAX)
 		regval += 1;
 
-	dev_info(chip->dev, "%s aicr = %d(0x%02X)\n", __func__, aicr, regval);
+	dev_dbg(chip->dev, "%s aicr = %d(0x%02X)\n", __func__, aicr, regval);
 
 	return eta6953_i2c_update_bits(chip, ETA6953_REG_AICR,
 				      regval << ETA6953_AICR_SHIFT,
@@ -694,7 +694,7 @@ static int __eta6953_set_cv(struct eta6953_chip *chip, u32 cv)
 	regval = eta6953_closest_reg(ETA6953_CV_MIN, ETA6953_CV_MAX,
 				    ETA6953_CV_STEP, cv);
 
-	dev_info(chip->dev, "%s cv = %d(0x%02X)\n", __func__, cv, regval);
+	dev_dbg(chip->dev, "%s cv = %d(0x%02X)\n", __func__, cv, regval);
 
 	return eta6953_i2c_update_bits(chip, ETA6953_REG_CV,
 				      regval << ETA6953_CV_SHIFT,
@@ -708,7 +708,7 @@ static int __eta6953_set_ichg(struct eta6953_chip *chip, u32 ichg)
 	regval = eta6953_closest_reg(ETA6953_ICHG_MIN, ETA6953_ICHG_MAX,
 				    ETA6953_ICHG_STEP, ichg);
 
-	dev_info(chip->dev, "%s ichg = %d(0x%02X)\n", __func__, ichg, regval);
+	dev_dbg(chip->dev, "%s ichg = %d(0x%02X)\n", __func__, ichg, regval);
 
 	return eta6953_i2c_update_bits(chip, ETA6953_REG_ICHG, \
 				      regval << ETA6953_ICHG_SHIFT, \
@@ -722,7 +722,7 @@ static int __eta6953_set_ieoc(struct eta6953_chip *chip, u32 ieoc)
 	regval = eta6953_closest_reg(ETA6953_IEOC_MIN, ETA6953_IEOC_MAX,
 				    ETA6953_IEOC_STEP, ieoc);
 
-	dev_info(chip->dev, "%s ieoc = %d(0x%02X)\n", __func__, ieoc, regval);
+	dev_dbg(chip->dev, "%s ieoc = %d(0x%02X)\n", __func__, ieoc, regval);
 
 	return eta6953_i2c_update_bits(chip, ETA6953_REG_IEOC,
 				      regval << ETA6953_IEOC_SHIFT,
@@ -736,7 +736,7 @@ static int __eta6953_set_safe_tmr(struct eta6953_chip *chip, u32 hr)
 	regval = eta6953_closest_reg(ETA6953_SAFETMR_MIN, ETA6953_SAFETMR_MAX,
 				    ETA6953_SAFETMR_STEP, hr);
 
-	dev_info(chip->dev, "%s time = %d(0x%02X)\n", __func__, hr, regval);
+	dev_dbg(chip->dev, "%s time = %d(0x%02X)\n", __func__, hr, regval);
 
 	return eta6953_i2c_update_bits(chip, ETA6953_REG_SAFETMR,
 				      regval << ETA6953_SAFETMR_SHIFT,
@@ -753,7 +753,7 @@ static int __eta6953_set_wdt(struct eta6953_chip *chip, u32 sec)
 	regval = eta6953_closest_reg_via_tbl(eta6953_wdt, ARRAY_SIZE(eta6953_wdt),
 					    sec);
 
-	dev_info(chip->dev, "%s time = %d(0x%02X)\n", __func__, sec, regval);
+	dev_dbg(chip->dev, "%s time = %d(0x%02X)\n", __func__, sec, regval);
 
 	return eta6953_i2c_update_bits(chip, ETA6953_REG_WDT,
 				      regval << ETA6953_WDT_SHIFT,
@@ -765,7 +765,7 @@ static int __eta6953_set_mivrtrack(struct eta6953_chip *chip, u32 mivr_track)
 	if (mivr_track >= ETA6953_MIVRTRACK_MAX)
 		mivr_track = ETA6953_MIVRTRACK_VBAT_300MV;
 
-	dev_info(chip->dev, "%s mivrtrack = %d\n", __func__, mivr_track);
+	dev_dbg(chip->dev, "%s mivrtrack = %d\n", __func__, mivr_track);
 
 	return eta6953_i2c_update_bits(chip, ETA6953_REG_MIVRTRACK,
 				      mivr_track << ETA6953_MIVRTRACK_SHIFT,
@@ -774,20 +774,20 @@ static int __eta6953_set_mivrtrack(struct eta6953_chip *chip, u32 mivr_track)
 
 static int __eta6953_kick_wdt(struct eta6953_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return eta6953_set_bit(chip, ETA6953_REG_WDTCNTRST, ETA6953_WDTCNTRST_MASK);
 }
 /*
 static int __eta6953_set_jeita_cool_iset(struct eta6953_chip *chip, bool en)
 {
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 	return (en ? eta6953_set_bit : eta6953_clr_bit)
 		(chip, ETA6953_REG_JEITA_COOL_ISET, ETA6953_JEITA_COOL_ISET_MASK);
 }
 
 static int __eta6953_set_jeita_cool_vset(struct eta6953_chip *chip, bool en)
 {
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 	return (en ? eta6953_set_bit : eta6953_clr_bit)
 		(chip, ETA6953_REG_JEITA_COOL_VSET, ETA6953_JEITA_COOL_VSET_MASK);
 }
@@ -836,13 +836,13 @@ static int __eta6953_dump_registers(struct eta6953_chip *chip)
 		printk(KERN_CONT" %02x",regbuf[i]);
 	}
 
-	dev_info(chip->dev, "%s MIVR = %dmV, AICR = %dmA\n",
+	dev_dbg(chip->dev, "%s MIVR = %dmV, AICR = %dmA\n",
 		 __func__, mivr / 1000, aicr / 1000);
 
-	dev_info(chip->dev, "%s chg_en = %d, chrg_stat = %d, vbus_stat = %d ic_stat = %d\n",
+	dev_dbg(chip->dev, "%s chg_en = %d, chrg_stat = %d, vbus_stat = %d ic_stat = %d\n",
 		 __func__, chg_en, chrg_stat, vbus_stat,ic_stat);
 
-	dev_info(chip->dev, "%s CV = %dmV, ICHG = %dmA, IEOC = %dmA\n",
+	dev_dbg(chip->dev, "%s CV = %dmV, ICHG = %dmA, IEOC = %dmA\n",
 		 __func__, cv / 1000, ichg / 1000, ieoc / 1000);
 
 	return 0;
@@ -854,7 +854,7 @@ static irqreturn_t eta6953_irq_handler(int irq, void *data)
 	u8 evt[ETA6953_STREG_MAX] = {0};
 	struct eta6953_chip *chip = (struct eta6953_chip *)data;
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	pm_stay_awake(chip->dev);
 
@@ -878,7 +878,7 @@ static irqreturn_t eta6953_irq_handler(int irq, void *data)
 	//
 	//if ( evt[ETA6953_ST_STATUS] & ETA6953_PGSTAT_MASK )
 	//{
-	//	dev_info(chip->dev, "%s %d\n", __func__,__LINE__);
+	//	dev_dbg(chip->dev, "%s %d\n", __func__,__LINE__);
 	//	//eta6953_chg_rdy_irq_handler(chip);
 	//}
 	//
@@ -912,7 +912,7 @@ static int eta6953_register_irq(struct eta6953_chip *chip)
 {
 	int ret = 0;
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	ret = devm_gpio_request_one(chip->dev, chip->intr_gpio, GPIOF_DIR_IN,
 			devm_kasprintf(chip->dev, GFP_KERNEL,
@@ -928,7 +928,7 @@ static int eta6953_register_irq(struct eta6953_chip *chip)
 				      __func__, chip->irq);
 		return chip->irq;
 	}
-	dev_info(chip->dev, "%s irq = %d\n", __func__, chip->irq);
+	dev_dbg(chip->dev, "%s irq = %d\n", __func__, chip->irq);
 
 	/* Request threaded IRQ */
 if (ret ==111111){
@@ -955,7 +955,7 @@ static int eta6953_parse_dt(struct eta6953_chip *chip)
 	struct device_node *parent_np = chip->dev->of_node, *np = NULL;
 	struct eta6953_desc *desc = NULL;
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	chip->desc = &eta6953_default_desc;
 
@@ -965,7 +965,7 @@ static int eta6953_parse_dt(struct eta6953_chip *chip)
 	}
 	np = of_get_child_by_name(parent_np, "eta6953");
 	if (!np) {
-		dev_info(chip->dev, "%s no eta6953 device node\n", __func__);
+		dev_dbg(chip->dev, "%s no eta6953 device node\n", __func__);
 		np = parent_np;
 	}
 
@@ -976,16 +976,16 @@ static int eta6953_parse_dt(struct eta6953_chip *chip)
 
 	ret = of_property_read_string(np, "chg_name", &desc->chg_name);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no chg_name(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no chg_name(%d)\n", __func__, ret);
 
 	ret = of_property_read_string(np, "chg_alias_name",
 				      &chip->chg_props.alias_name);
 	if (ret < 0) {
-		dev_info(chip->dev, "%s no chg_alias_name(%d)\n",
+		dev_dbg(chip->dev, "%s no chg_alias_name(%d)\n",
 				    __func__, ret);
 		chip->chg_props.alias_name = "eta6953_chg";
 	}
-	dev_info(chip->dev, "%s name = %s, alias name = %s\n", __func__,
+	dev_dbg(chip->dev, "%s name = %s, alias name = %s\n", __func__,
 			    desc->chg_name, chip->chg_props.alias_name);
 
 	if (strcmp(desc->chg_name, "secondary_chg") == 0)
@@ -1002,7 +1002,7 @@ static int eta6953_parse_dt(struct eta6953_chip *chip)
 
 	ret = of_get_named_gpio(parent_np, "rt,ceb_gpio", 0);
 	if (ret < 0) {
-		dev_info(chip->dev, "%s no rt,ceb_gpio(%d)\n",
+		dev_dbg(chip->dev, "%s no rt,ceb_gpio(%d)\n",
 				    __func__, ret);
 		chip->ceb_gpio = U32_MAX;
 	} else
@@ -1019,12 +1019,12 @@ static int eta6953_parse_dt(struct eta6953_chip *chip)
 	ret = of_property_read_u32(parent_np, "rt,ceb_gpio_num",
 				   &chip->ceb_gpio);
 	if (ret < 0) {
-		dev_info(chip->dev, "%s no rt,ceb_gpio_num(%d)\n",
+		dev_dbg(chip->dev, "%s no rt,ceb_gpio_num(%d)\n",
 				    __func__, ret);
 		chip->ceb_gpio = U32_MAX;
 	}
 #endif
-	dev_info(chip->dev, "%s intr_gpio = %u, ceb_gpio = %u\n",
+	dev_dbg(chip->dev, "%s intr_gpio = %u, ceb_gpio = %u\n",
 			    __func__, chip->intr_gpio, chip->ceb_gpio);
 
 	if (chip->ceb_gpio != U32_MAX) {
@@ -1042,39 +1042,39 @@ static int eta6953_parse_dt(struct eta6953_chip *chip)
 	/* Charger parameter */
 	ret = of_property_read_u32(np, "vac_ovp", &desc->vac_ovp);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no vac_ovp(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no vac_ovp(%d)\n", __func__, ret);
 
 	ret = of_property_read_u32(np, "mivr", &desc->mivr);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no mivr(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no mivr(%d)\n", __func__, ret);
 
 	ret = of_property_read_u32(np, "aicr", &desc->aicr);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no aicr(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no aicr(%d)\n", __func__, ret);
 
 	ret = of_property_read_u32(np, "cv", &desc->cv);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no cv(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no cv(%d)\n", __func__, ret);
 
 	ret = of_property_read_u32(np, "ichg", &desc->ichg);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no ichg(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no ichg(%d)\n", __func__, ret);
 
 	ret = of_property_read_u32(np, "ieoc", &desc->ieoc) < 0;
 	if (ret < 0)
-		dev_info(chip->dev, "%s no ieoc(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no ieoc(%d)\n", __func__, ret);
 
 	ret = of_property_read_u32(np, "safe_tmr", &desc->safe_tmr);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no safe_tmr(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no safe_tmr(%d)\n", __func__, ret);
 
 	ret = of_property_read_u32(np, "wdt", &desc->wdt);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no wdt(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no wdt(%d)\n", __func__, ret);
 
 	ret = of_property_read_u32(np, "mivr_track", &desc->mivr_track);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no mivr_track(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no mivr_track(%d)\n", __func__, ret);
 	if (desc->mivr_track >= ETA6953_MIVRTRACK_MAX)
 		desc->mivr_track = ETA6953_MIVRTRACK_VBAT_300MV;
 
@@ -1098,7 +1098,7 @@ static int eta6953_check_chg(struct eta6953_chip *chip)
 	int ret = 0;
 	u8 regval = 0;
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	ret = eta6953_i2c_read_byte(chip, ETA6953_REG_VBUSGD, &regval);
 	if (ret < 0)
@@ -1135,7 +1135,7 @@ static int eta6953_init_setting(struct eta6953_chip *chip)
 	u8 evt[ETA6953_STREG_MAX] = {0};
 	unsigned int boot_mode = get_boot_mode();
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	/* Clear all IRQs */
 	ret = eta6953_i2c_block_read(chip, ETA6953_REG_STATUS, ETA6953_STREG_MAX,
@@ -1192,7 +1192,7 @@ static int eta6953_init_setting(struct eta6953_chip *chip)
 	if ((boot_mode == KERNEL_POWER_OFF_CHARGING_BOOT ||
 	     boot_mode == LOW_POWER_OFF_CHARGING_BOOT) &&
 	     strcmp(desc->chg_name, "primary_chg") == 0) {
-		dev_info(chip->dev,
+		dev_dbg(chip->dev,
 		"%s do not HZ=1 and CHG_EN=0 for primary_chg when KPOC\n",
 		__func__);
 		return 0;
@@ -1230,7 +1230,7 @@ static int eta6953_reset_register(struct eta6953_chip *chip)
 {
 	int ret = 0;
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	ret = eta6953_set_bit(chip, ETA6953_REG_REGRST, ETA6953_REGRST_MASK);
 	if (ret < 0)
@@ -1251,7 +1251,7 @@ static bool eta6953_check_devinfo(struct eta6953_chip *chip)
 	}
 	chip->dev_id = (ret & ETA6953_DEVID_MASK) >> ETA6953_DEVID_SHIFT;
 	chip->dev_rev = (ret & ETA6953_DEVREV_MASK) >> ETA6953_DEVREV_SHIFT;
-	dev_info(chip->dev, "%s id = 0x%02X, devid rev = 0x%02X\n",
+	dev_dbg(chip->dev, "%s id = 0x%02X, devid rev = 0x%02X\n",
 			    __func__, chip->dev_id, chip->dev_rev);
 	switch (chip->dev_id) {
 	case ETA6963_DEVID:
@@ -1272,7 +1272,7 @@ static int eta6953_plug_in(struct charger_device *chg_dev)
 {
 	struct eta6953_chip *chip = dev_get_drvdata(&chg_dev->dev);
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	/* Enable charging */
 	return eta6953_enable_charging(chg_dev, true);
@@ -1282,7 +1282,7 @@ static int eta6953_plug_out(struct charger_device *chg_dev)
 {
 	struct eta6953_chip *chip = dev_get_drvdata(&chg_dev->dev);
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	/* Disable charging */
 	return eta6953_enable_charging(chg_dev, false);
@@ -1293,7 +1293,7 @@ static int eta6953_enable_charging(struct charger_device *chg_dev, bool en)
 	int ret = 0;
 	struct eta6953_chip *chip = dev_get_drvdata(&chg_dev->dev);
 
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 
 	if (en) {
 		ret = __eta6953_set_wdt(chip, chip->desc->wdt);
@@ -1444,7 +1444,7 @@ static int eta6953_event(struct charger_device *chg_dev, u32 event, u32 args)
 {
 	struct eta6953_chip *chip = dev_get_drvdata(&chg_dev->dev);
 
-	dev_info(chip->dev, "%s event = %d\n", __func__, event);
+	dev_dbg(chip->dev, "%s event = %d\n", __func__, event);
 
 	switch (event) {
 	case EVENT_EOC:
@@ -1464,7 +1464,7 @@ static int eta6953_enable_powerpath(struct charger_device *chg_dev, bool en)
 {
 	struct eta6953_chip *chip = dev_get_drvdata(&chg_dev->dev);
 
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 
 	return __eta6953_enable_hz(chip, !en);
 }
@@ -1473,7 +1473,7 @@ static int eta6953_enable_chip(struct charger_device *chg_dev, bool en)
 {
 	struct eta6953_chip *chip = dev_get_drvdata(&chg_dev->dev);
 
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 
 	return __eta6953_enable_hz(chip, !en);
 }
@@ -1584,14 +1584,14 @@ static int eta6953_run_iind(struct charger_device *chg_dev, u32 *uA)
 	bool chg_mivr = false;
 	u32 aicr = 0;
 
-	dev_info(chip->dev, "%s chip_rev = %d\n", __func__, chip->chip_rev);
+	dev_dbg(chip->dev, "%s chip_rev = %d\n", __func__, chip->chip_rev);
 
 	ret = eta6953_i2c_test_bit(chip, ETA6953_REG_ST_MIVR, ETA6953_ST_MIVR_SHIFT,
 				  &chg_mivr);
 	if (ret < 0)
 		return ret;
 	if (!chg_mivr) {
-		dev_info(chip->dev, "%s mivr stat not act\n", __func__);
+		dev_dbg(chip->dev, "%s mivr stat not act\n", __func__);
 		return ret;
 	}
 
@@ -1701,7 +1701,7 @@ static int eta6953_probe(struct i2c_client *client,
 	int ret = 0;
 	struct eta6953_chip *chip = NULL;
 
-	dev_info(&client->dev, "%s (%s)\n", __func__, ETA6953_DRV_VERSION);
+	dev_dbg(&client->dev, "%s (%s)\n", __func__, ETA6953_DRV_VERSION);
 
 	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
 	if (!chip)
@@ -1777,7 +1777,7 @@ static int eta6953_probe(struct i2c_client *client,
 	}
 
 	__eta6953_dump_registers(chip);
-	dev_info(chip->dev, "%s successfully\n", __func__);
+	dev_dbg(chip->dev, "%s successfully\n", __func__);
 	return 0;
 
 err_create_file:
@@ -1802,7 +1802,7 @@ static int eta6953_remove(struct i2c_client *client)
 {
 	struct eta6953_chip *chip = i2c_get_clientdata(client);
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	device_remove_file(chip->dev, &dev_attr_shipping_mode);
 	charger_device_unregister(chip->chg_dev);
@@ -1820,7 +1820,7 @@ static void eta6953_shutdown(struct i2c_client *client)
 	int ret = 0;
 	struct eta6953_chip *chip = i2c_get_clientdata(client);
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	charger_device_unregister(chip->chg_dev);
 	disable_irq(chip->irq);

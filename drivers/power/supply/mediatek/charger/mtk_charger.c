@@ -3068,7 +3068,7 @@ static ssize_t show_cmd_charge_disable(struct device *dev,
 {
 	struct charger_manager *pinfo = dev->driver_data;
 
-	pr_info("[charge] %s : %d\n",__func__, pinfo->cmd_discharging);
+	pr_debug("[charge] %s : %d\n",__func__, pinfo->cmd_discharging);
 	return sprintf(buf, "%d\n",pinfo->cmd_discharging);
 }
 
@@ -3083,9 +3083,9 @@ static ssize_t store_cmd_charge_disable(struct device *dev,
 	charger_dev_is_enabled(pinfo->dvchg1_dev, &dvchg1_chip_enabled);
 	//FIXME:prize-Solve 90% of the problems not as of charging-pengzhipeng-20220725-end
 
-	pr_info("[charge] %s\n", __func__);
+	pr_debug("[charge] %s\n", __func__);
 	if (buf != NULL && size != 0) {
-		pr_info("[store_cmd_charge_disable] buf is %s and size is %zu\n", buf, size);
+		pr_debug("[store_cmd_charge_disable] buf is %s and size is %zu\n", buf, size);
 		ret = kstrtouint(buf, 16, &reg);
 		if(reg == 1){
 		   pinfo->cmd_discharging = true;
@@ -3102,7 +3102,7 @@ static ssize_t store_cmd_charge_disable(struct device *dev,
 #endif /*CONFIG_PRIZE_MT5725_SUPPORT_15W*/
 		   pinfo->cmd_discharging = false;
 		}else{
-		  pr_info("[store_cmd_charge_disable] input err please 0 or 1\n");
+		  pr_debug("[store_cmd_charge_disable] input err please 0 or 1\n");
 		}
 
 		if((pinfo->chr_type != CHARGER_UNKNOWN) && (reg == 1)){
@@ -3114,7 +3114,7 @@ static ssize_t store_cmd_charge_disable(struct device *dev,
 		   }
 		   //FIXME:prize-Solve 90% of the problems not as of charging-pengzhipeng-20220725-end
 		   charger_manager_notifier(pinfo,CHARGER_NOTIFY_STOP_CHARGING);
-		   pr_info("[store_cmd_charge_disable] disable charge\n");
+		   pr_debug("[store_cmd_charge_disable] disable charge\n");
 		}else if((pinfo->chr_type != CHARGER_UNKNOWN) && (reg == 0)){
 		   charger_dev_enable(pinfo->chg1_dev, true);
 		   //FIXME:prize-Solve 90% of the problems not as of charging-pengzhipeng-20220725-start
@@ -3122,9 +3122,9 @@ static ssize_t store_cmd_charge_disable(struct device *dev,
 		   mtk_pe50_set_is_enable(pinfo, true);
 		   //FIXME:prize-Solve 90% of the problems not as of charging-pengzhipeng-20220725-end
 		   charger_manager_notifier(pinfo,CHARGER_NOTIFY_START_CHARGING);
-		   pr_info("[store_cmd_charge_disable]  enable charge \n");
+		   pr_debug("[store_cmd_charge_disable]  enable charge \n");
 		}else {
-		   pr_info("[store_cmd_charge_disable]  No USB connection \n");
+		   pr_debug("[store_cmd_charge_disable]  No USB connection \n");
 		}
 	}
 	return size;
@@ -3134,7 +3134,7 @@ static DEVICE_ATTR(cmd_charge_disable, 0664, show_cmd_charge_disable,
 
 #if defined (CONFIG_PRIZE_GIGASET_CHARGE_RESTRICTION)
 bool get_cmd_charge_disable(void){
-   pr_info("[charge] %s cmd_discharging =%d \n", __func__,pinfo->cmd_discharging);
+   pr_debug("[charge] %s cmd_discharging =%d \n", __func__,pinfo->cmd_discharging);
    return pinfo->cmd_discharging;
 }
 EXPORT_SYMBOL(get_cmd_charge_disable);
@@ -3176,7 +3176,7 @@ static ssize_t show_wireless_status(struct device *dev,
    if(pinfo->chr_type == NONSTANDARD_CHARGER)
 	   type = check_wireless_charge_status();
 
-	pr_info(" %s type =%d\n",__func__, type);
+	pr_debug(" %s type =%d\n",__func__, type);
 	return sprintf(buf, "%d\n",type);
 }
 
@@ -3196,7 +3196,7 @@ static ssize_t show_wireless_status(struct device *dev,
    if(pinfo->chr_type == NONSTANDARD_CHARGER)
 	   type = confirm_MT5715_works();
 
-	pr_info(" %s type =%d\n",__func__, type);
+	pr_debug(" %s type =%d\n",__func__, type);
 	return sprintf(buf, "%d\n",type);
 }
 

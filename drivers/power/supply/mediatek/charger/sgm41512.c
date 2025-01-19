@@ -255,7 +255,7 @@ static int sgm41512_register_rt_regmap(struct sgm41512_chip *chip)
 {
 	struct rt_regmap_properties *prop = NULL;
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	prop = devm_kzalloc(chip->dev, sizeof(*prop), GFP_KERNEL);
 	if (!prop)
@@ -659,21 +659,21 @@ static int __sgm41512_is_chg_enabled(struct sgm41512_chip *chip, bool *en)
 
 static int __sgm41512_enable_shipmode(struct sgm41512_chip *chip, bool en)
 {
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 	return (en ? sgm41512_set_bit : sgm41512_clr_bit)
 		(chip, SGM41512_REG_BATFETDIS, SGM41512_BATFETDIS_MASK);
 }
 
 static int __sgm41512_enable_safe_tmr(struct sgm41512_chip *chip, bool en)
 {
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 	return (en ? sgm41512_set_bit : sgm41512_clr_bit)
 		(chip, SGM41512_REG_SAFETMR_EN, SGM41512_SAFETMR_EN_MASK);
 }
 
 static int __sgm41512_enable_te(struct sgm41512_chip *chip, bool en)
 {
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 	return (en ? sgm41512_set_bit : sgm41512_clr_bit)
 		(chip, SGM41512_REG_TE, SGM41512_TE_MASK);
 }
@@ -682,7 +682,7 @@ static int __sgm41512_enable_hz(struct sgm41512_chip *chip, bool en)
 {
 	int ret = 0;
 
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 
 	if (ret < 0)
 		return ret;
@@ -696,14 +696,14 @@ static int __sgm41512_enable_hz(struct sgm41512_chip *chip, bool en)
 
 static int __sgm41512_enable_otg(struct sgm41512_chip *chip, bool en)
 {
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 	return (en ? sgm41512_set_bit : sgm41512_clr_bit)
 		(chip, SGM41512_REG_OTG_EN, SGM41512_OTG_EN_MASK);
 }
 
 static int __sgm41512_set_otgcc(struct sgm41512_chip *chip, u32 cc)
 {
-	dev_info(chip->dev, "%s cc = %d\n", __func__, cc);
+	dev_dbg(chip->dev, "%s cc = %d\n", __func__, cc);
 	return (cc <= sgm41512_otgcc[0] ? sgm41512_clr_bit : sgm41512_set_bit)
 		(chip, SGM41512_REG_OTGCC, SGM41512_OTGCC_MASK);
 }
@@ -713,7 +713,7 @@ static int __sgm41512_enable_chg(struct sgm41512_chip *chip, bool en)
 	int ret = 0;
 	struct sgm41512_desc *desc = chip->desc;
 
-	dev_info(chip->dev, "%s en = %d, chip_rev = %d\n",
+	dev_dbg(chip->dev, "%s en = %d, chip_rev = %d\n",
 			    __func__, en, chip->chip_rev);
 
 	if (chip->ceb_gpio != U32_MAX)
@@ -736,7 +736,7 @@ static int __sgm41512_set_vac_ovp(struct sgm41512_chip *chip, u32 vac_ovp)
 					    ARRAY_SIZE(sgm41512_vac_ovp),
 					    vac_ovp);
 
-	dev_info(chip->dev, "%s vac_ovp = %d(0x%02X)\n",
+	dev_dbg(chip->dev, "%s vac_ovp = %d(0x%02X)\n",
 			    __func__, vac_ovp, regval);
 
 	return sgm41512_i2c_update_bits(chip, SGM41512_REG_VAC_OVP,
@@ -751,7 +751,7 @@ static int __sgm41512_set_mivr(struct sgm41512_chip *chip, u32 mivr)
 	regval = sgm41512_closest_reg(SGM41512_MIVR_MIN, SGM41512_MIVR_MAX,
 				    SGM41512_MIVR_STEP, mivr);
 
-	dev_info(chip->dev, "%s mivr = %d(0x%02X)\n", __func__, mivr, regval);
+	dev_dbg(chip->dev, "%s mivr = %d(0x%02X)\n", __func__, mivr, regval);
 
 	return sgm41512_i2c_update_bits(chip, SGM41512_REG_MIVR,
 				      regval << SGM41512_MIVR_SHIFT,
@@ -768,7 +768,7 @@ static int __sgm41512_set_aicr(struct sgm41512_chip *chip, u32 aicr)
 	//if (aicr < SGM41512_AICR_MAX)
 	//	regval += 1;
 
-	dev_info(chip->dev, "%s aicr = %d(0x%02X)\n", __func__, aicr, regval);
+	dev_dbg(chip->dev, "%s aicr = %d(0x%02X)\n", __func__, aicr, regval);
 
 	return sgm41512_i2c_update_bits(chip, SGM41512_REG_AICR,
 				      regval << SGM41512_AICR_SHIFT,
@@ -782,7 +782,7 @@ static int __sgm41512_set_cv(struct sgm41512_chip *chip, u32 cv)
 	regval = sgm41512_closest_reg(SGM41512_CV_MIN, SGM41512_CV_MAX,
 				    SGM41512_CV_STEP, cv);
 
-	dev_info(chip->dev, "%s cv = %d(0x%02X)\n", __func__, cv, regval);
+	dev_dbg(chip->dev, "%s cv = %d(0x%02X)\n", __func__, cv, regval);
 
 	return sgm41512_i2c_update_bits(chip, SGM41512_REG_CV,
 				      regval << SGM41512_CV_SHIFT,
@@ -796,7 +796,7 @@ static int __sgm41512_set_ichg(struct sgm41512_chip *chip, u32 ichg)
 	regval = sgm41512_closest_reg(SGM41512_ICHG_MIN, SGM41512_ICHG_MAX,
 				    SGM41512_ICHG_STEP, ichg);
 
-	dev_info(chip->dev, "%s ichg = %d(0x%02X)\n", __func__, ichg, regval);
+	dev_dbg(chip->dev, "%s ichg = %d(0x%02X)\n", __func__, ichg, regval);
 
 	return sgm41512_i2c_update_bits(chip, SGM41512_REG_ICHG, \
 				      regval << SGM41512_ICHG_SHIFT, \
@@ -810,7 +810,7 @@ static int __sgm41512_set_ieoc(struct sgm41512_chip *chip, u32 ieoc)
 	regval = sgm41512_closest_reg(SGM41512_IEOC_MIN, SGM41512_IEOC_MAX,
 				    SGM41512_IEOC_STEP, ieoc);
 
-	dev_info(chip->dev, "%s ieoc = %d(0x%02X)\n", __func__, ieoc, regval);
+	dev_dbg(chip->dev, "%s ieoc = %d(0x%02X)\n", __func__, ieoc, regval);
 
 	return sgm41512_i2c_update_bits(chip, SGM41512_REG_IEOC,
 				      regval << SGM41512_IEOC_SHIFT,
@@ -824,7 +824,7 @@ static int __sgm41512_set_safe_tmr(struct sgm41512_chip *chip, u32 hr)
 	regval = sgm41512_closest_reg(SGM41512_SAFETMR_MIN, SGM41512_SAFETMR_MAX,
 				    SGM41512_SAFETMR_STEP, hr);
 
-	dev_info(chip->dev, "%s time = %d(0x%02X)\n", __func__, hr, regval);
+	dev_dbg(chip->dev, "%s time = %d(0x%02X)\n", __func__, hr, regval);
 
 	return sgm41512_i2c_update_bits(chip, SGM41512_REG_SAFETMR,
 				      regval << SGM41512_SAFETMR_SHIFT,
@@ -841,7 +841,7 @@ static int __sgm41512_set_wdt(struct sgm41512_chip *chip, u32 sec)
 	regval = sgm41512_closest_reg_via_tbl(sgm41512_wdt, ARRAY_SIZE(sgm41512_wdt),
 					    sec);
 
-	dev_info(chip->dev, "%s time = %d(0x%02X)\n", __func__, sec, regval);
+	dev_dbg(chip->dev, "%s time = %d(0x%02X)\n", __func__, sec, regval);
 
 	return sgm41512_i2c_update_bits(chip, SGM41512_REG_WDT,
 				      regval << SGM41512_WDT_SHIFT,
@@ -853,7 +853,7 @@ static int __sgm41512_set_mivrtrack(struct sgm41512_chip *chip, u32 mivr_track)
 	if (mivr_track >= SGM41512_MIVRTRACK_MAX)
 		mivr_track = SGM41512_MIVRTRACK_VBAT_300MV;
 
-	dev_info(chip->dev, "%s mivrtrack = %d\n", __func__, mivr_track);
+	dev_dbg(chip->dev, "%s mivrtrack = %d\n", __func__, mivr_track);
 
 	return sgm41512_i2c_update_bits(chip, SGM41512_REG_MIVRTRACK,
 				      mivr_track << SGM41512_MIVRTRACK_SHIFT,
@@ -862,20 +862,20 @@ static int __sgm41512_set_mivrtrack(struct sgm41512_chip *chip, u32 mivr_track)
 
 static int __sgm41512_kick_wdt(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return sgm41512_set_bit(chip, SGM41512_REG_WDTCNTRST, SGM41512_WDTCNTRST_MASK);
 }
 /*
 static int __sgm41512_set_jeita_cool_iset(struct sgm41512_chip *chip, bool en)
 {
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 	return (en ? sgm41512_set_bit : sgm41512_clr_bit)
 		(chip, SGM41512_REG_JEITA_COOL_ISET, SGM41512_JEITA_COOL_ISET_MASK);
 }
 
 static int __sgm41512_set_jeita_cool_vset(struct sgm41512_chip *chip, bool en)
 {
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 	return (en ? sgm41512_set_bit : sgm41512_clr_bit)
 		(chip, SGM41512_REG_JEITA_COOL_VSET, SGM41512_JEITA_COOL_VSET_MASK);
 }
@@ -920,13 +920,13 @@ static int __sgm41512_dump_registers(struct sgm41512_chip *chip)
 		}
 	}
 
-	dev_info(chip->dev, "%s MIVR = %dmV, AICR = %dmA\n",
+	dev_dbg(chip->dev, "%s MIVR = %dmV, AICR = %dmA\n",
 		 __func__, mivr / 1000, aicr / 1000);
 
-	dev_info(chip->dev, "%s chg_en = %d, chrg_stat = %d, vbus_stat = %d ic_stat = %d\n",
+	dev_dbg(chip->dev, "%s chg_en = %d, chrg_stat = %d, vbus_stat = %d ic_stat = %d\n",
 		 __func__, chg_en, chrg_stat, vbus_stat,ic_stat);
 		 
-	dev_info(chip->dev, "%s CV = %dmV, ICHG = %dmA, IEOC = %dmA\n",
+	dev_dbg(chip->dev, "%s CV = %dmV, ICHG = %dmA, IEOC = %dmA\n",
 		 __func__, cv / 1000, ichg / 1000, ieoc / 1000);
 
 	return 0;
@@ -940,7 +940,7 @@ static void sgm41512_buck_dwork_handler(struct work_struct *work)
 	bool chg_rdy = false, chg_done = false, sys_min = false;
 	u8 regval = 0;
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	__pm_stay_awake(&chip->buck_dwork_ws);
 	ret = sgm41512_i2c_read_byte(chip, SGM41512_REG_CHGDONE, &regval);
@@ -961,8 +961,8 @@ static void sgm41512_buck_dwork_handler(struct work_struct *work)
 	else
 		chg_rdy = false;
 
-	dev_info(chip->dev, "%s chg_rdy = %d\n", __func__, chg_rdy);
-	dev_info(chip->dev, "%s chg_done = %d, chg_done_once = %d\n",
+	dev_dbg(chip->dev, "%s chg_rdy = %d\n", __func__, chg_rdy);
+	dev_dbg(chip->dev, "%s chg_done = %d, chg_done_once = %d\n",
 			    __func__, chg_done, chip->chg_done_once);
 	if (!chg_rdy)
 		goto out;
@@ -971,7 +971,7 @@ static void sgm41512_buck_dwork_handler(struct work_struct *work)
 				  SGM41512_ST_SYSMIN_SHIFT, &sys_min);
 	if (ret < 0)
 		goto out;
-	dev_info(chip->dev, "%s sys_min = %d\n", __func__, sys_min);
+	dev_dbg(chip->dev, "%s sys_min = %d\n", __func__, sys_min);
 
 out:
 	__pm_relax(&chip->buck_dwork_ws);
@@ -1028,7 +1028,7 @@ static bool sgm41512_is_chgdone(struct sgm41512_chip *chip)
 
 static void sgm41512_enable_bc12(struct sgm41512_chip *chip, bool en)
 {
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 
 	mutex_lock(&chip->bc12_en_lock);
 	chip->bc12_en_buf[chip->bc12_en_buf_idx] = en;
@@ -1071,7 +1071,7 @@ static void sgm41512_force_iildet_en(struct sgm41512_chip *chip,int en)
 
 static void sgm41512_set_usbsw_state(struct sgm41512_chip *chip, int state)
 {
-	dev_info(chip->dev, "%s state = %d\n", __func__, state);
+	dev_dbg(chip->dev, "%s state = %d\n", __func__, state);
 
 	if (state == SGM41512_USBSW_CHG){
 		Charger_Detect_Init();
@@ -1086,7 +1086,7 @@ static bool sgm41512_chg_rdy(struct sgm41512_chip *chip)
 	bool chg_rdy = false;
 	u8 regval = 0;
 	
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	
 	ret = sgm41512_i2c_read_byte(chip, SGM41512_ST_STATUS, &regval);
 	if (ret < 0)
@@ -1121,7 +1121,7 @@ static int sgm41512_charge_type_detect_second(struct sgm41512_chip *chip)
 		return -SGM41512_CHR_DET_IIC_ERROR;
 	}
 /*prize add by zhaopengge 20210623 end*/
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	
 	ret = sgm41512_i2c_read_byte(chip, SGM41512_ST_STATUS, &regval);
 	if (ret < 0)
@@ -1133,19 +1133,19 @@ static int sgm41512_charge_type_detect_second(struct sgm41512_chip *chip)
 	
 //	if((!chg_rdy) && attach)
 //	{
-//	dev_info(chip->dev, "%s  chg_rdy = %d,attach = %d\n", __func__,chg_rdy,attach);
+//	dev_dbg(chip->dev, "%s  chg_rdy = %d,attach = %d\n", __func__,chg_rdy,attach);
 //		msleep(100);
 //		return -SGM41512_CHR_DET_VBUS_NOT_READY;
 //	}
 	
-	dev_info(chip->dev, "%s chg_rdy = %d, attach = %d\n",__func__, chg_rdy, attach);
+	dev_dbg(chip->dev, "%s chg_rdy = %d, attach = %d\n",__func__, chg_rdy, attach);
 
-	//dev_info(chip->dev, "%s chip->attach (%d) \n",__func__,chip->attach);
+	//dev_dbg(chip->dev, "%s chip->attach (%d) \n",__func__,chip->attach);
 
 #if 1
 	if (chip->attach == attach) 
 	{
-		dev_info(chip->dev, "%s attach(%d) is the same\n", __func__, attach);
+		dev_dbg(chip->dev, "%s attach(%d) is the same\n", __func__, attach);
 		inform_psy = !attach;
 		goto out;
 	}
@@ -1153,7 +1153,7 @@ static int sgm41512_charge_type_detect_second(struct sgm41512_chip *chip)
 
 	chip->attach = attach;
 	
-	dev_info(chip->dev, "%s attach = %d,chip->attach = %d\n", __func__, attach,chip->attach);
+	dev_dbg(chip->dev, "%s attach = %d,chip->attach = %d\n", __func__, attach,chip->attach);
 
 	if (!attach) {
 		chip->port = SGM41512_PORTSTAT_NOINPUT;
@@ -1164,14 +1164,14 @@ static int sgm41512_charge_type_detect_second(struct sgm41512_chip *chip)
 retry:
 	ret = sgm41512_i2c_read_byte(chip, SGM41512_REG_ICSTAT, &port);
 		
-	dev_info(chip->dev, "%s REG_ICSTAT = %x ret:%d\n", __func__,port, ret);
+	dev_dbg(chip->dev, "%s REG_ICSTAT = %x ret:%d\n", __func__,port, ret);
 		
 	if (ret < 0)
 		chip->port = SGM41512_PORTSTAT_NOINPUT;
 	else
 		chip->port = (port & SGM41512_PORTSTAT_MASK) >> SGM41512_PORTSTAT_SHIFT;
 		
-	dev_info(chip->dev, "%s chip->port = %x\n", __func__,chip->port);
+	dev_dbg(chip->dev, "%s chip->port = %x\n", __func__,chip->port);
 
 	switch (chip->port) {
 	case SGM41512_PORTSTAT_NOINPUT:
@@ -1197,7 +1197,7 @@ retry:
 	{
 		//sgm41512_enable_bc12(chip,true);
 		//return 0;
-		dev_info(chip->dev, "%s sgm41512_chg_type detect err %d\n", __func__,retry_cnt);
+		dev_dbg(chip->dev, "%s sgm41512_chg_type detect err %d\n", __func__,retry_cnt);
 		sgm41512_force_iildet_en(chip,true);
 		msleep(200);
 		retry_cnt++;
@@ -1219,13 +1219,13 @@ out:
 		sgm41512_enable_bc12(chip,false);
 		if((boot_mode == KERNEL_POWER_OFF_CHARGING_BOOT) ||(boot_mode == LOW_POWER_OFF_CHARGING_BOOT))
 		{
-			dev_info(chip->dev, " boot mode -- power off charger --,%s sgm41512_enable_bc12 = false\n", __func__);
+			dev_dbg(chip->dev, " boot mode -- power off charger --,%s sgm41512_enable_bc12 = false\n", __func__);
 		}
-		dev_info(chip->dev, "%s sgm41512_enable_bc12 = false\n", __func__);
+		dev_dbg(chip->dev, "%s sgm41512_enable_bc12 = false\n", __func__);
 	}
 	if (inform_psy)
 	{
-		dev_info(chip->dev, "%s sgm41512 start schedule_delayed_work\n", __func__);
+		dev_dbg(chip->dev, "%s sgm41512 start schedule_delayed_work\n", __func__);
 		schedule_delayed_work(&chip->psy_dwork, 0);
 	}
 	
@@ -1240,19 +1240,19 @@ static int sgm41512_bc12_en_kthread(void *data)
 	struct sgm41512_chip *chip = data;
 	const int max_wait_cnt = 100;
 	//const int max_retry_cnt = 10;
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 wait:
 	wait_event(chip->bc12_en_req, atomic_read(&chip->bc12_en_req_cnt) > 0 ||
 				      kthread_should_stop());
 	if (atomic_read(&chip->bc12_en_req_cnt) <= 0 &&
 	    kthread_should_stop()) {
-		dev_info(chip->dev, "%s bye bye\n", __func__);
+		dev_dbg(chip->dev, "%s bye bye\n", __func__);
 		return 0;
 	}
 	atomic_dec(&chip->bc12_en_req_cnt);
 /*
 	mutex_lock(&chip->bc12_en_lock);
-	dev_info(chip->dev, "%s chip->bc12_en_buf_idx = %d\n", __func__, chip->bc12_en_buf_idx);
+	dev_dbg(chip->dev, "%s chip->bc12_en_buf_idx = %d\n", __func__, chip->bc12_en_buf_idx);
 	chip->bc12_en_buf[chip->bc12_en_buf_idx] = -1;
 	if (en == -1) {
 		chip->bc12_en_buf_idx = 1 - chip->bc12_en_buf_idx;
@@ -1263,7 +1263,7 @@ wait:
 */
 	en = chip->bc12_en_buf[chip->bc12_en_buf_idx];
 	
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 	//if (en == -1)
 	//	goto wait;
 
@@ -1278,7 +1278,7 @@ wait:
 				break;
 			dev_dbg(chip->dev, "%s CDP block\n", __func__);
 			if (!atomic_read(&chip->vbus_gd)) {
-				dev_info(chip->dev, "%s plug out\n", __func__);
+				dev_dbg(chip->dev, "%s plug out\n", __func__);
 				goto relax_and_wait;
 			}
 			msleep(100);
@@ -1286,7 +1286,7 @@ wait:
 		if (i == max_wait_cnt)
 			dev_notice(chip->dev, "%s CDP timeout\n", __func__);
 		else
-			dev_info(chip->dev, "%s CDP free\n", __func__);
+			dev_dbg(chip->dev, "%s CDP free\n", __func__);
 	}
 	
 	sgm41512_set_usbsw_state(chip, en ? SGM41512_USBSW_CHG : SGM41512_USBSW_USB);
@@ -1306,14 +1306,14 @@ wait:
 			}
 			else
 			{
-				dev_info(chip->dev, "%s sgm41512 chg is not rdy,wait...%d\n", __func__,max_wait_cnt);
+				dev_dbg(chip->dev, "%s sgm41512 chg is not rdy,wait...%d\n", __func__,max_wait_cnt);
 				msleep(12);
 			}
 		}
 		if (i == max_wait_cnt)
 			dev_notice(chip->dev, "%s PGSTAT timeout\n", __func__);
 		else
-			dev_info(chip->dev, "%s PGSTAT good\n", __func__);
+			dev_dbg(chip->dev, "%s PGSTAT good\n", __func__);
 		
 		//chip->bc12_enable_done = true;
 		
@@ -1321,7 +1321,7 @@ wait:
 		
 		if(ret != SGM41512_CHR_DET_OK)
 		{
-			dev_info(chip->dev, "%s sgm41512 chg det err ret = %d\n", __func__,ret);
+			dev_dbg(chip->dev, "%s sgm41512 chg det err ret = %d\n", __func__,ret);
 		}
 	}
 relax_and_wait:
@@ -1350,7 +1350,7 @@ static int sgm41512_charge_type_detect_first(struct sgm41512_chip *chip)
 	}
 /*prize add by zhaopengge 20210623 end*/	
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	
 	//if (atomic_read(&chip->vbus_gd)) {
 		//sgm41512_enable_bc12(chip, false);
@@ -1403,7 +1403,7 @@ static void sgm41512_inform_psy_dwork_handler(struct work_struct *work)
 	chg_type = chip->chg_type;
 	mutex_unlock(&chip->bc12_lock);
 
-	dev_info(chip->dev, "%s vbus_gd = %d, type = %d\n", __func__,
+	dev_dbg(chip->dev, "%s vbus_gd = %d, type = %d\n", __func__,
 			    vbus_gd, chg_type);
 
 	/* Get chg type det power supply */
@@ -1451,10 +1451,10 @@ static int sgm41512_bc12_postprocess(struct sgm41512_chip *chip)
 	if (chip->dev_id != SGM41512_DEVID)
 		return -ENOTSUPP;
 	
-	dev_info(chip->dev, "%s %d attach (%d)  chip->attach (%d)\n",
+	dev_dbg(chip->dev, "%s %d attach (%d)  chip->attach (%d)\n",
 		__func__,__LINE__, attach , chip->attach);
 	attach = atomic_read(&chip->vbus_gd);
-	dev_info(chip->dev, "%s %d attach (%d)  chip->attach (%d) \n",__func__,__LINE__,attach,chip->attach);
+	dev_dbg(chip->dev, "%s %d attach (%d)  chip->attach (%d) \n",__func__,__LINE__,attach,chip->attach);
 	
 	sgm41512_enable_bc12(chip, false);
 	
@@ -1465,7 +1465,7 @@ static int sgm41512_bc12_postprocess(struct sgm41512_chip *chip)
 
 static int sgm41512_detach_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 #ifdef CONFIG_MTK_EXTERNAL_CHARGER_TYPE_DETECT
 #ifndef CONFIG_TCPC_CLASS
 	//pr_err("gezi--------------------\n");
@@ -1480,14 +1480,14 @@ static int sgm41512_detach_irq_handler(struct sgm41512_chip *chip)
 
 static int sgm41512_rechg_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	charger_dev_notify(chip->chg_dev, CHARGER_DEV_NOTIFY_RECHG);
 	return 0;
 }
 
 static int sgm41512_chg_done_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s chip_rev = %d\n", __func__, chip->chip_rev);
+	dev_dbg(chip->dev, "%s chip_rev = %d\n", __func__, chip->chip_rev);
 
 	//if (chip->chip_rev > 4)
 		//return 0;
@@ -1500,13 +1500,13 @@ static int sgm41512_chg_done_irq_handler(struct sgm41512_chip *chip)
 
 static int sgm41512_bg_chg_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return 0;
 }
 
 static int sgm41512_ieoc_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	charger_dev_notify(chip->chg_dev, CHARGER_DEV_NOTIFY_EOC);
 	return 0;
 }
@@ -1515,7 +1515,7 @@ static int sgm41512_chg_rdy_irq_handler(struct sgm41512_chip *chip)
 {
 	struct chgdev_notify *noti = &(chip->chg_dev->noti);
 
-	dev_info(chip->dev, "%s chip_rev = %d\n", __func__, chip->chip_rev);
+	dev_dbg(chip->dev, "%s chip_rev = %d\n", __func__, chip->chip_rev);
 	
 	if(chip->chip_rev >= 0)
 		return 0;
@@ -1534,21 +1534,21 @@ static int sgm41512_bc12_done_irq_handler(struct sgm41512_chip *chip)
 {/*
 	struct chgdev_notify *noti = &(chip->chg_dev->noti);
 
-	dev_info(chip->dev, "%s chip_rev = %d\n", __func__, chip->chip_rev);
+	dev_dbg(chip->dev, "%s chip_rev = %d\n", __func__, chip->chip_rev);
 
 	noti->vbusov_stat = false;
 	charger_dev_notify(chip->chg_dev, CHARGER_DEV_NOTIFY_VBUS_OVP);
 
 	mod_delayed_work(system_wq, &chip->buck_dwork, msecs_to_jiffies(100));
 */
-	dev_info(chip->dev, "%s line = %d\n", __func__,__LINE__);
+	dev_dbg(chip->dev, "%s line = %d\n", __func__,__LINE__);
 	if(chip->bc12_enable_done)	
 	{
 		//sgm41512_charge_type_detect_second(chip);
 	}
 	else
 	{
-		dev_info(chip->dev, "%s line = %d,bc12_enable_done = %d\n", __func__,__LINE__,chip->bc12_enable_done);
+		dev_dbg(chip->dev, "%s line = %d,bc12_enable_done = %d\n", __func__,__LINE__,chip->bc12_enable_done);
 	}
 		
 	return 0;
@@ -1563,7 +1563,7 @@ static int sgm41512_vbus_gd_irq_handler(struct sgm41512_chip *chip)
 	int vbus_gd = sgm41512_is_vbusgd(chip);
 	
 	atomic_set(&chip->vbus_gd,vbus_gd);
-	dev_info(chip->dev, "%s vbus_gd = %d\n", __func__,vbus_gd);
+	dev_dbg(chip->dev, "%s vbus_gd = %d\n", __func__,vbus_gd);
 	//sgm41512_charge_type_detect_first(chip);
 	//mutex_unlock(&chip->bc12_lock);
 #endif /* CONFIG_TCPC_CLASS */
@@ -1573,39 +1573,39 @@ static int sgm41512_vbus_gd_irq_handler(struct sgm41512_chip *chip)
 
 static int sgm41512_chg_batov_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	charger_dev_notify(chip->chg_dev, CHARGER_DEV_NOTIFY_BAT_OVP);
 	return 0;
 }
 
 static int sgm41512_chg_sysov_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return 0;
 }
 
 static int sgm41512_chg_tout_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	charger_dev_notify(chip->chg_dev, CHARGER_DEV_NOTIFY_SAFETY_TIMEOUT);
 	return 0;
 }
 
 static int sgm41512_chg_busuv_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return 0;
 }
 
 static int sgm41512_chg_threg_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return 0;
 }
 
 static int sgm41512_chg_aicr_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return 0;
 }
 
@@ -1619,26 +1619,26 @@ static int sgm41512_chg_mivr_irq_handler(struct sgm41512_chip *chip)
 	if (ret < 0)
 		return ret;
 
-	dev_info(chip->dev, "%s mivr = %d\n", __func__, mivr);
+	dev_dbg(chip->dev, "%s mivr = %d\n", __func__, mivr);
 
 	return 0;
 }
 
 static int sgm41512_sys_short_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return 0;
 }
 
 static int sgm41512_sys_min_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return 0;
 }
 /*
 static int sgm41512_aicc_done_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	complete(&chip->aicc_done);
 	return 0;
 }
@@ -1646,56 +1646,56 @@ static int sgm41512_aicc_done_irq_handler(struct sgm41512_chip *chip)
 
 static int sgm41512_pe_done_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	complete(&chip->pe_done);
 	return 0;
 }
 
 static int sgm41512_jeita_cold_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return 0;
 }
 
 static int sgm41512_jeita_cool_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return 0;
 }
 
 static int sgm41512_jeita_warm_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return 0;
 }
 
 static int sgm41512_jeita_hot_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return 0;
 }
 
 static int sgm41512_otg_fault_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return 0;
 }
 
 static int sgm41512_otg_lbp_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return 0;
 }
 
 static int sgm41512_otg_cc_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return 0;
 }
 
 static int sgm41512_wdt_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return __sgm41512_kick_wdt(chip);
 }
 
@@ -1710,7 +1710,7 @@ static int sgm41512_vac_ov_irq_handler(struct sgm41512_chip *chip)
 	if (ret < 0)
 		return ret;
 
-	dev_info(chip->dev, "%s vac_ov = %d\n", __func__, vac_ov);
+	dev_dbg(chip->dev, "%s vac_ov = %d\n", __func__, vac_ov);
 	noti->vbusov_stat = vac_ov;
 	charger_dev_notify(chip->chg_dev, CHARGER_DEV_NOTIFY_VBUS_OVP);
 
@@ -1719,7 +1719,7 @@ static int sgm41512_vac_ov_irq_handler(struct sgm41512_chip *chip)
 
 static int sgm41512_otp_irq_handler(struct sgm41512_chip *chip)
 {
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 	return 0;
 }
 
@@ -1769,7 +1769,7 @@ static irqreturn_t sgm41512_irq_handler(int irq, void *data)
 	u8 evt[SGM41512_STREG_MAX] = {0};
 	struct sgm41512_chip *chip = (struct sgm41512_chip *)data;
 
-	dev_info(chip->dev, "%s +\n", __func__);
+	dev_dbg(chip->dev, "%s +\n", __func__);
 
 	pm_stay_awake(chip->dev);
 
@@ -1793,7 +1793,7 @@ static irqreturn_t sgm41512_irq_handler(int irq, void *data)
 
 	if ( evt[SGM41512_ST_STATUS] & SGM41512_PGSTAT_MASK )
 	{
-		dev_info(chip->dev, "%s PowerGood\n", __func__);
+		dev_dbg(chip->dev, "%s PowerGood\n", __func__);
 		//sgm41512_chg_rdy_irq_handler(chip);
 		//sgm41512_bc12_done_irq_handler(chip);
 	}
@@ -1843,7 +1843,7 @@ static int sgm41512_register_irq(struct sgm41512_chip *chip)
 {
 	int ret = 0;
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	ret = devm_gpio_request_one(chip->dev, chip->intr_gpio, GPIOF_DIR_IN,
 			devm_kasprintf(chip->dev, GFP_KERNEL,
@@ -1859,7 +1859,7 @@ static int sgm41512_register_irq(struct sgm41512_chip *chip)
 				      __func__, chip->irq);
 		return chip->irq;
 	}
-	dev_info(chip->dev, "%s irq = %d\n", __func__, chip->irq);
+	dev_dbg(chip->dev, "%s irq = %d\n", __func__, chip->irq);
 
 	/* Request threaded IRQ */
 	ret = devm_request_threaded_irq(chip->dev, chip->irq, NULL,
@@ -1917,7 +1917,7 @@ static inline void sgm41512_irq_mask(struct sgm41512_chip *chip, int irqnum)
 
 static inline void sgm41512_irq_unmask(struct sgm41512_chip *chip, int irqnum)
 {
-	dev_info(chip->dev, "%s irq(%d, %s)\n", __func__, irqnum,
+	dev_dbg(chip->dev, "%s irq(%d, %s)\n", __func__, irqnum,
 		 sgm41512_get_irq_name(irqnum));
 	chip->irq_mask[irqnum / 8] &= ~(1 << (irqnum % 8));
 }
@@ -1929,7 +1929,7 @@ static int sgm41512_parse_dt(struct sgm41512_chip *chip)
 	struct sgm41512_desc *desc = NULL;
 	const char *name = NULL;
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	chip->desc = &sgm41512_default_desc;
 
@@ -1939,7 +1939,7 @@ static int sgm41512_parse_dt(struct sgm41512_chip *chip)
 	}
 	np = of_get_child_by_name(parent_np, "sgm41512");
 	if (!np) {
-		dev_info(chip->dev, "%s no sgm41512 device node\n", __func__);
+		dev_dbg(chip->dev, "%s no sgm41512 device node\n", __func__);
 		np = parent_np;
 	}
 
@@ -1950,16 +1950,16 @@ static int sgm41512_parse_dt(struct sgm41512_chip *chip)
 
 	ret = of_property_read_string(np, "chg_name", &desc->chg_name);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no chg_name(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no chg_name(%d)\n", __func__, ret);
 
 	ret = of_property_read_string(np, "chg_alias_name",
 				      &chip->chg_props.alias_name);
 	if (ret < 0) {
-		dev_info(chip->dev, "%s no chg_alias_name(%d)\n",
+		dev_dbg(chip->dev, "%s no chg_alias_name(%d)\n",
 				    __func__, ret);
 		chip->chg_props.alias_name = "sgm41512_chg";
 	}
-	dev_info(chip->dev, "%s name = %s, alias name = %s\n", __func__,
+	dev_dbg(chip->dev, "%s name = %s, alias name = %s\n", __func__,
 			    desc->chg_name, chip->chg_props.alias_name);
 
 	if (strcmp(desc->chg_name, "secondary_chg") == 0)
@@ -1976,7 +1976,7 @@ static int sgm41512_parse_dt(struct sgm41512_chip *chip)
 
 	ret = of_get_named_gpio(parent_np, "rt,ceb_gpio", 0);
 	if (ret < 0) {
-		dev_info(chip->dev, "%s no rt,ceb_gpio(%d)\n",
+		dev_dbg(chip->dev, "%s no rt,ceb_gpio(%d)\n",
 				    __func__, ret);
 		chip->ceb_gpio = U32_MAX;
 	} else
@@ -1993,12 +1993,12 @@ static int sgm41512_parse_dt(struct sgm41512_chip *chip)
 	ret = of_property_read_u32(parent_np, "rt,ceb_gpio_num",
 				   &chip->ceb_gpio);
 	if (ret < 0) {
-		dev_info(chip->dev, "%s no rt,ceb_gpio_num(%d)\n",
+		dev_dbg(chip->dev, "%s no rt,ceb_gpio_num(%d)\n",
 				    __func__, ret);
 		chip->ceb_gpio = U32_MAX;
 	}
 #endif
-	dev_info(chip->dev, "%s intr_gpio = %u, ceb_gpio = %u\n",
+	dev_dbg(chip->dev, "%s intr_gpio = %u, ceb_gpio = %u\n",
 			    __func__, chip->intr_gpio, chip->ceb_gpio);
 
 	if (chip->ceb_gpio != U32_MAX) {
@@ -2016,47 +2016,47 @@ static int sgm41512_parse_dt(struct sgm41512_chip *chip)
 	/* Register map */
 	ret = of_property_read_u8(np, "rm-slave-addr", &desc->rm_slave_addr);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no rm-slave-addr(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no rm-slave-addr(%d)\n", __func__, ret);
 	ret = of_property_read_string(np, "rm-name", &desc->rm_name);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no rm-name(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no rm-name(%d)\n", __func__, ret);
 
 	/* Charger parameter */
 	ret = of_property_read_u32(np, "vac_ovp", &desc->vac_ovp);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no vac_ovp(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no vac_ovp(%d)\n", __func__, ret);
 
 	ret = of_property_read_u32(np, "mivr", &desc->mivr);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no mivr(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no mivr(%d)\n", __func__, ret);
 
 	ret = of_property_read_u32(np, "aicr", &desc->aicr);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no aicr(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no aicr(%d)\n", __func__, ret);
 
 	ret = of_property_read_u32(np, "cv", &desc->cv);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no cv(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no cv(%d)\n", __func__, ret);
 
 	ret = of_property_read_u32(np, "ichg", &desc->ichg);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no ichg(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no ichg(%d)\n", __func__, ret);
 
 	ret = of_property_read_u32(np, "ieoc", &desc->ieoc) < 0;
 	if (ret < 0)
-		dev_info(chip->dev, "%s no ieoc(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no ieoc(%d)\n", __func__, ret);
 
 	ret = of_property_read_u32(np, "safe_tmr", &desc->safe_tmr);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no safe_tmr(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no safe_tmr(%d)\n", __func__, ret);
 
 	ret = of_property_read_u32(np, "wdt", &desc->wdt);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no wdt(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no wdt(%d)\n", __func__, ret);
 
 	ret = of_property_read_u32(np, "mivr_track", &desc->mivr_track);
 	if (ret < 0)
-		dev_info(chip->dev, "%s no mivr_track(%d)\n", __func__, ret);
+		dev_dbg(chip->dev, "%s no mivr_track(%d)\n", __func__, ret);
 	if (desc->mivr_track >= SGM41512_MIVRTRACK_MAX)
 		desc->mivr_track = SGM41512_MIVRTRACK_VBAT_300MV;
 
@@ -2089,7 +2089,7 @@ static int sgm41512_check_chg(struct sgm41512_chip *chip)
 	int ret = 0;
 	u8 regval = 0;
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	ret = sgm41512_i2c_read_byte(chip, SGM41512_REG_VBUSGD, &regval);
 	if (ret < 0)
@@ -2126,7 +2126,7 @@ static int sgm41512_init_setting(struct sgm41512_chip *chip)
 	u8 evt[SGM41512_STREG_MAX] = {0};
 	unsigned int boot_mode = get_boot_mode();
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	/* Clear all IRQs */
 	ret = sgm41512_i2c_block_read(chip, SGM41512_REG_STATUS, SGM41512_STREG_MAX,
@@ -2183,7 +2183,7 @@ static int sgm41512_init_setting(struct sgm41512_chip *chip)
 	if ((boot_mode == KERNEL_POWER_OFF_CHARGING_BOOT ||
 	     boot_mode == LOW_POWER_OFF_CHARGING_BOOT) &&
 	     strcmp(desc->chg_name, "primary_chg") == 0) {
-		dev_info(chip->dev,
+		dev_dbg(chip->dev,
 		"%s do not HZ=1 and CHG_EN=0 for primary_chg when KPOC\n",
 		__func__);
 		return 0;
@@ -2221,7 +2221,7 @@ static int sgm41512_reset_register(struct sgm41512_chip *chip)
 {
 	int ret = 0;
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	ret = sgm41512_set_bit(chip, SGM41512_REG_REGRST, SGM41512_REGRST_MASK);
 	if (ret < 0)
@@ -2245,7 +2245,7 @@ static bool sgm41512_check_devinfo(struct sgm41512_chip *chip)
 	}
 	chip->dev_id = (ret & SGM41512_DEVID_MASK) >> SGM41512_DEVID_SHIFT;
 	chip->dev_rev = (ret & SGM41512_DEVREV_MASK) >> SGM41512_DEVREV_SHIFT;
-	dev_info(chip->dev, "%s id = 0x%02X, devid rev = 0x%02X\n",
+	dev_dbg(chip->dev, "%s id = 0x%02X, devid rev = 0x%02X\n",
 			    __func__, chip->dev_id, chip->dev_rev);
 	switch (chip->dev_id) {
 /*prize add by zhaopengge 20210623 start*/
@@ -2268,7 +2268,7 @@ static int sgm41512_plug_in(struct charger_device *chg_dev)
 {
 	struct sgm41512_chip *chip = dev_get_drvdata(&chg_dev->dev);
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	/* Enable charging */
 	return sgm41512_enable_charging(chg_dev, true);
@@ -2278,7 +2278,7 @@ static int sgm41512_plug_out(struct charger_device *chg_dev)
 {
 	struct sgm41512_chip *chip = dev_get_drvdata(&chg_dev->dev);
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	/* Disable charging */
 	return sgm41512_enable_charging(chg_dev, false);
@@ -2289,7 +2289,7 @@ static int sgm41512_enable_charging(struct charger_device *chg_dev, bool en)
 	int ret = 0;
 	struct sgm41512_chip *chip = dev_get_drvdata(&chg_dev->dev);
 
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 
 	if (en) {
 		ret = __sgm41512_set_wdt(chip, chip->desc->wdt);
@@ -2440,7 +2440,7 @@ static int sgm41512_event(struct charger_device *chg_dev, u32 event, u32 args)
 {
 	struct sgm41512_chip *chip = dev_get_drvdata(&chg_dev->dev);
 
-	dev_info(chip->dev, "%s event = %d\n", __func__, event);
+	dev_dbg(chip->dev, "%s event = %d\n", __func__, event);
 
 	switch (event) {
 	case EVENT_EOC:
@@ -2460,7 +2460,7 @@ static int sgm41512_enable_hz(struct charger_device *chg_dev, bool en)
 {
 	struct sgm41512_chip *chip = dev_get_drvdata(&chg_dev->dev);
 
-	dev_info(chip->dev, "%s en = %d\n", __func__, en);
+	dev_dbg(chip->dev, "%s en = %d\n", __func__, en);
 
 	return __sgm41512_enable_hz(chip, !en);
 }
@@ -2554,7 +2554,7 @@ static int sgm41512_enable_chg_type_det(struct charger_device *chg_dev, bool en)
 	struct sgm41512_chip *chip = dev_get_drvdata(&chg_dev->dev);
 	vbusgd = sgm41512_is_vbusgd(chip);
 	
-	dev_info(chip->dev, "%s en = %d,sgm41512_is_vbusgd = %d\n", __func__, en,vbusgd);
+	dev_dbg(chip->dev, "%s en = %d,sgm41512_is_vbusgd = %d\n", __func__, en,vbusgd);
 
 	mutex_lock(&chip->bc12_lock);
 	
@@ -2583,14 +2583,14 @@ static int sgm41512_run_iind(struct charger_device *chg_dev, u32 *uA)
 	bool chg_mivr = false;
 	u32 aicr = 0;
 
-	dev_info(chip->dev, "%s chip_rev = %d\n", __func__, chip->chip_rev);
+	dev_dbg(chip->dev, "%s chip_rev = %d\n", __func__, chip->chip_rev);
 
 	ret = sgm41512_i2c_test_bit(chip, SGM41512_REG_ST_MIVR, SGM41512_ST_MIVR_SHIFT,
 				  &chg_mivr);
 	if (ret < 0)
 		return ret;
 	if (!chg_mivr) {
-		dev_info(chip->dev, "%s mivr stat not act\n", __func__);
+		dev_dbg(chip->dev, "%s mivr stat not act\n", __func__);
 		return ret;
 	}
 
@@ -2611,7 +2611,7 @@ static int sgm41512_set_pep_current_pattern(struct charger_device *chg_dev,
 	int ret = 0;
 	struct sgm41512_chip *chip = dev_get_drvdata(&chg_dev->dev);
 
-	dev_info(chip->dev, "%s: pe1.0 pump_up = %d\n", __func__, is_increase);
+	dev_dbg(chip->dev, "%s: pe1.0 pump_up = %d\n", __func__, is_increase);
 
 	/* Set Pump Up/Down */
 	if(is_increase == true){
@@ -2619,84 +2619,84 @@ static int sgm41512_set_pep_current_pattern(struct charger_device *chg_dev,
 		__sgm41512_set_aicr(chip,100000); /* 100mA */
 		msleep(85);
 		__sgm41512_set_aicr(chip,500000); /* 500mA */
-		pr_info("mtk_ta_increase() on 1");
+		pr_debug("mtk_ta_increase() on 1");
 		msleep(85);
 		__sgm41512_set_aicr(chip,100000); /* 100mA */
-		pr_info("mtk_ta_increase() off 1");
+		pr_debug("mtk_ta_increase() off 1");
 		msleep(85);
 		__sgm41512_set_aicr(chip,500000); /* 500mA */
-		pr_info("mtk_ta_increase() on 2");
+		pr_debug("mtk_ta_increase() on 2");
 		msleep(85);
 		__sgm41512_set_aicr(chip,100000); /* 100mA */
-		pr_info("mtk_ta_increase() off 2");
+		pr_debug("mtk_ta_increase() off 2");
 		msleep(85);
 		__sgm41512_set_aicr(chip,500000); /* 500mA */
-		pr_info("mtk_ta_increase() on 3");
+		pr_debug("mtk_ta_increase() on 3");
 		msleep(281);
 		__sgm41512_set_aicr(chip,100000); /* 100mA */
-		pr_info("mtk_ta_increase() off 3");
+		pr_debug("mtk_ta_increase() off 3");
 		msleep(85);
 		__sgm41512_set_aicr(chip,500000); /* 500mA */
-		pr_info("mtk_ta_increase() on 4");
+		pr_debug("mtk_ta_increase() on 4");
 		msleep(281);
 		__sgm41512_set_aicr(chip,100000); /* 100mA */
-		pr_info("mtk_ta_increase() off 4");
+		pr_debug("mtk_ta_increase() off 4");
 		msleep(85);
 		__sgm41512_set_aicr(chip,500000); /* 500mA */
-		pr_info("mtk_ta_increase() on 5");
+		pr_debug("mtk_ta_increase() on 5");
 		msleep(281);
 		__sgm41512_set_aicr(chip,100000); /* 100mA */
-		pr_info("mtk_ta_increase() off 5");
+		pr_debug("mtk_ta_increase() off 5");
 		msleep(85);
 		__sgm41512_set_aicr(chip,500000); /* 500mA */
-		pr_info("mtk_ta_increase() on 6");
+		pr_debug("mtk_ta_increase() on 6");
 		msleep(485);
 		__sgm41512_set_aicr(chip,100000); /* 100mA */
-		pr_info("mtk_ta_increase() off 6");
+		pr_debug("mtk_ta_increase() off 6");
 		msleep(50);
-		pr_notice("mtk_ta_increase() end \n");
+		pr_debug("mtk_ta_increase() end \n");
 		__sgm41512_set_aicr(chip,500000); /* 500mA */
 		msleep(200);
 	}else{
 		__sgm41512_set_aicr(chip,100000); /* 100mA */
 		msleep(85);
 		__sgm41512_set_aicr(chip,500000); /* 500mA */
-		pr_info("mtk_ta_decrease() on 1");
+		pr_debug("mtk_ta_decrease() on 1");
 		msleep(281);
 		__sgm41512_set_aicr(chip,100000); /* 100mA */
-		pr_info("mtk_ta_decrease() off 1");
+		pr_debug("mtk_ta_decrease() off 1");
 		msleep(85);
 		__sgm41512_set_aicr(chip,500000); /* 500mA */
-		pr_info("mtk_ta_decrease() on 2");
+		pr_debug("mtk_ta_decrease() on 2");
 		msleep(281);
 		__sgm41512_set_aicr(chip,100000); /* 100mA */
-		pr_info("mtk_ta_decrease() off 2");
+		pr_debug("mtk_ta_decrease() off 2");
 		msleep(85);
 		__sgm41512_set_aicr(chip,500000); /* 500mA */
-		pr_info("mtk_ta_decrease() on 3");
+		pr_debug("mtk_ta_decrease() on 3");
 		msleep(281);
 		__sgm41512_set_aicr(chip,100000); /* 100mA */
-		pr_info("mtk_ta_decrease() off 3");
+		pr_debug("mtk_ta_decrease() off 3");
 		msleep(85);
 		__sgm41512_set_aicr(chip,500000); /* 500mA */
-		pr_info("mtk_ta_decrease() on 4");
+		pr_debug("mtk_ta_decrease() on 4");
 		msleep(85);
 		__sgm41512_set_aicr(chip,100000); /* 100mA */
-		pr_info("mtk_ta_decrease() off 4");
+		pr_debug("mtk_ta_decrease() off 4");
 		msleep(85);
 		__sgm41512_set_aicr(chip,500000); /* 500mA */
-		pr_info("mtk_ta_decrease() on 5");
+		pr_debug("mtk_ta_decrease() on 5");
 		msleep(85);
 		__sgm41512_set_aicr(chip,100000); /* 100mA */
-		pr_info("mtk_ta_decrease() off 5");
+		pr_debug("mtk_ta_decrease() off 5");
 		msleep(85);
 		__sgm41512_set_aicr(chip,500000); /* 500mA */
-		pr_info("mtk_ta_decrease() on 6");
+		pr_debug("mtk_ta_decrease() on 6");
 		msleep(485);
 		__sgm41512_set_aicr(chip,100000); /* 100mA */
-		pr_info("mtk_ta_decrease() off 6");
+		pr_debug("mtk_ta_decrease() off 6");
 		msleep(50);
-		pr_notice("mtk_ta_decrease() end \n");
+		pr_debug("mtk_ta_decrease() end \n");
 		__sgm41512_set_aicr(chip,500000); /* 500mA */
 	}
 	return ret;
@@ -2820,7 +2820,7 @@ static int sgm41512_probe(struct i2c_client *client,
 	int ret = 0;
 	struct sgm41512_chip *chip = NULL;
 
-	dev_info(&client->dev, "%s (%s)\n", __func__, SGM41512_DRV_VERSION);
+	dev_dbg(&client->dev, "%s (%s)\n", __func__, SGM41512_DRV_VERSION);
 
 	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
 	if (!chip)
@@ -2943,7 +2943,7 @@ static int sgm41512_probe(struct i2c_client *client,
 	}
 
 	__sgm41512_dump_registers(chip);
-	dev_info(chip->dev, "%s successfully\n", __func__);
+	dev_dbg(chip->dev, "%s successfully\n", __func__);
 	return 0;
 
 err_create_file:
@@ -2981,7 +2981,7 @@ static int sgm41512_remove(struct i2c_client *client)
 {
 	struct sgm41512_chip *chip = i2c_get_clientdata(client);
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	device_remove_file(chip->dev, &dev_attr_shipping_mode);
 	charger_device_unregister(chip->chg_dev);
@@ -3015,7 +3015,7 @@ static void sgm41512_shutdown(struct i2c_client *client)
 	int ret = 0;
 	struct sgm41512_chip *chip = i2c_get_clientdata(client);
 
-	dev_info(chip->dev, "%s\n", __func__);
+	dev_dbg(chip->dev, "%s\n", __func__);
 
 	charger_device_unregister(chip->chg_dev);
 	disable_irq(chip->irq);
@@ -3039,7 +3039,7 @@ static int sgm41512_suspend(struct device *dev)
 {
 	struct sgm41512_chip *chip = dev_get_drvdata(dev);
 
-	dev_info(dev, "%s\n", __func__);
+	dev_dbg(dev, "%s\n", __func__);
 	if (device_may_wakeup(dev))
 		enable_irq_wake(chip->irq);
 	//disable_irq(chip->irq);
@@ -3051,7 +3051,7 @@ static int sgm41512_resume(struct device *dev)
 {
 	struct sgm41512_chip *chip = dev_get_drvdata(dev);
 
-	dev_info(dev, "%s\n", __func__);
+	dev_dbg(dev, "%s\n", __func__);
 	enable_irq(chip->irq);
 	if (device_may_wakeup(dev))
 		disable_irq_wake(chip->irq);
