@@ -98,8 +98,8 @@
 
 #define LOG_INF(format, args...)         pr_debug(MyTag format,  ##args)
 #define LOG_NOTICE(format, args...)      pr_debug(MyTag format,  ##args)
-#define LOG_PR_WARN(format, args...)     pr_warn(MyTag format,  ##args)
-#define LOG_PR_ERR(format, args...)      pr_err(MyTag format,  ##args)
+#define LOG_PR_WARN(format, args...)     pr_debug(MyTag format,  ##args)
+#define LOG_PR_ERR(format, args...)      pr_debug(MyTag format,  ##args)
 #define LOG_PR_ALERT(format, args...)    pr_alert(MyTag format, ##args)
 
 /* --------------------------------------------------------------- */
@@ -1126,7 +1126,7 @@ static unsigned int g_DmaErr_p1[nDMA_ERR] = { 0 };
 	} while (0)
 #else
 #define IRQ_LOG_KEEPER(irq, ppb, logT, fmt, args...)    pr_debug(IRQTag fmt,  ##args)
-#define IRQ_LOG_KEEPER_PR_ERR(irq, ppb, logT, fmt, args...)    pr_err(IRQTag fmt,  ##args)
+#define IRQ_LOG_KEEPER_PR_ERR(irq, ppb, logT, fmt, args...)    pr_debug(IRQTag fmt,  ##args)
 #endif
 
 #if     1

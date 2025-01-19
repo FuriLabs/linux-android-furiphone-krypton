@@ -148,9 +148,9 @@ pr_debug(MyTag "[%s] " format, __func__, ##args)
 #define LOG_NOTICE(format, args...) \
 pr_debug(MyTag "[%s] " format, __func__, ##args)
 #define LOG_WRN(format, args...) \
-pr_warn(MyTag "[%s] " format, __func__, ##args)
+pr_debug(MyTag "[%s] " format, __func__, ##args)
 #define LOG_ERR(format, args...) \
-pr_err(MyTag "[%s] " format, __func__, ##args)
+pr_debug(MyTag "[%s] " format, __func__, ##args)
 #define LOG_AST(format, args...) \
 pr_debug(MyTag "[%s] " format, __func__, ##args)
 

@@ -77,9 +77,9 @@ pr_debug("FDVT [%s] " format, __func__, ##args)
 #define log_inf(format, args...) \
 pr_debug("FDVT [%s] " format, __func__, ##args)
 #define log_wrn(format, args...) \
-pr_warn("FDVT [%s] WARNING: " format, __func__, ##args)
+pr_debug("FDVT [%s] WARNING: " format, __func__, ##args)
 #define log_err(format, args...) \
-pr_err("FDVT [%s, line%04d] ERROR: " format, __func__, __LINE__, ##args)
+pr_debug("FDVT [%s, line%04d] ERROR: " format, __func__, __LINE__, ##args)
 #define log_ast(format, args...) \
 pr_debug("FDVT [%s, line%04d] ASSERT: " format, __func__, __LINE__, ##args)
 
