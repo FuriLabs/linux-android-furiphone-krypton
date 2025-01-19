@@ -89,7 +89,7 @@ struct consys_platform_coredump_ops g_consys_platform_coredump_ops_mt6895 = {
 static struct coredump_hw_config* consys_plt_coredump_get_platform_config(int conn_type)
 {
     if (conn_type < 0 || conn_type >= CONN_DEBUG_TYPE_END) {
-        pr_notice("Incorrect type: %d\n", conn_type);
+        pr_debug("Incorrect type: %d\n", conn_type);
         return NULL;
     }
     return &g_coredump_config[conn_type];
@@ -103,12 +103,12 @@ static unsigned int consys_plt_coredump_get_platform_chipid(void)
 static char* consys_plt_coredump_get_task_string(int conn_type, unsigned int task_id)
 {
     if (conn_type < 0 || conn_type >= CONN_DEBUG_TYPE_END) {
-        pr_notice("Incorrect type: %d\n", conn_type);
+        pr_debug("Incorrect type: %d\n", conn_type);
         return NULL;
     }
 
     if (task_id > g_coredump_config[conn_type].task_table_size) {
-        pr_notice("[%s] Incorrect task: %d\n",
+        pr_debug("[%s] Incorrect task: %d\n",
             g_coredump_config[conn_type].name, task_id);
         return NULL;
     }
@@ -119,7 +119,7 @@ static char* consys_plt_coredump_get_task_string(int conn_type, unsigned int tas
 static char* consys_plt_coredump_get_sys_name(int conn_type)
 {
     if (conn_type < 0 || conn_type >= CONN_DEBUG_TYPE_END) {
-        pr_notice("Incorrect type: %d\n", conn_type);
+        pr_debug("Incorrect type: %d\n", conn_type);
         return NULL;
     }
     return g_coredump_config[conn_type].name;
@@ -163,7 +163,7 @@ static bool consys_plt_coredump_is_host_csr_readable(void)
         }
         iounmap(vir_addr);
     } else
-        pr_info("[%s] remap 0x10001c5c fail", __func__);
+        pr_debug("[%s] remap 0x10001c5c fail", __func__);
 
     return ret;
 }

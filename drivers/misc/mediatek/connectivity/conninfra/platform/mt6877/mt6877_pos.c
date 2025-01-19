@@ -82,7 +82,7 @@ unsigned int consys_emi_set_remapping_reg_mt6877(
 			CONN_HOST_CSR_TOP_CONN2AP_REMAP_MD_SHARE_EMI_BASE_ADDR_ADDR,
 			md_shared_emi_base_addr, 0, 16, 20);
 	}
-	pr_info("connsys_emi_base=[0x%llx] mcif_emi_base=[0x%llx] remap cr: connsys=[0x%08x] mcif=[0x%08x]\n",
+	pr_debug("connsys_emi_base=[0x%llx] mcif_emi_base=[0x%llx] remap cr: connsys=[0x%08x] mcif=[0x%08x]\n",
 		con_emi_base_addr, md_shared_emi_base_addr,
 		CONSYS_REG_READ(CONN_HOST_CSR_TOP_CONN2AP_REMAP_MCU_EMI_BASE_ADDR_ADDR),
 		CONSYS_REG_READ(CONN_HOST_CSR_TOP_CONN2AP_REMAP_MD_SHARE_EMI_BASE_ADDR_ADDR));
@@ -501,7 +501,7 @@ int consys_polling_chipid_mt6877(void)
 	while (--retry > 0) {
 		consys_hw_ver = CONSYS_REG_READ(CONN_CFG_IP_VERSION_ADDR);
 		if (consys_hw_ver == CONN_HW_VER) {
-			pr_info("Consys HW version id(0x%x)\n", consys_hw_ver);
+			pr_debug("Consys HW version id(0x%x)\n", consys_hw_ver);
 			ret = 0;
 			break;
 		}
@@ -572,7 +572,7 @@ int connsys_d_die_cfg_mt6877(void)
 
 #if defined(CONNINFRA_PLAT_BUILD_MODE)
 	CONSYS_REG_WRITE(CONN_INFRA_SYSRAM_SW_CR_BUILD_MODE, CONNINFRA_PLAT_BUILD_MODE);
-	pr_info("[%s] Write CONN_INFRA_SYSRAM_SW_CR_BUILD_MODE to 0x%08x\n",
+	pr_debug("[%s] Write CONN_INFRA_SYSRAM_SW_CR_BUILD_MODE to 0x%08x\n",
 		__func__, CONSYS_REG_READ(CONN_INFRA_SYSRAM_SW_CR_BUILD_MODE));
 #endif
 
@@ -842,7 +842,7 @@ static bool connsys_a_die_efuse_read_nolock(
 		consys_spi_read_nolock(SYS_SPI_TOP, ATOP_EFUSE_CTRL, &ret);
 	}
 	if ((ret & (0x1 << 30)) != 0) {
-		pr_info("[%s] EFUSE busy, retry failed(%d)\n", __func__, retry);
+		pr_debug("[%s] EFUSE busy, retry failed(%d)\n", __func__, retry);
 	}
 
 	/* Check efuse_valid & return
@@ -866,7 +866,7 @@ static bool connsys_a_die_efuse_read_nolock(
 		ret3 = consys_spi_read_nolock(SYS_SPI_TOP, ATOP_EFUSE_RDATA3, efuse3);
 		CONSYS_REG_WRITE(CONN_INFRA_SYSRAM_SW_CR_A_DIE_EFUSE_DATA_3, *efuse3);
 
-		pr_info("efuse = [0x%08x, 0x%08x, 0x%08x, 0x%08x]", *efuse0, *efuse1, *efuse2, *efuse3);
+		pr_debug("efuse = [0x%08x, 0x%08x, 0x%08x, 0x%08x]", *efuse0, *efuse1, *efuse2, *efuse3);
 		if (ret0 || ret1 || ret2 || ret3)
 			pr_err("efuse read error: [%d, %d, %d, %d]", ret0, ret1, ret2, ret3);
 		efuse_valid = true;
@@ -894,16 +894,16 @@ static int connsys_a_die_thermal_cal_nolock(
 			consys_spi_write_offset_range_nolock(
 				SYS_SPI_TOP, ATOP_RG_TOP_THADC, efuse1, 26, 13, 2);
 			input.slop_molecule = (efuse1 & 0x1f00) >> 8;
-			pr_info("slop_molecule=[%d]", input.slop_molecule);
+			pr_debug("slop_molecule=[%d]", input.slop_molecule);
 		}
 		if (efuse1 & (0x1 << 23)) {
 			/* [22:16] */
 			input.thermal_b = (efuse1 & 0x7f0000) >> 16;
-			pr_info("thermal_b =[%d]", input.thermal_b);
+			pr_debug("thermal_b =[%d]", input.thermal_b);
 		}
 		if (efuse1 & (0x1 << 31)) {
 			input.offset = (efuse1 & 0x7f000000) >> 24;
-			pr_info("offset=[%d]", input.offset);
+			pr_debug("offset=[%d]", input.offset);
 		}
 	}
 	update_thermal_data_mt6877(&input);
@@ -914,7 +914,7 @@ static int connsys_a_die_thermal_cal_nolock(
 int connsys_a_die_cfg_mt6877(void)
 {
 #ifdef CONFIG_FPGA_EARLY_PORTING
-	pr_info("[%s] not support on FPGA", __func__);
+	pr_debug("[%s] not support on FPGA", __func__);
 #else /* CONFIG_FPGA_EARLY_PORTING */
 	bool adie_26m = true;
 	unsigned int adie_id = 0;
@@ -923,7 +923,7 @@ int connsys_a_die_cfg_mt6877(void)
 	bool efuse_valid;
 
 	if (consys_co_clock_type_mt6877() == CONNSYS_CLOCK_SCHEMATIC_52M_COTMS) {
-		pr_info("A-die clock 52M\n");
+		pr_debug("A-die clock 52M\n");
 		adie_26m = false;
 	}
 
@@ -973,7 +973,7 @@ int connsys_a_die_cfg_mt6877(void)
 		consys_sema_release_mt6877(CONN_SEMA_RFSPI_INDEX);
 		return -1;
 	}
-	pr_info("[%s] A-die chip id: 0x%08x\n", __func__, adie_id);
+	pr_debug("[%s] A-die chip id: 0x%08x\n", __func__, adie_id);
 
 	conn_hw_env.adie_hw_version = adie_id;
 	/* Write to conninfra sysram */
@@ -1427,7 +1427,7 @@ int connsys_low_power_setting_mt6877(unsigned int curr_status, unsigned int next
 			CONSYS_SET_BIT(addr, (0x1 << 4));
 			CONSYS_CLR_BIT(addr, (0x1 << 9));
 		} else {
-			pr_info("[%s] remap 0x1800f000 error", __func__);
+			pr_debug("[%s] remap 0x1800f000 error", __func__);
 			return -1;
 		}
 		iounmap(addr);
@@ -1460,7 +1460,7 @@ int connsys_low_power_setting_mt6877(unsigned int curr_status, unsigned int next
 			CONSYS_SET_BIT(addr, (0x1 << 4));
 			CONSYS_CLR_BIT(addr, (0x1 << 9));
 		} else {
-			pr_info("[%s] remap 0x1801d000 error", __func__);
+			pr_debug("[%s] remap 0x1801d000 error", __func__);
 			return -1;
 		}
 		iounmap(addr);
@@ -1559,7 +1559,7 @@ int connsys_low_power_setting_mt6877(unsigned int curr_status, unsigned int next
 		/* Not first on */
 		if (wifi_on == 0) { // wifi turn off
 			// Debug use for vcn13 oc
-			pr_info("Debug use: wifi power off, dump a-die status\n");
+			pr_debug("Debug use: wifi power off, dump a-die status\n");
 			pmic_mng_event_cb(0, 7);
 		}
 	}
@@ -1627,7 +1627,7 @@ void consys_sema_release_mt6877(unsigned int index)
 	if (index == CONN_SEMA_RFSPI_INDEX)
 		local_irq_restore(flags);
 	if (duration > SEMA_HOLD_TIME_THRESHOLD)
-		pr_notice("%s hold semaphore (%d) for %llu ms\n", __func__, index, duration);
+		pr_debug("%s hold semaphore (%d) for %llu ms\n", __func__, index, duration);
 }
 
 struct spi_op {
@@ -1782,7 +1782,7 @@ static int consys_spi_write_nolock(enum sys_spi_subsystem subsystem, unsigned in
 	 */
 #ifndef CONFIG_FPGA_EARLY_PORTING
 	if (subsystem == SYS_SPI_TOP && addr == 0x380 && data == 0) {
-		pr_info("check who writes 0x380 to 0\n");
+		pr_debug("check who writes 0x380 to 0\n");
 		BUG_ON(1);
 		return CONNINFRA_SPI_OP_FAIL;
 	}
@@ -1904,7 +1904,7 @@ int consys_spi_clock_switch_mt6877(enum connsys_spi_speed_type type)
 			CONSYS_SET_BIT(CONN_RF_SPI_MST_REG_SPI_CRTL_ADDR, (0x1 << 5));
 		} else {
 			ret = -1;
-			pr_info("[%s] BPLL enable fail: 0x%08x",
+			pr_debug("[%s] BPLL enable fail: 0x%08x",
 				__func__, CONSYS_REG_READ(CONN_CFG_PLL_STATUS_ADDR));
 		}
 	} else {

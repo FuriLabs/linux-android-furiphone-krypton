@@ -106,12 +106,12 @@ static void print_pmif_reg(void)
 	/* DEBUGTOP_MON 0x0d0a0088 */
 	addr = ioremap(0x0d0a0088, 0x4);
 	if (!addr) {
-		pr_notice("%s clk cg ioremap failed\n", __func__);
+		pr_debug("%s clk cg ioremap failed\n", __func__);
 		return;
 	}
 	v = CONSYS_REG_READ(addr);
 	iounmap(addr);
-	pr_info("[consys]DEBUGTOP_MON:%x\n", v);
+	pr_debug("[consys]DEBUGTOP_MON:%x\n", v);
 }
 
 void consys_set_if_pinmux_mt6879(unsigned int enable)
@@ -187,7 +187,7 @@ int connsys_d_die_cfg_mt6879(void)
 
 #if defined(CONNINFRA_PLAT_BUILD_MODE)
 	CONSYS_REG_WRITE(CONN_INFRA_SYSRAM_SW_CR_BUILD_MODE, CONNINFRA_PLAT_BUILD_MODE);
-	pr_info("[%s] Write CONN_INFRA_SYSRAM_SW_CR_BUILD_MODE to 0x%08x\n",
+	pr_debug("[%s] Write CONN_INFRA_SYSRAM_SW_CR_BUILD_MODE to 0x%08x\n",
 		__func__, CONSYS_REG_READ(CONN_INFRA_SYSRAM_SW_CR_BUILD_MODE));
 #endif
 
@@ -236,7 +236,7 @@ int consys_get_sleep_mode_mt6879(void)
 int connsys_a_die_cfg_mt6879(void)
 {
 #ifdef CONFIG_FPGA_EARLY_PORTING
-	pr_info("[%s] not support on FPGA", __func__);
+	pr_debug("[%s] not support on FPGA", __func__);
 #else /* CONFIG_FPGA_EARLY_PORTING */
 	unsigned int adie_id = 0;
 	unsigned int hw_ver_id = 0;
@@ -256,7 +256,7 @@ int connsys_a_die_cfg_mt6879(void)
 		clock_type == CONNSYS_CLOCK_SCHEMATIC_26M_EXTCXO) {
 		sysram_clock_type = 1;
 	} else {
-		pr_notice("unexpected value\n");
+		pr_debug("unexpected value\n");
 	}
 
 	// Write clock type to conninfra sysram
@@ -294,7 +294,7 @@ int connsys_a_die_cfg_mt6879(void)
 	sysram_efuse_list[3] = (void __iomem *)CONN_INFRA_SYSRAM_SW_CR_A_DIE_EFUSE_DATA_3;
 	connsys_a_die_efuse_read_get_efuse_info_mt6879_gen(sysram_efuse_list,
 			&(input.slop_molecule), &(input.thermal_b), &(input.offset));
-	pr_info("slop_molecule=[%d], thermal_b =[%d], offset=[%d]", input.slop_molecule, input.thermal_b, input.offset);
+	pr_debug("slop_molecule=[%d], thermal_b =[%d], offset=[%d]", input.slop_molecule, input.thermal_b, input.offset);
 	update_thermal_data_mt6879(&input);
 
 	connsys_a_die_cfg_PART2_mt6879_gen(hw_ver_id);
@@ -304,7 +304,7 @@ int connsys_a_die_cfg_mt6879(void)
 	connsys_a_die_switch_to_conn_mode_mt6879_gen();
 
 	conn_hw_env.is_rc_mode = consys_is_rc_mode_enable_mt6879();
-	pr_info("[%s] Check rc mode=[%d]\n", __func__, conn_hw_env.is_rc_mode);
+	pr_debug("[%s] Check rc mode=[%d]\n", __func__, conn_hw_env.is_rc_mode);
 #endif /* CONFIG_FPGA_EARLY_PORTING */
 
 	sleep_mode = consys_get_sleep_mode_mt6879();
@@ -411,8 +411,8 @@ void consys_sema_release_mt6879(unsigned int index)
 	}
 
 	if (duration > SEMA_HOLD_TIME_THRESHOLD) {
-		pr_notice("%s hold semaphore (%d) for %llu ms\n", __func__, index, duration);
-		pr_notice("[%s] log_sema_time: [%llu][%llu][%llu][%llu][%llu][%llu][%llu][%llu][%llu][%llu]\n",
+		pr_debug("%s hold semaphore (%d) for %llu ms\n", __func__, index, duration);
+		pr_debug("[%s] log_sema_time: [%llu][%llu][%llu][%llu][%llu][%llu][%llu][%llu][%llu][%llu]\n",
 			__func__, log_sema_time[0], log_sema_time[1], log_sema_time[2], log_sema_time[3],
 			log_sema_time[4], log_sema_time[5], log_sema_time[6],
 			log_sema_time[7], log_sema_time[8], log_sema_time[9]);
@@ -603,7 +603,7 @@ int consys_spi_write_nolock_mt6879(enum sys_spi_subsystem subsystem, unsigned in
 #endif
 
 	if (subsystem == SYS_SPI_TOP && addr == 0xa00) {
-		pr_info("[%s] Someone is trying to write ATOP 0xa00\n", __func__);
+		pr_debug("[%s] Someone is trying to write ATOP 0xa00\n", __func__);
 		return CONNINFRA_SPI_ADDR_INVALID;
 	}
 
@@ -639,7 +639,7 @@ int consys_spi_update_bits_mt6879(enum sys_spi_subsystem subsystem, unsigned int
 	/* Get semaphore before updating bits */
 	if (subsystem != SYS_SPI_FM && subsystem != SYS_SPI_GPS) {
 		if (consys_sema_acquire_timeout_mt6879(CONN_SEMA_RFSPI_INDEX, CONN_SEMA_TIMEOUT) == CONN_SEMA_GET_FAIL) {
-			pr_notice("[SPI WRITE] Require semaphore fail\n");
+			pr_debug("[SPI WRITE] Require semaphore fail\n");
 			return CONNINFRA_SPI_OP_FAIL;
 		}
 	}
@@ -707,7 +707,7 @@ int consys_spi_clock_switch_mt6879(enum connsys_spi_speed_type type)
 			CONSYS_REG_WRITE_HW_ENTRY(CONN_RF_SPI_MST_REG_SPI_HSCK_CTL_SET_FM_HS_EN, 1);
 		} else {
 			ret = -1;
-			pr_info("[%s] BPLL enable fail: 0x%08x",
+			pr_debug("[%s] BPLL enable fail: 0x%08x",
 				__func__, CONSYS_REG_READ(CONN_CFG_PLL_STATUS_ADDR));
 		}
 	} else {

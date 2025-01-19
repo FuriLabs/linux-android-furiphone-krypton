@@ -154,7 +154,7 @@ int consys_co_clock_type_mt6877(void)
 		pr_err("[%s] Get conf fail", __func__);
 		return -1;
 	}
-	pr_info("[%s] conf->tcxo_gpio=%d conn_hw_env.tcxo_support=%d",
+	pr_debug("[%s] conf->tcxo_gpio=%d conn_hw_env.tcxo_support=%d",
 		__func__, conf->tcxo_gpio, conn_hw_env.tcxo_support);
 	/* TODO: for co-clock mode, there are two case: 26M and 52M. Need something to distinguish it. */
 	if (conf->tcxo_gpio != 0 || conn_hw_env.tcxo_support)
@@ -316,7 +316,7 @@ void consys_power_state(void)
 			buf_len += str_len;
 		}
 	}
-	pr_info("[%s] [0x%x] %s", __func__, r, buf);
+	pr_debug("[%s] [0x%x] %s", __func__, r, buf);
 
 }
 
@@ -372,7 +372,7 @@ int consys_power_state_dump_mt6877(char *buf, unsigned int size)
 		CONN_HOST_CSR_TOP_HOST_CONN_INFRA_SLP_TIMER_ADDR);
 	gps_sleep_cnt = CONSYS_REG_READ(
 		CONN_HOST_CSR_TOP_HOST_CONN_INFRA_SLP_COUNTER_ADDR);
-	pr_info("[consys_power_state]conninfra:%u,%u;wf:%u,%u;bt:%u,%u;gps:%u,%u;",
+	pr_debug("[consys_power_state]conninfra:%u,%u;wf:%u,%u;bt:%u,%u;gps:%u,%u;",
 		conninfra_sleep_time, conninfra_sleep_cnt,
 		wf_sleep_time, wf_sleep_cnt,
 		bt_sleep_time, bt_sleep_cnt,
@@ -413,7 +413,7 @@ static int calculate_thermal_temperature(int y)
 	t = (y - (data->thermal_b == 0 ? 0x36 : data->thermal_b)) *
 			((data->slop_molecule + 209) / 100) + (data->offset + const_offset);
 
-	pr_info("y=[%d] b=[%d] constOffset=[%d] [%d] [%d] => t=[%d]\n",
+	pr_debug("y=[%d] b=[%d] constOffset=[%d] [%d] [%d] => t=[%d]\n",
 			y, data->thermal_b, const_offset, data->slop_molecule, data->offset,
 			t);
 
@@ -481,7 +481,7 @@ int consys_thermal_query_mt6877(void)
 			CONSYS_REG_READ(CONN_REG_CONN_THERM_CTL_ADDR + thermal_dump_crs[i])) >= 0)
 			strncat(tmp_buf, tmp, strlen(tmp));
 	}
-	pr_info("[%s] efuse:[0x%08x][0x%08x][0x%08x][0x%08x] thermal dump: %s",
+	pr_debug("[%s] efuse:[0x%08x][0x%08x][0x%08x][0x%08x] thermal dump: %s",
 		__func__, efuse0, efuse1, efuse2, efuse3, tmp_buf);
 
 	res = calculate_thermal_temperature(cal_val);
@@ -520,7 +520,7 @@ static unsigned long long consys_soc_timestamp_get_mt6877(void)
 		} while (tick_h != tmp_h);
 		iounmap(addr);
 	} else {
-		pr_info("[%s] remap fail", __func__);
+		pr_debug("[%s] remap fail", __func__);
 		return 0;
 	}
 
@@ -537,7 +537,7 @@ static unsigned int consys_adie_detection_mt6877(void)
 
 static void consys_set_mcu_control_mt6877(int type, bool onoff)
 {
-	pr_info("[%s] Set mcu control type=[%d] onoff=[%d]\n", __func__, type, onoff);
+	pr_debug("[%s] Set mcu control type=[%d] onoff=[%d]\n", __func__, type, onoff);
 
 	if (onoff) // Turn on
 		CONSYS_SET_BIT(CONN_INFRA_SYSRAM_SW_CR_MCU_LOG_CONTROL, (0x1 << type));

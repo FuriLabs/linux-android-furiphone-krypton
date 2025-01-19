@@ -131,12 +131,12 @@ const unsigned int g_cmdbt_dwn_value_ary_mt6879[1024] = {
 void consys_set_if_pinmux_mt6879_gen(unsigned int enable)
 {
 	if (GPIO_REG_BASE == 0) {
-		pr_notice("GPIO_REG_BASE is not defined\n");
+		pr_debug("GPIO_REG_BASE is not defined\n");
 		return;
 	}
 
 	if (IOCFG_RT_REG_BASE == 0) {
-		pr_notice("IOCFG_RT_REG_BASE is not defined\n");
+		pr_debug("IOCFG_RT_REG_BASE is not defined\n");
 		return;
 	}
 
@@ -184,7 +184,7 @@ void consys_set_if_pinmux_mt6879_gen(unsigned int enable)
 void consys_set_gpio_tcxo_mode_mt6879_gen(unsigned int tcxo_mode, unsigned int enable)
 {
 	if (GPIO_REG_BASE == 0) {
-		pr_notice("GPIO_REG_BASE is not defined\n");
+		pr_debug("GPIO_REG_BASE is not defined\n");
 		return;
 	}
 
@@ -212,12 +212,12 @@ int consys_conninfra_on_power_ctrl_mt6879_gen(unsigned int enable)
 	int check = 0;
 
 	if (SPM_REG_BASE == 0) {
-		pr_notice("SPM_REG_BASE is not defined\n");
+		pr_debug("SPM_REG_BASE is not defined\n");
 		return -1;
 	}
 
 	if (INFRACFG_AO_REG_BASE == 0) {
-		pr_notice("INFRACFG_AO_REG_BASE is not defined\n");
+		pr_debug("INFRACFG_AO_REG_BASE is not defined\n");
 		return -1;
 	}
 
@@ -240,7 +240,7 @@ int consys_conninfra_on_power_ctrl_mt6879_gen(unsigned int enable)
 				CONSYS_GEN_CONN_PWR_CON_OFFSET_ADDR,
 				30, 1, 10, 500, check);
 			if (check != 0) {
-				pr_notice("check conn_infra_on primary part power status fail, Status=0x%08x\n",
+				pr_debug("check conn_infra_on primary part power status fail, Status=0x%08x\n",
 					CONSYS_REG_READ(SPM_REG_BASE +
 						CONSYS_GEN_CONN_PWR_CON_OFFSET_ADDR));
 			}
@@ -260,7 +260,7 @@ int consys_conninfra_on_power_ctrl_mt6879_gen(unsigned int enable)
 				CONSYS_GEN_CONN_PWR_CON_OFFSET_ADDR,
 				31, 1, 10, 500, check);
 			if (check != 0) {
-				pr_notice("check conn_infra_on secondary part power status fail, Status=0x%08x\n",
+				pr_debug("check conn_infra_on secondary part power status fail, Status=0x%08x\n",
 					CONSYS_REG_READ(SPM_REG_BASE +
 						CONSYS_GEN_CONN_PWR_CON_OFFSET_ADDR));
 			}
@@ -298,7 +298,7 @@ int consys_conninfra_on_power_ctrl_mt6879_gen(unsigned int enable)
 			CONSYS_GEN_MCU_CONNSYS_PROTECT_RDY_STA_0_OFFSET_ADDR,
 			0, 0, 100, 500, check);
 		if (check != 0) {
-			pr_notice("check  AP2CONN AHB RX bus sleep protect turn off fail, Status=0x%08x\n",
+			pr_debug("check  AP2CONN AHB RX bus sleep protect turn off fail, Status=0x%08x\n",
 				CONSYS_REG_READ(INFRACFG_AO_REG_BASE +
 					CONSYS_GEN_MCU_CONNSYS_PROTECT_RDY_STA_0_OFFSET_ADDR));
 		}
@@ -318,7 +318,7 @@ int consys_conninfra_on_power_ctrl_mt6879_gen(unsigned int enable)
 				CONSYS_GEN_INFRASYS_PROTECT_RDY_STA_1_OFFSET_ADDR,
 				12, 0, 100, 500, check);
 			if (check != 0) {
-				pr_notice("check  AP2CONN AHB TX bus sleep protect turn off fail, Status=0x%08x\n",
+				pr_debug("check  AP2CONN AHB TX bus sleep protect turn off fail, Status=0x%08x\n",
 					CONSYS_REG_READ(INFRACFG_AO_REG_BASE +
 						CONSYS_GEN_INFRASYS_PROTECT_RDY_STA_1_OFFSET_ADDR));
 			}
@@ -350,7 +350,7 @@ int consys_conninfra_on_power_ctrl_mt6879_gen(unsigned int enable)
 				CONSYS_GEN_INFRASYS_PROTECT_RDY_STA_1_OFFSET_ADDR,
 				12, 1, 100, 500, check);
 			if (check != 0) {
-				pr_notice("check  AP2CONN AHB TX bus sleep protect turn on fail, Status=0x%08x\n",
+				pr_debug("check  AP2CONN AHB TX bus sleep protect turn on fail, Status=0x%08x\n",
 					CONSYS_REG_READ(INFRACFG_AO_REG_BASE +
 						CONSYS_GEN_INFRASYS_PROTECT_RDY_STA_1_OFFSET_ADDR));
 			}
@@ -370,7 +370,7 @@ int consys_conninfra_on_power_ctrl_mt6879_gen(unsigned int enable)
 				CONSYS_GEN_MCU_CONNSYS_PROTECT_RDY_STA_0_OFFSET_ADDR,
 				0, 1, 100, 500, check);
 			if (check != 0) {
-				pr_notice("check  AP2CONN AHB RX bus sleep protect turn on fail, Status=0x%08x\n",
+				pr_debug("check  AP2CONN AHB RX bus sleep protect turn on fail, Status=0x%08x\n",
 					CONSYS_REG_READ(INFRACFG_AO_REG_BASE +
 						CONSYS_GEN_MCU_CONNSYS_PROTECT_RDY_STA_0_OFFSET_ADDR));
 			}
@@ -391,7 +391,7 @@ int consys_conninfra_on_power_ctrl_mt6879_gen(unsigned int enable)
 				CONSYS_GEN_MCU_CONNSYS_PROTECT_RDY_STA_0_OFFSET_ADDR,
 				1, 1, 100, 500, check);
 			if (check != 0) {
-				pr_notice("check  CONN2AP AXI TX bus sleep protect turn on fail, Status=0x%08x\n",
+				pr_debug("check  CONN2AP AXI TX bus sleep protect turn on fail, Status=0x%08x\n",
 					CONSYS_REG_READ(INFRACFG_AO_REG_BASE +
 						CONSYS_GEN_MCU_CONNSYS_PROTECT_RDY_STA_0_OFFSET_ADDR));
 			}
@@ -412,7 +412,7 @@ int consys_conninfra_on_power_ctrl_mt6879_gen(unsigned int enable)
 				CONSYS_GEN_INFRASYS_PROTECT_RDY_STA_0_OFFSET_ADDR,
 				8, 1, 100, 500, check);
 			if (check != 0) {
-				pr_notice("check  CONN2AP AXI RX bus sleep protect turn on fail, Status=0x%08x\n",
+				pr_debug("check  CONN2AP AXI RX bus sleep protect turn on fail, Status=0x%08x\n",
 					CONSYS_REG_READ(INFRACFG_AO_REG_BASE +
 						CONSYS_GEN_INFRASYS_PROTECT_RDY_STA_0_OFFSET_ADDR));
 			}
@@ -455,7 +455,7 @@ void consys_update_ap2conn_hclk_mt6879_gen(void)
 	vir_addr_consys_gen_topckgen_base = ioremap(CONSYS_GEN_TOPCKGEN_BASE_ADDR, 0x118);
 
 	if (!vir_addr_consys_gen_topckgen_base) {
-		pr_notice("vir_addr_consys_gen_topckgen_base(%x) ioremap fail\n",
+		pr_debug("vir_addr_consys_gen_topckgen_base(%x) ioremap fail\n",
 			CONSYS_GEN_TOPCKGEN_BASE_ADDR);
 		return;
 	}
@@ -483,7 +483,7 @@ int consys_polling_chipid_mt6879_gen(unsigned int *pconsys_ver_id)
 	unsigned int consys_ver_id = 0;
 
 	if (CONN_CFG_BASE == 0) {
-		pr_notice("CONN_CFG_BASE is not defined\n");
+		pr_debug("CONN_CFG_BASE is not defined\n");
 		return -1;
 	}
 
@@ -496,7 +496,7 @@ int consys_polling_chipid_mt6879_gen(unsigned int *pconsys_ver_id)
 			CONSYS_GEN_IP_VERSION_OFFSET_ADDR);
 		if (consys_ver_id == CONSYS_GEN_CONN_HW_VER) {
 			check = 0;
-			pr_info("Consys HW version id(0x%08x), retry(%d)\n", consys_ver_id, retry);
+			pr_debug("Consys HW version id(0x%08x), retry(%d)\n", consys_ver_id, retry);
 			if (pconsys_ver_id != NULL)
 				*pconsys_ver_id = consys_ver_id;
 			break;
@@ -506,7 +506,7 @@ int consys_polling_chipid_mt6879_gen(unsigned int *pconsys_ver_id)
 	}
 
 	if (check != 0) {
-		pr_notice("Read CONSYS version id fail. Expect 0x%08x but get 0x%08x\n",
+		pr_debug("Read CONSYS version id fail. Expect 0x%08x but get 0x%08x\n",
 			CONSYS_GEN_CONN_HW_VER, consys_ver_id);
 		#if defined(KERNEL_clk_buf_show_status_info)
 			KERNEL_clk_buf_show_status_info();  /* dump clock buffer */
@@ -524,7 +524,7 @@ unsigned int consys_emi_set_remapping_reg_mt6879_gen(
 		unsigned int emi_base_addr_offset)
 {
 	if (CONN_BUS_CR_BASE == 0) {
-		pr_notice("CONN_BUS_CR_BASE is not defined\n");
+		pr_debug("CONN_BUS_CR_BASE is not defined\n");
 		return -1;
 	}
 
@@ -535,7 +535,7 @@ unsigned int consys_emi_set_remapping_reg_mt6879_gen(
 			con_emi_base_addr, 0, emi_base_addr_offset, 20);
 	}
 
-	pr_info("connsys_emi_base=[0x%llx] remap cr: connsys=[0x%08x]\n",
+	pr_debug("connsys_emi_base=[0x%llx] remap cr: connsys=[0x%08x]\n",
 		con_emi_base_addr,
 		CONSYS_REG_READ(CONN_BUS_CR_BASE +
 			CONSYS_GEN_CONN2AP_REMAP_MCU_EMI_BASE_ADDR_OFFSET_ADDR));
@@ -546,7 +546,7 @@ unsigned int consys_emi_set_remapping_reg_mt6879_gen(
 			md_shared_emi_base_addr, 0, emi_base_addr_offset, 20);
 	}
 
-	pr_info("mcif_emi_base=[0x%llx] remap cr: mcif=[0x%08x]\n",
+	pr_debug("mcif_emi_base=[0x%llx] remap cr: mcif=[0x%08x]\n",
 		md_shared_emi_base_addr,
 		CONSYS_REG_READ(CONN_BUS_CR_BASE +
 			CONSYS_GEN_CONN2AP_REMAP_MD_SHARE_EMI_BASE_ADDR_OFFSET_ADDR));
@@ -557,7 +557,7 @@ unsigned int consys_emi_set_remapping_reg_mt6879_gen(
 			gps_emi_base_addr, 0, emi_base_addr_offset, 20);
 	}
 
-	pr_info("gps_emi_base=[0x%llx] remap cr: gps=[0x%08x]\n",
+	pr_debug("gps_emi_base=[0x%llx] remap cr: gps=[0x%08x]\n",
 		gps_emi_base_addr,
 		CONSYS_REG_READ(CONN_BUS_CR_BASE +
 			CONSYS_GEN_CONN2AP_REMAP_GPS_EMI_BASE_ADDR_OFFSET_ADDR));
@@ -581,14 +581,14 @@ void consys_init_conninfra_sysram_mt6879_gen(void)
 	#endif
 
 	if (CONN_BUS_CR_BASE == 0) {
-		pr_notice("CONN_BUS_CR_BASE is not defined\n");
+		pr_debug("CONN_BUS_CR_BASE is not defined\n");
 		return;
 	}
 
 	/* initial conn_infra_sysram value */
 	#ifndef CONFIG_FPGA_EARLY_PORTING
 		if (CONN_INFRA_SYSRAM_SIZE == 0) {
-			pr_notice("CONN_INFRA_SYSRAM_SIZE is 0.\n");
+			pr_debug("CONN_INFRA_SYSRAM_SIZE is 0.\n");
 			return;
 		}
 
@@ -600,7 +600,7 @@ void consys_init_conninfra_sysram_mt6879_gen(void)
 				memset_io(addr, 0x0, CONN_INFRA_SYSRAM_SIZE);
 				iounmap(addr);
 			} else
-				pr_notice("[%s] remap 0x%08x fail", __func__, CONSYS_GEN_CONN_INFRA_SYSRAM_BASE_OFFSET_ADDR);
+				pr_debug("[%s] remap 0x%08x fail", __func__, CONSYS_GEN_CONN_INFRA_SYSRAM_BASE_OFFSET_ADDR);
 		#endif
 	#endif
 
@@ -614,7 +614,7 @@ void consys_init_conninfra_sysram_mt6879_gen(void)
 void connsys_get_d_die_efuse_mt6879_gen(unsigned int *p_d_die_efuse)
 {
 	if (CONN_CFG_BASE == 0) {
-		pr_notice("CONN_CFG_BASE is not defined\n");
+		pr_debug("CONN_CFG_BASE is not defined\n");
 		return;
 	}
 
@@ -628,7 +628,7 @@ void connsys_get_d_die_efuse_mt6879_gen(unsigned int *p_d_die_efuse)
 int connsys_d_die_cfg_mt6879_gen(void)
 {
 	if (CONN_RGU_ON_BASE == 0) {
-		pr_notice("CONN_RGU_ON_BASE is not defined\n");
+		pr_debug("CONN_RGU_ON_BASE is not defined\n");
 		return -1;
 	}
 
@@ -654,7 +654,7 @@ int connsys_d_die_cfg_mt6879_gen(void)
 void connsys_wt_slp_top_ctrl_adie6637_mt6879_gen(void)
 {
 	if (CONN_WT_SLP_CTL_REG_BASE == 0) {
-		pr_notice("CONN_WT_SLP_CTL_REG_BASE is not defined\n");
+		pr_debug("CONN_WT_SLP_CTL_REG_BASE is not defined\n");
 		return;
 	}
 
@@ -686,7 +686,7 @@ void connsys_wt_slp_top_ctrl_adie6637_mt6879_gen(void)
 int connsys_a_die_switch_to_gpio_mode_mt6879_gen(void)
 {
 	if (GPIO_REG_BASE == 0) {
-		pr_notice("GPIO_REG_BASE is not defined\n");
+		pr_debug("GPIO_REG_BASE is not defined\n");
 		return -1;
 	}
 
@@ -728,7 +728,7 @@ int connsys_adie_top_ck_en_ctl_mt6879_gen(unsigned int enable)
 	#endif
 
 	if (CONN_WT_SLP_CTL_REG_BASE == 0) {
-		pr_notice("CONN_WT_SLP_CTL_REG_BASE is not defined\n");
+		pr_debug("CONN_WT_SLP_CTL_REG_BASE is not defined\n");
 		return -1;
 	}
 
@@ -747,7 +747,7 @@ int connsys_adie_top_ck_en_ctl_mt6879_gen(unsigned int enable)
 				CONSYS_GEN_WB_SLP_TOP_CK_0_OFFSET_ADDR,
 				1, 0, 100, 5, check);
 			if (check != 0) {
-				pr_notice("polling enable A-die top_ck_en_0 fail, Status=0x%08x\n",
+				pr_debug("polling enable A-die top_ck_en_0 fail, Status=0x%08x\n",
 					CONSYS_REG_READ(CONN_WT_SLP_CTL_REG_BASE +
 						CONSYS_GEN_WB_SLP_TOP_CK_0_OFFSET_ADDR));
 				return check;
@@ -768,7 +768,7 @@ int connsys_adie_top_ck_en_ctl_mt6879_gen(unsigned int enable)
 				CONSYS_GEN_WB_SLP_TOP_CK_0_OFFSET_ADDR,
 				1, 0, 100, 5, check);
 			if (check != 0) {
-				pr_notice("polling disable A-die top_ck_en_0 fail, Status=0x%08x\n",
+				pr_debug("polling disable A-die top_ck_en_0 fail, Status=0x%08x\n",
 					CONSYS_REG_READ(CONN_WT_SLP_CTL_REG_BASE +
 						CONSYS_GEN_WB_SLP_TOP_CK_0_OFFSET_ADDR));
 				return check;
@@ -782,7 +782,7 @@ int connsys_adie_top_ck_en_ctl_mt6879_gen(unsigned int enable)
 int connsys_a_die_cfg_adie6637_deassert_adie_reset_mt6879_gen(void)
 {
 	if (CONN_CFG_ON_BASE == 0) {
-		pr_notice("CONN_CFG_ON_BASE is not defined\n");
+		pr_debug("CONN_CFG_ON_BASE is not defined\n");
 		return -1;
 	}
 
@@ -805,7 +805,7 @@ int connsys_a_die_cfg_adie6637_read_adie_id_mt6879_gen(
 	#endif
 
 	if (SYS_SPI_TOP == 0) {
-		pr_notice("SYS_SPI_TOP is not defined\n");
+		pr_debug("SYS_SPI_TOP is not defined\n");
 		return -1;
 	}
 
@@ -813,11 +813,11 @@ int connsys_a_die_cfg_adie6637_read_adie_id_mt6879_gen(
 	#ifndef CONFIG_FPGA_EARLY_PORTING
 		check = consys_spi_read_nolock_mt6879(SYS_SPI_TOP, CONSYS_GEN_ADIE6637_ATOP_CHIP_ID, &chip_id);
 		if (check || (chip_id & 0xffff0000) != 0x66370000) {
-			pr_notice("[%s] get a-die fail, ret=%d, adie_id=0x%x\n", __func__, check, chip_id);
+			pr_debug("[%s] get a-die fail, ret=%d, adie_id=0x%x\n", __func__, check, chip_id);
 			return -1;
 		}
 
-		pr_info("[%s] A-die chip id: 0x%08x\n", __func__, chip_id);
+		pr_debug("[%s] A-die chip id: 0x%08x\n", __func__, chip_id);
 		if (padie_id != NULL)
 			*padie_id = chip_id;
 		if (phw_ver_id != NULL)
@@ -830,17 +830,17 @@ int connsys_a_die_cfg_adie6637_read_adie_id_mt6879_gen(
 int connsys_a_die_cfg_adie6637_PART1_mt6879_gen(void)
 {
 	if (SYS_SPI_TOP == 0) {
-		pr_notice("SYS_SPI_TOP is not defined\n");
+		pr_debug("SYS_SPI_TOP is not defined\n");
 		return -1;
 	}
 
 	if (CONN_RF_SPI_MST_REG_BASE == 0) {
-		pr_notice("CONN_RF_SPI_MST_REG_BASE is not defined\n");
+		pr_debug("CONN_RF_SPI_MST_REG_BASE is not defined\n");
 		return -1;
 	}
 
 	if (CONN_THERM_CTL_BASE == 0) {
-		pr_notice("CONN_THERM_CTL_BASE is not defined\n");
+		pr_debug("CONN_THERM_CTL_BASE is not defined\n");
 		return -1;
 	}
 
@@ -880,7 +880,7 @@ int connsys_a_die_efuse_read_adie6637_check_efuse_valid_mt6879_gen(bool *pefuse_
 	#endif
 
 	if (SYS_SPI_TOP == 0) {
-		pr_notice("SYS_SPI_TOP is not defined\n");
+		pr_debug("SYS_SPI_TOP is not defined\n");
 		return -1;
 	}
 
@@ -911,7 +911,7 @@ int connsys_a_die_efuse_read_adie6637_check_efuse_valid_mt6879_gen(bool *pefuse_
 		}
 
 		if ((ret & (0x1 << 30)) != 0) {
-			pr_notice("[%s]Polling EFUSE busy = low, retry fail(%d)\n", __func__, retry);
+			pr_debug("[%s]Polling EFUSE busy = low, retry fail(%d)\n", __func__, retry);
 		}
 	#endif
 
@@ -922,7 +922,7 @@ int connsys_a_die_efuse_read_adie6637_check_efuse_valid_mt6879_gen(bool *pefuse_
 		if (((efuse_ctrl & (0x1 << 29)) >> 29) == 1)
 			efuse_valid = true;
 		else {
-			pr_notice("EFUSE is invalid\n");
+			pr_debug("EFUSE is invalid\n");
 			consys_spi_read_nolock_mt6879(SYS_SPI_TOP, 0xa10, &ret1);
 			consys_spi_read_nolock_mt6879(SYS_SPI_TOP, 0xb00, &ret2);
 			consys_spi_read_nolock_mt6879(SYS_SPI_TOP, 0xb04, &ret3);
@@ -932,7 +932,7 @@ int connsys_a_die_efuse_read_adie6637_check_efuse_valid_mt6879_gen(bool *pefuse_
 			consys_spi_read_nolock_mt6879(SYS_SPI_TOP, 0xb14, &ret7);
 			consys_spi_read_nolock_mt6879(SYS_SPI_TOP, 0x0c8, &ret8);
 			consys_spi_read_nolock_mt6879(SYS_SPI_TOP, 0x03c, &ret9);
-			pr_info("[%s] ATOP READ 0xa10=[0x%08x], 0xb00=[0x%08x], 0xb04=[0x%08x], 0xb08=[0x%08x], 0xb0c=[0x%08x], 0xb10=[0x%08x], 0xb14=[0x%08x], 0x0c8=[0x%08x], 0x03c=[0x%08x]\n",
+			pr_debug("[%s] ATOP READ 0xa10=[0x%08x], 0xb00=[0x%08x], 0xb04=[0x%08x], 0xb08=[0x%08x], 0xb0c=[0x%08x], 0xb10=[0x%08x], 0xb14=[0x%08x], 0x0c8=[0x%08x], 0x03c=[0x%08x]\n",
 				__func__, ret1, ret2, ret3, ret4, ret5, ret6, ret7, ret8, ret9);
 
 			if (consys_check_conninfra_on_domain_mt6879() == 0)
@@ -963,7 +963,7 @@ int connsys_a_die_efuse_read_adie6637_get_efuse0_info_mt6879_gen(
 	#endif
 
 	if (SYS_SPI_TOP == 0) {
-		pr_notice("SYS_SPI_TOP is not defined\n");
+		pr_debug("SYS_SPI_TOP is not defined\n");
 		return -1;
 	}
 
@@ -991,7 +991,7 @@ int connsys_a_die_efuse_read_adie6637_get_efuse1_info_mt6879_gen(
 	#endif
 
 	if (SYS_SPI_TOP == 0) {
-		pr_notice("SYS_SPI_TOP is not defined\n");
+		pr_debug("SYS_SPI_TOP is not defined\n");
 		return -1;
 	}
 
@@ -1019,7 +1019,7 @@ int connsys_a_die_efuse_read_adie6637_get_efuse2_info_mt6879_gen(
 	#endif
 
 	if (SYS_SPI_TOP == 0) {
-		pr_notice("SYS_SPI_TOP is not defined\n");
+		pr_debug("SYS_SPI_TOP is not defined\n");
 		return -1;
 	}
 
@@ -1047,7 +1047,7 @@ int connsys_a_die_efuse_read_adie6637_get_efuse3_info_mt6879_gen(
 	#endif
 
 	if (SYS_SPI_TOP == 0) {
-		pr_notice("SYS_SPI_TOP is not defined\n");
+		pr_debug("SYS_SPI_TOP is not defined\n");
 		return -1;
 	}
 
@@ -1074,7 +1074,7 @@ int connsys_a_die_thermal_cal_adie6637_conf_mt6879_gen(
 		int *poffset)
 {
 	if (SYS_SPI_TOP == 0) {
-		pr_notice("SYS_SPI_TOP is not defined\n");
+		pr_debug("SYS_SPI_TOP is not defined\n");
 		return -1;
 	}
 
@@ -1126,7 +1126,7 @@ int connsys_a_die_thermal_cal_adie6637_conf_mt6879_gen(
 int connsys_a_die_cfg_adie6637_PART2_mt6879_gen(unsigned int hw_ver_id)
 {
 	if (SYS_SPI_TOP == 0) {
-		pr_notice("SYS_SPI_TOP is not defined\n");
+		pr_debug("SYS_SPI_TOP is not defined\n");
 		return -1;
 	}
 
@@ -1305,9 +1305,9 @@ int connsys_a_die_efuse_read_get_efuse_info_mt6879_gen(
 		ret[3] = connsys_a_die_efuse_read_adie6637_get_efuse3_info_mt6879_gen(efuse_valid, &(efuse_list[3]));
 		CONSYS_REG_WRITE(psysram_efuse_list[3], efuse_list[3]);
 
-		pr_info("efuse = [0x%08x, 0x%08x, 0x%08x, 0x%08x]", efuse_list[0], efuse_list[1], efuse_list[2], efuse_list[3]);
+		pr_debug("efuse = [0x%08x, 0x%08x, 0x%08x, 0x%08x]", efuse_list[0], efuse_list[1], efuse_list[2], efuse_list[3]);
 		if (ret[0] || ret[1] || ret[2] || ret[3])
-			pr_notice("efuse read error: [%d, %d, %d, %d]", ret[0], ret[1], ret[2], ret[3]);
+			pr_debug("efuse read error: [%d, %d, %d, %d]", ret[0], ret[1], ret[2], ret[3]);
 
 		connsys_a_die_thermal_cal_adie6637_conf_mt6879_gen(
 			efuse_valid, efuse_list, efuse_size, pslop_molecule, pthermal_b, poffset);
@@ -1330,7 +1330,7 @@ int connsys_a_die_cfg_PART2_mt6879_gen(unsigned int hw_ver_id)
 int connsys_a_die_switch_to_conn_mode_mt6879_gen(void)
 {
 	if (GPIO_REG_BASE == 0) {
-		pr_notice("GPIO_REG_BASE is not defined\n");
+		pr_debug("GPIO_REG_BASE is not defined\n");
 		return -1;
 	}
 
@@ -1346,7 +1346,7 @@ int connsys_a_die_switch_to_conn_mode_mt6879_gen(void)
 void connsys_wt_slp_top_power_saving_ctrl_adie6637_sleep_mode_1_mt6879_gen(void)
 {
 	if (CONN_WT_SLP_CTL_REG_BASE == 0) {
-		pr_notice("CONN_WT_SLP_CTL_REG_BASE is not defined\n");
+		pr_debug("CONN_WT_SLP_CTL_REG_BASE is not defined\n");
 		return;
 	}
 
@@ -1394,7 +1394,7 @@ void connsys_wt_slp_top_power_saving_ctrl_adie6637_sleep_mode_1_mt6879_gen(void)
 void connsys_wt_slp_top_power_saving_ctrl_adie6637_sleep_mode_2_mt6879_gen(void)
 {
 	if (CONN_WT_SLP_CTL_REG_BASE == 0) {
-		pr_notice("CONN_WT_SLP_CTL_REG_BASE is not defined\n");
+		pr_debug("CONN_WT_SLP_CTL_REG_BASE is not defined\n");
 		return;
 	}
 
@@ -1442,7 +1442,7 @@ void connsys_wt_slp_top_power_saving_ctrl_adie6637_sleep_mode_2_mt6879_gen(void)
 void connsys_wt_slp_top_power_saving_ctrl_adie6637_sleep_mode_3_mt6879_gen(void)
 {
 	if (CONN_WT_SLP_CTL_REG_BASE == 0) {
-		pr_notice("CONN_WT_SLP_CTL_REG_BASE is not defined\n");
+		pr_debug("CONN_WT_SLP_CTL_REG_BASE is not defined\n");
 		return;
 	}
 
@@ -1510,12 +1510,12 @@ int connsys_afe_wbg_cal_mt6879_gen(
 		unsigned int spi_semaphore_timeout_usec)
 {
 	if (SYS_SPI_TOP == 0) {
-		pr_notice("SYS_SPI_TOP is not defined\n");
+		pr_debug("SYS_SPI_TOP is not defined\n");
 		return -1;
 	}
 
 	if (CONN_AFE_CTL_BASE == 0) {
-		pr_notice("CONN_AFE_CTL_BASE is not defined\n");
+		pr_debug("CONN_AFE_CTL_BASE is not defined\n");
 		return -1;
 	}
 
@@ -1523,7 +1523,7 @@ int connsys_afe_wbg_cal_mt6879_gen(
 	#ifndef CONFIG_FPGA_EARLY_PORTING
 		/* Get semaphore before read */
 		if (consys_sema_acquire_timeout_mt6879(spi_semaphore_index, spi_semaphore_timeout_usec) == CONN_SEMA_GET_FAIL) {
-			pr_notice("[SPI WRITE] Require semaphore fail\n");
+			pr_debug("[SPI WRITE] Require semaphore fail\n");
 			return CONNINFRA_SPI_OP_FAIL;
 		}
 
@@ -1652,7 +1652,7 @@ int connsys_afe_wbg_cal_mt6879_gen(
 	#ifndef CONFIG_FPGA_EARLY_PORTING
 		/* Get semaphore before read */
 		if (consys_sema_acquire_timeout_mt6879(spi_semaphore_index, spi_semaphore_timeout_usec) == CONN_SEMA_GET_FAIL) {
-			pr_notice("[SPI WRITE] Require semaphore fail\n");
+			pr_debug("[SPI WRITE] Require semaphore fail\n");
 			return CONNINFRA_SPI_OP_FAIL;
 		}
 
@@ -1667,7 +1667,7 @@ int connsys_afe_wbg_cal_mt6879_gen(
 int connsys_subsys_pll_initial_xtal_26000k_mt6879_gen(void)
 {
 	if (CONN_AFE_CTL_BASE == 0) {
-		pr_notice("CONN_AFE_CTL_BASE is not defined\n");
+		pr_debug("CONN_AFE_CTL_BASE is not defined\n");
 		return -1;
 	}
 
@@ -1689,49 +1689,49 @@ int connsys_low_power_setting_mt6879_gen(void)
 	unsigned int addr_offset = 0;
 
 	if (CONN_CFG_ON_BASE == 0) {
-		pr_notice("CONN_CFG_ON_BASE is not defined\n");
+		pr_debug("CONN_CFG_ON_BASE is not defined\n");
 		return -1;
 	}
 
 	if (CONN_RGU_ON_BASE == 0) {
-		pr_notice("CONN_RGU_ON_BASE is not defined\n");
+		pr_debug("CONN_RGU_ON_BASE is not defined\n");
 		return -1;
 	}
 
 	if (CONN_CFG_BASE == 0) {
-		pr_notice("CONN_CFG_BASE is not defined\n");
+		pr_debug("CONN_CFG_BASE is not defined\n");
 		return -1;
 	}
 
 	if (CONN_BUS_CR_ON_BASE == 0) {
-		pr_notice("CONN_BUS_CR_ON_BASE is not defined\n");
+		pr_debug("CONN_BUS_CR_ON_BASE is not defined\n");
 		return -1;
 	}
 
 	if (CONN_BUS_CR_BASE == 0) {
-		pr_notice("CONN_BUS_CR_BASE is not defined\n");
+		pr_debug("CONN_BUS_CR_BASE is not defined\n");
 		return -1;
 	}
 
 	if (CONN_OFF_DEBUG_CTRL_AO_BASE == 0) {
-		pr_notice("CONN_OFF_DEBUG_CTRL_AO_BASE is not defined\n");
+		pr_debug("CONN_OFF_DEBUG_CTRL_AO_BASE is not defined\n");
 		return -1;
 	}
 
 	if (CONN_CLKGEN_TOP_BASE == 0) {
-		pr_notice("CONN_CLKGEN_TOP_BASE is not defined\n");
+		pr_debug("CONN_CLKGEN_TOP_BASE is not defined\n");
 		return -1;
 	}
 
 	if (CONN_HOST_CSR_TOP_BASE == 0) {
-		pr_notice("CONN_HOST_CSR_TOP_BASE is not defined\n");
+		pr_debug("CONN_HOST_CSR_TOP_BASE is not defined\n");
 		return -1;
 	}
 
 	vir_addr_consys_gen_conn_infra_sysram_base_offset = ioremap(CONSYS_GEN_CONN_INFRA_SYSRAM_BASE_OFFSET_ADDR, 0x10);
 
 	if (!vir_addr_consys_gen_conn_infra_sysram_base_offset) {
-		pr_notice("vir_addr_consys_gen_conn_infra_sysram_base_offset(%x) ioremap fail\n",
+		pr_debug("vir_addr_consys_gen_conn_infra_sysram_base_offset(%x) ioremap fail\n",
 			CONSYS_GEN_CONN_INFRA_SYSRAM_BASE_OFFSET_ADDR);
 		return -1;
 	}
@@ -2096,12 +2096,12 @@ int consys_conninfra_wakeup_mt6879_gen(void)
 	int check = 0;
 
 	if (CONN_HOST_CSR_TOP_BASE == 0) {
-		pr_notice("CONN_HOST_CSR_TOP_BASE is not defined\n");
+		pr_debug("CONN_HOST_CSR_TOP_BASE is not defined\n");
 		return -1;
 	}
 
 	if (CONN_CFG_ON_BASE == 0) {
-		pr_notice("CONN_CFG_ON_BASE is not defined\n");
+		pr_debug("CONN_CFG_ON_BASE is not defined\n");
 		return -1;
 	}
 
@@ -2123,7 +2123,7 @@ int consys_conninfra_wakeup_mt6879_gen(void)
 		CONSYS_GEN_CONN_INFRA_CFG_PWRCTRL1_OFFSET_ADDR,
 		16, 1, 10, 500, check);
 	if (check != 0) {
-		pr_notice("check CONN_INFRA cmdbt restore done fail, Status=0x%08x\n",
+		pr_debug("check CONN_INFRA cmdbt restore done fail, Status=0x%08x\n",
 			CONSYS_REG_READ(CONN_CFG_ON_BASE +
 				CONSYS_GEN_CONN_INFRA_CFG_PWRCTRL1_OFFSET_ADDR));
 	}
@@ -2155,7 +2155,7 @@ int connsys_adie_clock_buffer_setting_mt6879_gen(
 	#endif
 
 	if (SYS_SPI_TOP == 0) {
-		pr_notice("SYS_SPI_TOP is not defined\n");
+		pr_debug("SYS_SPI_TOP is not defined\n");
 		return -1;
 	}
 
@@ -2168,7 +2168,7 @@ int connsys_adie_clock_buffer_setting_mt6879_gen(
 		/* Get semaphore before read */
 		#ifndef CONFIG_FPGA_EARLY_PORTING
 			if (consys_sema_acquire_timeout_mt6879(spi_semaphore_index, spi_semaphore_timeout_usec) == CONN_SEMA_GET_FAIL) {
-				pr_notice("[SPI WRITE] Require semaphore fail\n");
+				pr_debug("[SPI WRITE] Require semaphore fail\n");
 				return CONNINFRA_SPI_OP_FAIL;
 			}
 
@@ -2238,7 +2238,7 @@ int connsys_adie_clock_buffer_setting_mt6879_gen(
 int consys_conninfra_sleep_mt6879_gen(void)
 {
 	if (CONN_HOST_CSR_TOP_BASE == 0) {
-		pr_notice("CONN_HOST_CSR_TOP_BASE is not defined\n");
+		pr_debug("CONN_HOST_CSR_TOP_BASE is not defined\n");
 		return -1;
 	}
 

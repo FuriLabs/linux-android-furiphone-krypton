@@ -116,7 +116,7 @@ int consys_plt_pmic_get_from_dts_mt6879(struct platform_device *pdev, struct con
 		vcn13_nb.notifier_call = consys_vcn13_oc_notify;
 		ret = devm_regulator_register_notifier(reg_VCN13, &vcn13_nb);
 		if (ret)
-			pr_info("VCN13 regulator notifier request failed\n");
+			pr_debug("VCN13 regulator notifier request failed\n");
 	}
 
 	reg_VRFIO18 = devm_regulator_get(&pdev->dev, "mt6363_vrfio18");
@@ -127,7 +127,7 @@ int consys_plt_pmic_get_from_dts_mt6879(struct platform_device *pdev, struct con
 		vrfio18_nb.notifier_call = consys_vrfio18_oc_notify;
 		ret = devm_regulator_register_notifier(reg_VRFIO18, &vrfio18_nb);
 		if (ret)
-			pr_info("VRFIO18 regulator notifier request failed\n");
+			pr_debug("VRFIO18 regulator notifier request failed\n");
 	}
 
 	reg_VCN33_1 = devm_regulator_get(&pdev->dev, "mt6368_vcn33_1");
@@ -147,7 +147,7 @@ int consys_plt_pmic_get_from_dts_mt6879(struct platform_device *pdev, struct con
 	}
 	reg_buckboost = devm_regulator_get_optional(&pdev->dev, "rt6160-buckboost");
 	if (IS_ERR(reg_buckboost)) {
-		pr_info("Regulator_get buckboost fail\n");
+		pr_debug("Regulator_get buckboost fail\n");
 		reg_buckboost = NULL;
 	}
 
@@ -158,7 +158,7 @@ int consys_plt_pmic_common_power_ctrl_mt6879(unsigned int enable)
 {
 	int ret = 0;
 #ifdef CONFIG_FPGA_EARLY_PORTING
-	pr_info("[%s] not support on FPGA", __func__);
+	pr_debug("[%s] not support on FPGA", __func__);
 #else
 	int sleep_mode;
 
@@ -190,7 +190,7 @@ int consys_plt_pmic_common_power_ctrl_mt6879(unsigned int enable)
 		regulator_set_mode(reg_VCN13, REGULATOR_MODE_NORMAL);
 		ret = regulator_disable(reg_VCN13);
 		if (ret)
-			pr_notice("%s regulator_disable err: %d", __func__, ret);
+			pr_debug("%s regulator_disable err: %d", __func__, ret);
 
 		/* set PMIC VRFIO18 LDO SW_EN = 0, SW_LP =0 (sw disable) */
 		regulator_set_mode(reg_VRFIO18, REGULATOR_MODE_NORMAL);
@@ -198,7 +198,7 @@ int consys_plt_pmic_common_power_ctrl_mt6879(unsigned int enable)
 		if (sleep_mode == 1) {
 			ret = regulator_disable(reg_VRFIO18);
 			if (ret)
-				pr_notice("%s regulator_disable err: %d", __func__, ret);
+				pr_debug("%s regulator_disable err: %d", __func__, ret);
 		}
 
 		/* Set buckboost to 3.45V (for VCN33_1 & VCN33_2) */
@@ -229,7 +229,7 @@ int consys_plt_pmic_common_power_low_power_mode_mt6879(unsigned int enable)
 {
 	int ret = 0;
 #ifdef CONFIG_FPGA_EARLY_PORTING
-	pr_info("[%s] not support on FPGA", __func__);
+	pr_debug("[%s] not support on FPGA", __func__);
 #else
 	int sleep_mode;
 	struct regmap *r = g_regmap_mt6363;
@@ -241,7 +241,7 @@ int consys_plt_pmic_common_power_low_power_mode_mt6879(unsigned int enable)
 	/* Notice that buckboost might not be enabled. */
 	if (reg_buckboost) {
 		regulator_set_voltage(reg_buckboost, 3650000, 3650000);
-		pr_info("Set buckboost to 3.65V\n");
+		pr_debug("Set buckboost to 3.65V\n");
 	}
 
 	if (consys_is_rc_mode_enable_mt6879()) {
@@ -269,7 +269,7 @@ int consys_plt_pmic_common_power_low_power_mode_mt6879(unsigned int enable)
 			/* set PMIC VRFIO18 LDO SW_EN = 0, SW_LP =0 */
 			ret = regulator_disable(reg_VRFIO18);
 			if (ret)
-				pr_notice("%s regulator_disable err: %d", __func__, ret);
+				pr_debug("%s regulator_disable err: %d", __func__, ret);
 			regulator_set_mode(reg_VRFIO18, REGULATOR_MODE_NORMAL); /* SW_LP = 0 */
 		}
 
@@ -345,11 +345,11 @@ int consys_plt_pmic_wifi_power_ctrl_mt6879(unsigned int enable)
 
 	ret = consys_pmic_vcn33_1_power_ctl_mt6879_lg(enable);
 	if (ret)
-		pr_info("%s VCN33_1 fail\n", (enable? "Enable" : "Disable"));
+		pr_debug("%s VCN33_1 fail\n", (enable? "Enable" : "Disable"));
 
 	ret = consys_pmic_vcn33_2_power_ctl_mt6879_lg(enable);
 	if (ret)
-		pr_info("%s VCN33_2 fail\n", (enable? "Enable" : "Disable"));
+		pr_debug("%s VCN33_2 fail\n", (enable? "Enable" : "Disable"));
 
 	return ret;
 }
@@ -408,16 +408,16 @@ static int consys_pmic_vcn33_1_power_ctl_mt6879_lg(bool enable)
 	else
 		enable_count--;
 
-	pr_info("%s enable_count %d\n", __func__, enable_count);
+	pr_debug("%s enable_count %d\n", __func__, enable_count);
 	if (enable_count < 0 || enable_count > 2) {
-		pr_info("enable_count %d is unexpected!!!\n", enable_count);
+		pr_debug("enable_count %d is unexpected!!!\n", enable_count);
 		return 0;
 	}
 
 	if (enable_count == 0) {
 		ret = regulator_disable(reg_VCN33_1);
 		if (ret)
-			pr_notice("%s regulator_disable err: %d", __func__, ret);
+			pr_debug("%s regulator_disable err: %d", __func__, ret);
 		return ret;
 	}
 
@@ -437,7 +437,7 @@ static int consys_pmic_vcn33_1_power_ctl_mt6879_lg(bool enable)
 	regulator_set_mode(reg_VCN33_1, REGULATOR_MODE_NORMAL);
 	ret = regulator_enable(reg_VCN33_1);
 	if (ret)
-		pr_notice("%s regulator_enable err: %d", __func__, ret);
+		pr_debug("%s regulator_enable err: %d", __func__, ret);
 
 	return ret;
 }
@@ -451,7 +451,7 @@ static int consys_pmic_vcn33_2_power_ctl_mt6879_lg(bool enable)
 	if (!enable) {
 		ret = regulator_disable(reg_VCN33_2);
 		if (ret)
-			pr_notice("%s regulator_disable err: %d", __func__, ret);
+			pr_debug("%s regulator_disable err: %d", __func__, ret);
         } else {
 		/* 1. set PMIC VCN33_2 LDO PMIC HW mode control by SRCCLKENA0 */
 		/* 1.1. set PMIC VCN33_2 LDO op_mode = 1 */
@@ -464,7 +464,7 @@ static int consys_pmic_vcn33_2_power_ctl_mt6879_lg(bool enable)
 		regulator_set_mode(reg_VCN33_2, REGULATOR_MODE_NORMAL);
 		ret = regulator_enable(reg_VCN33_2);
 		if (ret)
-			pr_notice("%s regulator_enable err: %d", __func__, ret);
+			pr_debug("%s regulator_enable err: %d", __func__, ret);
 	}
 
 	return ret;
@@ -501,7 +501,7 @@ static int consys_pmic_vant18_power_ctl_mt6879(bool enable)
 		if (consys_is_rc_mode_enable_mt6879() == 0 && regulator_is_enabled(reg_VANT18)) {
 			ret = regulator_disable(reg_VANT18);
 			if (ret)
-				pr_notice("%s regulator_disable err: %d", __func__, ret);
+				pr_debug("%s regulator_disable err: %d", __func__, ret);
 		}
 		return 0;
 	}
@@ -528,7 +528,7 @@ static int consys_pmic_vant18_power_ctl_mt6879(bool enable)
 		regulator_set_mode(reg_VANT18, REGULATOR_MODE_NORMAL);
 		ret = regulator_enable(reg_VANT18);
 		if (ret)
-			pr_notice("%s regulator_enable err: %d", __func__, ret);
+			pr_debug("%s regulator_enable err: %d", __func__, ret);
 	}
 
 	return ret;
@@ -548,7 +548,7 @@ static void dump_adie_cr(enum sys_spi_subsystem subsystem, const unsigned int *a
 		if (snprintf(tmp, LOG_TMP_BUF_SZ, "[0x%04x: 0x%08x]", adie_cr[i], adie_value) >= 0)
 			strncat(tmp_buf, tmp, strlen(tmp));
 	}
-	pr_info("%s:%s\n", title, tmp_buf);
+	pr_debug("%s:%s\n", title, tmp_buf);
 }
 
 static int consys_plt_pmic_event_notifier_mt6879(unsigned int id, unsigned int event)
@@ -570,7 +570,7 @@ static int consys_plt_pmic_event_notifier_mt6879(unsigned int id, unsigned int e
 
 	ret = consys_hw_force_conninfra_wakeup();
 	if (ret) {
-		pr_info("[%s] force conninfra wakeup fail\n", __func__);
+		pr_debug("[%s] force conninfra wakeup fail\n", __func__);
 		return -1;
 	}
 
@@ -596,7 +596,7 @@ static int consys_vcn13_oc_notify(struct notifier_block *nb, unsigned long event
 		return NOTIFY_OK;
 
 	oc_counter++;
-	pr_info("[%s] VCN13 OC times: %d\n", __func__, oc_counter);
+	pr_debug("[%s] VCN13 OC times: %d\n", __func__, oc_counter);
 
 	if (oc_counter <= 30)
 		oc_dump = 1;
@@ -620,7 +620,7 @@ static int consys_vrfio18_oc_notify(struct notifier_block *nb, unsigned long eve
 		return NOTIFY_OK;
 
 	oc_counter++;
-	pr_info("[%s] VRFIO18 OC times: %d\n", __func__, oc_counter);
+	pr_debug("[%s] VRFIO18 OC times: %d\n", __func__, oc_counter);
 
 	if (oc_counter <= 30)
 		oc_dump = 1;
@@ -642,7 +642,7 @@ void consys_pmic_debug_log_mt6879(void)
 	int vcn13 = 0, vrfio18 = 0, vcn33_1 = 0, vcn33_2 = 0, vant18 = 0;
 
 	if (!r || !r2) {
-		pr_notice("%s regmap is NULL\n", __func__);
+		pr_debug("%s regmap is NULL\n", __func__);
 		return;
 	}
 
@@ -652,6 +652,6 @@ void consys_pmic_debug_log_mt6879(void)
 	regmap_read(r2, MT6368_RG_LDO_VCN33_2_MON_ADDR, &vcn33_2);
 	regmap_read(r2, MT6368_RG_LDO_VANT18_MON_ADDR, &vant18);
 
-	pr_info("%s vcn13:0x%08x,vrfio18:0x%08x,vcn33_1:0x%08x,vcn33_2:0x%08x,vant18:0x%08x\n",
+	pr_debug("%s vcn13:0x%08x,vrfio18:0x%08x,vcn33_1:0x%08x,vcn33_2:0x%08x,vant18:0x%08x\n",
 		__func__, vcn13, vrfio18, vcn33_1, vcn33_2, vant18);
 }

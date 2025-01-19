@@ -115,7 +115,7 @@ int consys_plt_pmic_get_from_dts_mt6877(struct platform_device *pdev, struct con
 		vcn13_nb.notifier_call = consys_vcn13_oc_notify;
 		ret = devm_regulator_register_notifier(reg_VCN13, &vcn13_nb);
 		if (ret)
-			pr_info("VCN13 regulator notifier request failed\n");
+			pr_debug("VCN13 regulator notifier request failed\n");
 	}
 
 	reg_VCN18 = regulator_get(&pdev->dev, "vcn18");
@@ -139,7 +139,7 @@ int consys_plt_pmic_get_from_dts_mt6877(struct platform_device *pdev, struct con
 int consys_plt_pmic_common_power_ctrl_mt6877(unsigned int enable)
 {
 #ifdef CONFIG_FPGA_EARLY_PORTING
-	pr_info("[%s] not support on FPGA", __func__);
+	pr_debug("[%s] not support on FPGA", __func__);
 #else
 	int ret;
 
@@ -263,7 +263,7 @@ int consys_plt_pmic_common_power_ctrl_mt6877(unsigned int enable)
 int consys_plt_pmic_common_power_low_power_mode_mt6877(unsigned int enable)
 {
 #ifdef CONFIG_FPGA_EARLY_PORTING
-	pr_info("[%s] not support on FPGA", __func__);
+	pr_debug("[%s] not support on FPGA", __func__);
 #else
 	if (consys_is_rc_mode_enable_mt6877()) {
 		if (enable) {
@@ -319,7 +319,7 @@ int consys_plt_pmic_fm_power_ctrl_mt6877(unsigned int enable)
 int consys_pmic_vcn33_1_power_ctl_mt6877(bool enable, struct regulator* reg_VCN33_1)
 {
 #ifdef CONFIG_FPGA_EARLY_PORTING
-	pr_info("[%s] not support on FPGA", __func__);
+	pr_debug("[%s] not support on FPGA", __func__);
 #else
 	int ret;
 	if (enable) {
@@ -384,7 +384,7 @@ int consys_pmic_vcn33_1_power_ctl_mt6877(bool enable, struct regulator* reg_VCN3
 int consys_pmic_vcn33_2_power_ctl_mt6877(bool enable)
 {
 #ifdef CONFIG_FPGA_EARLY_PORTING
-	pr_info("[%s] not support on FPGA", __func__);
+	pr_debug("[%s] not support on FPGA", __func__);
 #else
 	int ret;
 
@@ -468,12 +468,12 @@ int consys_plt_pmic_raise_voltage_mt6877(unsigned int drv_type, bool raise, bool
 	if (curr_vcn13_state == next_state) {
 		return 0;
 	}
-	pr_info("[%s][drv_type(%d) raise(%d) onoff(%d)][bt_raise(%d) curr_state(%d) next_state(%d)]\n",
+	pr_debug("[%s][drv_type(%d) raise(%d) onoff(%d)][bt_raise(%d) curr_state(%d) next_state(%d)]\n",
 		__func__, drv_type, raise, onoff, bt_raise, curr_vcn13_state, next_state);
 
 	/* Check raise window, the duration to previous action should be 1 ms. */
 	while (atomic_read(&g_voltage_change_status) == 1);
-	pr_info("[%s] check down\n", __func__);
+	pr_debug("[%s] check down\n", __func__);
 	curr_vcn13_state = next_state;
 
 	switch (curr_vcn13_state) {
@@ -614,10 +614,10 @@ int consys_plt_pmic_event_notifier_mt6877(unsigned int id, unsigned int event)
 	int i;
 
 	if (event == 7)
-		pr_info("[%s] Debug OC use: print a-die status\n", __func__);
+		pr_debug("[%s] Debug OC use: print a-die status\n", __func__);
 	else {
 		oc_counter++;
-		pr_info("[%s] VCN13 OC times: %d\n", __func__, oc_counter);
+		pr_debug("[%s] VCN13 OC times: %d\n", __func__, oc_counter);
 	}
 
 	if (oc_counter <= 30)
@@ -658,12 +658,12 @@ int consys_plt_pmic_event_notifier_mt6877(unsigned int id, unsigned int event)
 	dump1_b = CONSYS_REG_READ(CONN_HOST_CSR_TOP_DBG_DUMMY_2_ADDR);
 
 	dump2_a = CONSYS_REG_READ(SPM_MD32PCM_SCU_STA0);
-	pr_info("0x1806_02CC=[0x%08x] 0x1806_02C8=[0x%08x] 0x1000_6110=[0x%08x]",
+	pr_debug("0x1806_02CC=[0x%08x] 0x1806_02C8=[0x%08x] 0x1000_6110=[0x%08x]",
 		dump1_a, dump1_b, dump2_a);
 
 	addr = ioremap(0x1000F900, 0x100);
 	if (addr) {
-		pr_info("[rc_status] [0x%08x][0x%08x][0x%08x][0x%08x]",
+		pr_debug("[rc_status] [0x%08x][0x%08x][0x%08x][0x%08x]",
 			CONSYS_REG_READ(addr + 0x28), CONSYS_REG_READ(addr + 0x2c),
 			CONSYS_REG_READ(addr + 0x30), CONSYS_REG_READ(addr + 0x34));
 		memset(tmp_buf, '\0', LOG_TMP_BUF_SZ);
@@ -672,7 +672,7 @@ int consys_plt_pmic_event_notifier_mt6877(unsigned int id, unsigned int event)
 				CONSYS_REG_READ(addr + i)) >= 0)
 				strncat(tmp_buf, tmp, strlen(tmp));
 		}
-		pr_info("[rc_trace] %s", tmp_buf);
+		pr_debug("[rc_trace] %s", tmp_buf);
 
 		memset(tmp_buf, '\0', LOG_TMP_BUF_SZ);
 		for (i = 0x98; i <= 0xd4; i += 4) {
@@ -680,15 +680,15 @@ int consys_plt_pmic_event_notifier_mt6877(unsigned int id, unsigned int event)
 				CONSYS_REG_READ(addr + i)) >= 0)
 				strncat(tmp_buf, tmp, strlen(tmp));
 		}
-		pr_info("[rc_timer] %s", tmp_buf);
+		pr_debug("[rc_timer] %s", tmp_buf);
 		iounmap(addr);
 	} else {
-		pr_info("[%s] ioremap 0x1000_F900 fail", __func__);
+		pr_debug("[%s] ioremap 0x1000_F900 fail", __func__);
 	}
 
 	ret = consys_hw_force_conninfra_wakeup();
 	if (ret) {
-		pr_info("[%s] force conninfra wakeup fail\n", __func__);
+		pr_debug("[%s] force conninfra wakeup fail\n", __func__);
 		return NOTIFY_OK;
 	}
 
@@ -698,7 +698,7 @@ int consys_plt_pmic_event_notifier_mt6877(unsigned int id, unsigned int event)
 			CONSYS_REG_READ(CONN_REG_CONN_WT_SLP_CTL_REG_ADDR + i)) >= 0)
 			strncat(tmp_buf, tmp, strlen(tmp));
 	}
-	pr_info("a-die ck:%s [0x%08x]", tmp_buf, CONSYS_REG_READ(CONN_WT_SLP_CTL_REG_WB_CK_STA_ADDR));
+	pr_debug("a-die ck:%s [0x%08x]", tmp_buf, CONSYS_REG_READ(CONN_WT_SLP_CTL_REG_WB_CK_STA_ADDR));
 
 #if 0
 	connsys_adie_top_ck_en_ctl_mt6877(true);
@@ -712,7 +712,7 @@ int consys_plt_pmic_event_notifier_mt6877(unsigned int id, unsigned int event)
 #if 0
 	connsys_adie_top_ck_en_ctl_mt6877(false);
 #endif
-	pr_info("ATOP:%s\n", tmp_buf);
+	pr_debug("ATOP:%s\n", tmp_buf);
 
 	consys_hw_force_conninfra_sleep();
 	return NOTIFY_OK;

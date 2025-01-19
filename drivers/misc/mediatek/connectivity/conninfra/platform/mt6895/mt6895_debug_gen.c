@@ -75,7 +75,7 @@ void update_debug_read_info_mt6895_debug_gen(
 
 	if (tag != NULL) {
 		if (snprintf(&(info->tag[info->length][0]), DEBUG_TAG_SIZE, "%s", tag) < 0)
-			pr_notice("%s snprintf fail", __func__);
+			pr_debug("%s snprintf fail", __func__);
 	}
 
 	info->rd_addr[info->length] = rd_addr;
@@ -108,7 +108,7 @@ void update_debug_write_info_mt6895_debug_gen(
 		len = snprintf(&(info->tag[info->length][0]), DEBUG_TAG_SIZE, "%s", "");
 
 	if (len < 0)
-		pr_notice("%s snprintf fail", __func__);
+		pr_debug("%s snprintf fail", __func__);
 
 	info->wr_addr[info->length] = wr_addr;
 	info->wr_addr_lsb[info->length] = wr_addr_lsb;
@@ -129,19 +129,19 @@ void consys_print_power_debug_dbg_level_0_mt6895_debug_gen(
 		return;
 
 	if (!vir_addr_consys_dbg_gen_srclkenrc_base_mt6895) {
-		pr_notice("vir_addr_consys_dbg_gen_srclkenrc_base_mt6895(%x) ioremap fail\n",
+		pr_debug("vir_addr_consys_dbg_gen_srclkenrc_base_mt6895(%x) ioremap fail\n",
 				CONSYS_DBG_GEN_SRCLKENRC_BASE_ADDR);
 		return;
 	}
 
 	if (!vir_addr_consys_dbg_gen_topckgen_base_mt6895) {
-		pr_notice("vir_addr_consys_dbg_gen_topckgen_base_mt6895(%x) ioremap fail\n",
+		pr_debug("vir_addr_consys_dbg_gen_topckgen_base_mt6895(%x) ioremap fail\n",
 				CONSYS_DBG_GEN_TOPCKGEN_BASE_ADDR);
 		return;
 	}
 
 	if (SPM_REG_BASE == 0) {
-		pr_notice("SPM_REG_BASE is not defined\n");
+		pr_debug("SPM_REG_BASE is not defined\n");
 		return;
 	}
 
@@ -506,13 +506,13 @@ void consys_print_power_debug_dbg_level_1_mt6895_debug_gen(
 		return;
 
 	if (!vir_addr_consys_dbg_gen_conn_dbg_ctl_base_mt6895) {
-		pr_notice("vir_addr_consys_dbg_gen_conn_dbg_ctl_base_mt6895(%x) ioremap fail\n",
+		pr_debug("vir_addr_consys_dbg_gen_conn_dbg_ctl_base_mt6895(%x) ioremap fail\n",
 				CONSYS_DBG_GEN_CONN_DBG_CTL_BASE_ADDR);
 		return;
 	}
 
 	if (CONN_HOST_CSR_TOP_BASE == 0) {
-		pr_notice("CONN_HOST_CSR_TOP_BASE is not defined\n");
+		pr_debug("CONN_HOST_CSR_TOP_BASE is not defined\n");
 		return;
 	}
 
@@ -638,38 +638,38 @@ void consys_print_power_debug_dbg_level_2_mt6895_debug_gen(
 		return;
 
 	if (!vir_addr_consys_dbg_gen_conn_infra_sysram_base_offset_mt6895) {
-		pr_notice("vir_addr_consys_dbg_gen_conn_infra_sysram_base_offset_mt6895(%x) ioremap fail\n",
+		pr_debug("vir_addr_consys_dbg_gen_conn_infra_sysram_base_offset_mt6895(%x) ioremap fail\n",
 				CONSYS_DBG_GEN_CONN_INFRA_SYSRAM_BASE_OFFSET_ADDR);
 		return;
 	}
 
 	if (CONN_CFG_BASE == 0) {
-		pr_notice("CONN_CFG_BASE is not defined\n");
+		pr_debug("CONN_CFG_BASE is not defined\n");
 		return;
 	}
 
 	if (CONN_CLKGEN_TOP_BASE == 0) {
-		pr_notice("CONN_CLKGEN_TOP_BASE is not defined\n");
+		pr_debug("CONN_CLKGEN_TOP_BASE is not defined\n");
 		return;
 	}
 
 	if (CONN_CFG_ON_BASE == 0) {
-		pr_notice("CONN_CFG_ON_BASE is not defined\n");
+		pr_debug("CONN_CFG_ON_BASE is not defined\n");
 		return;
 	}
 
 	if (CONN_RGU_ON_BASE == 0) {
-		pr_notice("CONN_RGU_ON_BASE is not defined\n");
+		pr_debug("CONN_RGU_ON_BASE is not defined\n");
 		return;
 	}
 
 	if (CONN_WT_SLP_CTL_REG_BASE == 0) {
-		pr_notice("CONN_WT_SLP_CTL_REG_BASE is not defined\n");
+		pr_debug("CONN_WT_SLP_CTL_REG_BASE is not defined\n");
 		return;
 	}
 
 	if (CONN_RF_SPI_MST_REG_BASE == 0) {
-		pr_notice("CONN_RF_SPI_MST_REG_BASE is not defined\n");
+		pr_debug("CONN_RF_SPI_MST_REG_BASE is not defined\n");
 		return;
 	}
 
@@ -878,7 +878,7 @@ void consys_print_bus_debug_dbg_level_1_mt6895_debug_gen(
 		return;
 
 	if (!vir_addr_consys_dbg_gen_conn_dbg_ctl_base_mt6895) {
-		pr_notice("vir_addr_consys_dbg_gen_conn_dbg_ctl_base_mt6895(%x) ioremap fail\n",
+		pr_debug("vir_addr_consys_dbg_gen_conn_dbg_ctl_base_mt6895(%x) ioremap fail\n",
 				CONSYS_DBG_GEN_CONN_DBG_CTL_BASE_ADDR);
 		return;
 	}
@@ -1298,18 +1298,18 @@ void consys_print_bus_debug_dbg_level_2_mt6895_debug_gen(
 		return;
 
 	if (!vir_addr_0x1804c000_mt6895) {
-		pr_notice("vir_addr_0x1804c000_mt6895(%x) ioremap fail\n",
+		pr_debug("vir_addr_0x1804c000_mt6895(%x) ioremap fail\n",
 				0x1804c000);
 		return;
 	}
 
 	if (CONN_BUS_CR_ON_BASE == 0) {
-		pr_notice("CONN_BUS_CR_ON_BASE is not defined\n");
+		pr_debug("CONN_BUS_CR_ON_BASE is not defined\n");
 		return;
 	}
 
 	if (CONN_OFF_DEBUG_CTRL_AO_BASE == 0) {
-		pr_notice("CONN_OFF_DEBUG_CTRL_AO_BASE is not defined\n");
+		pr_debug("CONN_OFF_DEBUG_CTRL_AO_BASE is not defined\n");
 		return;
 	}
 
@@ -1415,7 +1415,7 @@ void consys_print_bus_slpprot_debug_dbg_level_2_mt6895_debug_gen(
 		return;
 
 	if (CONN_CFG_ON_BASE == 0) {
-		pr_notice("CONN_CFG_ON_BASE is not defined\n");
+		pr_debug("CONN_CFG_ON_BASE is not defined\n");
 		return;
 	}
 
@@ -1481,7 +1481,7 @@ void consys_print_bus_slpprot_debug_dbg_level_0_mt6895_debug_gen(
 		return;
 
 	if (INFRACFG_AO_REG_BASE == 0) {
-		pr_notice("INFRACFG_AO_REG_BASE is not defined\n");
+		pr_debug("INFRACFG_AO_REG_BASE is not defined\n");
 		return;
 	}
 
