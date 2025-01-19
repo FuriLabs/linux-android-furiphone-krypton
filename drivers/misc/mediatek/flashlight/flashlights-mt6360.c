@@ -100,13 +100,13 @@ static int mt6360_high_voltage_supply(int enable)
 	if (chg_psy == NULL)
 		chg_psy = power_supply_get_by_name("mtk-master-charger");
 	if (chg_psy == NULL || IS_ERR(chg_psy)) {
-		pr_notice("%s Couldn't get chg_psy\n", __func__);
+		pr_debug("%s Couldn't get chg_psy\n", __func__);
 		ret = -1;
 	} else {
 		prop.intval = enable;
 		ret = power_supply_set_property(chg_psy,
 			 POWER_SUPPLY_PROP_VOLTAGE_MAX, &prop);
-		pr_notice("%s enable_hv:%d\n", __func__, prop.intval);
+		pr_debug("%s enable_hv:%d\n", __func__, prop.intval);
 		power_supply_changed(chg_psy);
 	}
 
@@ -177,7 +177,7 @@ static int mt6360_enable(void)
 	enum flashlight_mode mode = FLASHLIGHT_MODE_TORCH;
 
 	if (!flashlight_dev_ch1 || !flashlight_dev_ch2) {
-		pr_info("Failed to enable since no flashlight device.\n");
+		pr_debug("Failed to enable since no flashlight device.\n");
 		return -1;
 	}
 
@@ -190,7 +190,7 @@ static int mt6360_enable(void)
 		mt6360_en_ch1, mt6360_en_ch2, mode);
 #if MT6360_LED1_LED2_SAME
 if (mt6360_en_ch1 != MT6360_DISABLE && mt6360_en_ch2 != MT6360_DISABLE) {
-	pr_info("dual flash mode mode=%d\n",mode);
+	pr_debug("dual flash mode mode=%d\n",mode);
 	if (mode == FLASHLIGHT_MODE_TORCH) {
 		ret |= flashlight_set_mode(
 			flashlight_dev_ch1, FLASHLIGHT_MODE_DUAL_TORCH);
@@ -204,7 +204,7 @@ if (mt6360_en_ch1 != MT6360_DISABLE && mt6360_en_ch2 != MT6360_DISABLE) {
 			flashlight_dev_ch2, FLASHLIGHT_MODE_DUAL_FLASH);
 	}
 } else {
-		pr_info("set off\n");
+		pr_debug("set off\n");
 		ret |= flashlight_set_mode(
 			flashlight_dev_ch1, FLASHLIGHT_MODE_OFF);
 		ret |= flashlight_set_mode(
@@ -216,7 +216,7 @@ if (mt6360_en_ch1 != MT6360_DISABLE && mt6360_en_ch2 != MT6360_DISABLE) {
 	if (mt6360_decouple_mode == FLASHLIGHT_SCENARIO_COUPLE &&
 			mt6360_en_ch1 != MT6360_DISABLE &&
 			mt6360_en_ch2 != MT6360_DISABLE) {
-		pr_info("dual flash mode\n");
+		pr_debug("dual flash mode\n");
 		if (mode == FLASHLIGHT_MODE_TORCH)
 			ret |= flashlight_set_mode(
 				flashlight_dev_ch1, FLASHLIGHT_MODE_DUAL_TORCH);
@@ -239,7 +239,7 @@ if (mt6360_en_ch1 != MT6360_DISABLE && mt6360_en_ch2 != MT6360_DISABLE) {
 	}
 #endif
 	if (ret < 0)
-		pr_info("Failed to enable.\n");
+		pr_debug("Failed to enable.\n");
 
 	return ret;
 }
@@ -252,14 +252,14 @@ static int mt6360_disable_ch1(void)
 	pr_debug("disable_ch1.\n");
 
 	if (!flashlight_dev_ch1) {
-		pr_info("Failed to disable since no flashlight device.\n");
+		pr_debug("Failed to disable since no flashlight device.\n");
 		return -1;
 	}
 
 	ret |= flashlight_set_mode(flashlight_dev_ch1, FLASHLIGHT_MODE_OFF);
 
 	if (ret < 0)
-		pr_info("Failed to disable.\n");
+		pr_debug("Failed to disable.\n");
 
 	return ret;
 }
@@ -271,14 +271,14 @@ static int mt6360_disable_ch2(void)
 	pr_debug("disable_ch2.\n");
 
 	if (!flashlight_dev_ch2) {
-		pr_info("Failed to disable since no flashlight device.\n");
+		pr_debug("Failed to disable since no flashlight device.\n");
 		return -1;
 	}
 
 	ret |= flashlight_set_mode(flashlight_dev_ch2, FLASHLIGHT_MODE_OFF);
 
 	if (ret < 0)
-		pr_info("Failed to disable.\n");
+		pr_debug("Failed to disable.\n");
 
 	return ret;
 }
@@ -290,7 +290,7 @@ static int mt6360_disable_all(void)
 	pr_debug("disable_ch1.\n");
 
 	if (!flashlight_dev_ch1) {
-		pr_info("Failed to disable since no flashlight device.\n");
+		pr_debug("Failed to disable since no flashlight device.\n");
 		return -1;
 	}
 
@@ -298,7 +298,7 @@ static int mt6360_disable_all(void)
 		FLASHLIGHT_MODE_DUAL_OFF);
 
 	if (ret < 0)
-		pr_info("Failed to disable.\n");
+		pr_debug("Failed to disable.\n");
 
 	return ret;
 }
@@ -314,7 +314,7 @@ static int mt6360_disable(int channel)
 	else if (channel == MT6360_CHANNEL_ALL)
 		ret = mt6360_disable_all();
 	else {
-		pr_info("Error channel\n");
+		pr_debug("Error channel\n");
 		return -1;
 	}
 
@@ -328,7 +328,7 @@ static int mt6360_set_level_ch1(int level)
 	mt6360_level_ch1 = level;
 
 	if (!flashlight_dev_ch1) {
-		pr_info("Failed to set ht level since no flashlight device.\n");
+		pr_debug("Failed to set ht level since no flashlight device.\n");
 		return -1;
 	}
 
@@ -348,7 +348,7 @@ static int mt6360_set_level_ch2(int level)
 	mt6360_level_ch2 = level;
 
 	if (!flashlight_dev_ch2) {
-		pr_info("Failed to set lt level since no flashlight device.\n");
+		pr_debug("Failed to set lt level since no flashlight device.\n");
 		return -1;
 	}
 
@@ -370,7 +370,7 @@ static int mt6360_set_level(int channel, int level)
 		mt6360_set_level_ch2(level);
 	}
 	else {
-		pr_info("Error channel\n");
+		pr_debug("Error channel\n");
 		return -1;
 	}
 #else
@@ -379,7 +379,7 @@ static int mt6360_set_level(int channel, int level)
 	else if (channel == MT6360_CHANNEL_CH2)
 		mt6360_set_level_ch2(level);
 	else {
-		pr_info("Error channel\n");
+		pr_debug("Error channel\n");
 		return -1;
 	}
 #endif
@@ -395,7 +395,7 @@ static int mt6360_set_scenario(int scenario)
 	mutex_lock(&mt6360_mutex);
 	if (scenario & FLASHLIGHT_SCENARIO_CAMERA_MASK) {
 		if (!is_decrease_voltage) {
-			pr_info("Decrease voltage level.\n");
+			pr_debug("Decrease voltage level.\n");
 #if defined(CONFIG_MACH_MT6877) || defined(CONFIG_MACH_MT6833) \
 || defined(CONFIG_MACH_MT6893) || defined(CONFIG_MACH_MT6785) \
 || defined(CONFIG_MACH_MT6885) || defined(CONFIG_MACH_MT6873)
@@ -408,7 +408,7 @@ static int mt6360_set_scenario(int scenario)
 		}
 	} else {
 		if (is_decrease_voltage) {
-			pr_info("Increase voltage level.\n");
+			pr_debug("Increase voltage level.\n");
 #if defined(CONFIG_MACH_MT6877) || defined(CONFIG_MACH_MT6833) \
 || defined(CONFIG_MACH_MT6893) || defined(CONFIG_MACH_MT6785) \
 || defined(CONFIG_MACH_MT6885) || defined(CONFIG_MACH_MT6873)
@@ -496,7 +496,7 @@ static int mt6360_timer_start(int channel, ktime_t ktime)
 	else if (channel == MT6360_CHANNEL_CH2)
 		hrtimer_start(&mt6360_timer_ch2, ktime, HRTIMER_MODE_REL);
 	else {
-		pr_info("Error channel\n");
+		pr_debug("Error channel\n");
 		return -1;
 	}
 
@@ -510,7 +510,7 @@ static int mt6360_timer_cancel(int channel)
 	else if (channel == MT6360_CHANNEL_CH2)
 		hrtimer_cancel(&mt6360_timer_ch2);
 	else {
-		pr_info("Error channel\n");
+		pr_debug("Error channel\n");
 		return -1;
 	}
 
@@ -554,7 +554,7 @@ static int mt6360_operate(int channel, int enable)
 			if (mt6360_is_torch(mt6360_level_ch2))
 				mt6360_en_ch2 = MT6360_ENABLE_FLASH;
 	} else {
-		pr_info("Error channel\n");
+		pr_debug("Error channel\n");
 		return -1;
 	}
 #endif
@@ -665,7 +665,7 @@ static int mt6360_ioctl(unsigned int cmd, unsigned long arg)
 
 	/* verify channel */
 	if (channel < 0 || channel >= MT6360_CHANNEL_NUM) {
-		pr_info("Failed with error channel\n");
+		pr_debug("Failed with error channel\n");
 		return -EINVAL;
 	}
 
@@ -736,7 +736,7 @@ static int mt6360_ioctl(unsigned int cmd, unsigned long arg)
 		break;
 
 	default:
-		pr_info("No such command and arg(%d): (%d, %d)\n",
+		pr_debug("No such command and arg(%d): (%d, %d)\n",
 				channel, _IOC_NR(cmd), (int)fl_arg->arg);
 		return -ENOTTY;
 	}
@@ -762,7 +762,7 @@ static int mt6360_release(void)
 	pr_debug("close driver: %d\n", fd_use_count);
 	/* If camera NE, we need to enable pe by ourselves*/
 	if (fd_use_count == 0 && is_decrease_voltage) {
-		pr_info("Increase voltage level.\n");
+		pr_debug("Increase voltage level.\n");
 #if defined(CONFIG_MACH_MT6877) || defined(CONFIG_MACH_MT6833) \
 || defined(CONFIG_MACH_MT6893) || defined(CONFIG_MACH_MT6785) \
 || defined(CONFIG_MACH_MT6885) || defined(CONFIG_MACH_MT6873)
@@ -861,13 +861,13 @@ static int mt6360_parse_dt(struct device *dev,
 
 	pdata->channel_num = of_get_child_count(np);
 	if (!pdata->channel_num) {
-		pr_info("Parse no dt, node.\n");
+		pr_debug("Parse no dt, node.\n");
 		return 0;
 	}
-	pr_info("Channel number(%d).\n", pdata->channel_num);
+	pr_debug("Channel number(%d).\n", pdata->channel_num);
 
 	if (of_property_read_u32(np, "decouple", &decouple))
-		pr_info("Parse no dt, decouple.\n");
+		pr_debug("Parse no dt, decouple.\n");
 
 	pdata->dev_id = devm_kzalloc(dev,
 			pdata->channel_num *
@@ -888,7 +888,7 @@ static int mt6360_parse_dt(struct device *dev,
 		pdata->dev_id[i].channel = i;
 		pdata->dev_id[i].decouple = decouple;
 
-		pr_info("Parse dt (type,ct,part,name,channel,decouple)=(%d,%d,%d,%s,%d,%d).\n",
+		pr_debug("Parse dt (type,ct,part,name,channel,decouple)=(%d,%d,%d,%s,%d,%d).\n",
 				pdata->dev_id[i].type, pdata->dev_id[i].ct,
 				pdata->dev_id[i].part, pdata->dev_id[i].name,
 				pdata->dev_id[i].channel,
@@ -942,19 +942,19 @@ static int mt6360_probe(struct platform_device *pdev)
 	/* get RTK flashlight handler */
 	flashlight_dev_ch1 = find_flashlight_by_name(RT_FLED_DEVICE_CH1);
 	if (!flashlight_dev_ch1) {
-		pr_info("Failed to get ht flashlight device.\n");
+		pr_debug("Failed to get ht flashlight device.\n");
 		return -EFAULT;
 	}
 	flashlight_dev_ch2 = find_flashlight_by_name(RT_FLED_DEVICE_CH2);
 	if (!flashlight_dev_ch2) {
-		pr_info("Failed to get lt flashlight device.\n");
+		pr_debug("Failed to get lt flashlight device.\n");
 		return -EFAULT;
 	}
 
 	/* setup strobe mode timeout */
 	if (flashlight_set_strobe_timeout(flashlight_dev_ch1,
 				MT6360_HW_TIMEOUT, MT6360_HW_TIMEOUT + 200) < 0)
-		pr_info("Failed to set strobe timeout.\n");
+		pr_debug("Failed to set strobe timeout.\n");
 #if defined(CONFIG_MACH_MT6877) || defined(CONFIG_MACH_MT6833) \
 || defined(CONFIG_MACH_MT6893) || defined(CONFIG_MACH_MT6785) \
 || defined(CONFIG_MACH_MT6885) || defined(CONFIG_MACH_MT6873)
@@ -962,7 +962,7 @@ static int mt6360_probe(struct platform_device *pdev)
 	flashlight_charger_consumer = charger_manager_get_by_name(
 			&flashlight_dev_ch1->dev, CHARGER_SUPPLY_NAME);
 	if (!flashlight_charger_consumer) {
-		pr_info("Failed to get charger manager.\n");
+		pr_debug("Failed to get charger manager.\n");
 		return -EFAULT;
 	}
 #endif
@@ -1052,14 +1052,14 @@ static int __init flashlight_mt6360_init(void)
 #ifndef CONFIG_OF
 	ret = platform_device_register(&mt6360_platform_device);
 	if (ret) {
-		pr_info("Failed to register platform device\n");
+		pr_debug("Failed to register platform device\n");
 		return ret;
 	}
 #endif
 
 	ret = platform_driver_register(&mt6360_platform_driver);
 	if (ret) {
-		pr_info("Failed to register platform driver\n");
+		pr_debug("Failed to register platform driver\n");
 		return ret;
 	}
 

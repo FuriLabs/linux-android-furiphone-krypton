@@ -156,7 +156,7 @@ static volatile int aw36518_level_ch1 = -1;
 
 static int aw36518_is_torch(int level)
 {
-    pr_info("%s level=%d\n", __func__, level);
+    pr_debug("%s level=%d\n", __func__, level);
 	if (level >= AW36518_LEVEL_TORCH)
 		return -1;
 
@@ -242,7 +242,7 @@ static int aw36518_enable(int channel)
 /* prize add flash/torch gpio en by liaoxingen 20200924 start */
 	struct aw36518_chip_data *chip = i2c_get_clientdata(aw36518_i2c_client);
 
-    pr_info("%s channel=%d\n", __func__, channel);
+    pr_debug("%s channel=%d\n", __func__, channel);
 	if (aw36518_is_torch(aw36518_level_ch1)) {
 		pinctrl_select_state(chip->aw36518_pctrl,chip->aw36518_strobe_1);
 	} else {
@@ -265,7 +265,7 @@ static int aw36518_disable(int channel)
 /* prize add flash/torch gpio en by liaoxingen 20200924 start */
 //	struct aw36518_chip_data *chip = i2c_get_clientdata(aw36518_i2c_client);
 
-    pr_info("%s channel=%d\n", __func__, channel);
+    pr_debug("%s channel=%d\n", __func__, channel);
  //   pinctrl_select_state(chip->aw36518_pctrl,chip->aw36518_en_0);
 /* prize add flash/torch gpio en by liaoxingen 20200924 end */	
 	if (channel == AW36518_CHANNEL_CH1)
@@ -361,7 +361,7 @@ static unsigned int aw36518_timeout_ms[AW36518_CHANNEL_NUM];
 
 static void aw36518_work_disable_ch1(struct work_struct *data)
 {
-	pr_info("ht work queue callback\n");
+	pr_debug("ht work queue callback\n");
 	aw36518_disable_ch1();
 }
 
@@ -417,19 +417,19 @@ static int aw36518_ioctl(unsigned int cmd, unsigned long arg)
 
 	switch (cmd) {
 	case FLASH_IOC_SET_TIME_OUT_TIME_MS:
-		pr_info("FLASH_IOC_SET_TIME_OUT_TIME_MS(%d): %d\n",
+		pr_debug("FLASH_IOC_SET_TIME_OUT_TIME_MS(%d): %d\n",
 				channel, (int)fl_arg->arg);
 		aw36518_timeout_ms[channel] = fl_arg->arg;
 		break;
 
 	case FLASH_IOC_SET_DUTY:
-		pr_info("FLASH_IOC_SET_DUTY(%d): %d\n",
+		pr_debug("FLASH_IOC_SET_DUTY(%d): %d\n",
 				channel, (int)fl_arg->arg);
 		aw36518_set_level(channel, fl_arg->arg);
 		break;
 
 	case FLASH_IOC_SET_ONOFF:
-		pr_info("FLASH_IOC_SET_ONOFF(%d): %d\n",
+		pr_debug("FLASH_IOC_SET_ONOFF(%d): %d\n",
 				channel, (int)fl_arg->arg);
 		if (fl_arg->arg == 1) {
 			if (aw36518_timeout_ms[channel]) {
@@ -446,7 +446,7 @@ static int aw36518_ioctl(unsigned int cmd, unsigned long arg)
 		break;
 
 	default:
-		pr_info("No such command and arg(%d): (%d, %d)\n",
+		pr_debug("No such command and arg(%d): (%d, %d)\n",
 				channel, _IOC_NR(cmd), (int)fl_arg->arg);
 		return -ENOTTY;
 	}
@@ -472,7 +472,7 @@ static int aw36518_release(void)
 		use_count = 0;
 	mutex_unlock(&aw36518_mutex);
 
-	pr_info("Release: %d\n", use_count);
+	pr_debug("Release: %d\n", use_count);
 
 	return 0;
 }
@@ -486,7 +486,7 @@ static int aw36518_set_driver(int set)
 	use_count++;
 	mutex_unlock(&aw36518_mutex);
 
-	pr_info("Set driver: %d\n", use_count);
+	pr_debug("Set driver: %d\n", use_count);
 
 	return 0;
 }
@@ -573,7 +573,7 @@ aw36518_i2c_probe(struct i2c_client *client, const struct i2c_device_id *id)
 	struct aw36518_platform_data *pdata = client->dev.platform_data;
 	int err;
 
-	pr_info("%s Probe start.\n", __func__);
+	pr_debug("%s Probe start.\n", __func__);
 
 	/* check i2c */
 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
@@ -668,7 +668,7 @@ aw36518_i2c_probe(struct i2c_client *client, const struct i2c_device_id *id)
 
 	aw36518_create_sysfs(client);
 
-	pr_info("%s Probe done.\n", __func__);
+	pr_debug("%s Probe done.\n", __func__);
 
 	return 0;
 
@@ -685,7 +685,7 @@ static int aw36518_i2c_remove(struct i2c_client *client)
 {
 	struct aw36518_chip_data *chip = i2c_get_clientdata(client);
 
-	pr_info("Remove start.\n");
+	pr_debug("Remove start.\n");
 
 	/* flush work queue */
 	flush_work(&aw36518_work_ch1);
@@ -698,7 +698,7 @@ static int aw36518_i2c_remove(struct i2c_client *client)
 		kfree(chip->pdata);
 	kfree(chip);
 
-	pr_info("Remove done.\n");
+	pr_debug("Remove done.\n");
 
 	return 0;
 }
@@ -733,25 +733,25 @@ static struct i2c_driver aw36518_i2c_driver = {
  *****************************************************************************/
 static int aw36518_probe(struct platform_device *dev)
 {
-	pr_info("%s Probe start.\n", __func__);
+	pr_debug("%s Probe start.\n", __func__);
 
 	if (i2c_add_driver(&aw36518_i2c_driver)) {
 		pr_err("Failed to add i2c driver.\n");
 		return -1;
 	}
 
-	pr_info("%s Probe done.\n", __func__);
+	pr_debug("%s Probe done.\n", __func__);
 
 	return 0;
 }
 
 static int aw36518_remove(struct platform_device *dev)
 {
-	pr_info("Remove start.\n");
+	pr_debug("Remove start.\n");
 
 	i2c_del_driver(&aw36518_i2c_driver);
 
-	pr_info("Remove done.\n");
+	pr_debug("Remove done.\n");
 
 	return 0;
 }
@@ -790,7 +790,7 @@ static int __init flashlight_aw36518_init(void)
 {
 	int ret;
 
-	pr_info("%s driver version %s.\n", __func__, AW36518_VERSION);
+	pr_debug("%s driver version %s.\n", __func__, AW36518_VERSION);
 
 #ifndef CONFIG_OF
 	ret = platform_device_register(&aw36518_platform_device);
@@ -806,18 +806,18 @@ static int __init flashlight_aw36518_init(void)
 		return ret;
 	}
 
-	pr_info("flashlight_aw36518 Init done.\n");
+	pr_debug("flashlight_aw36518 Init done.\n");
 
 	return 0;
 }
 
 static void __exit flashlight_aw36518_exit(void)
 {
-	pr_info("flashlight_aw36518-Exit start.\n");
+	pr_debug("flashlight_aw36518-Exit start.\n");
 
 	platform_driver_unregister(&aw36518_platform_driver);
 
-	pr_info("flashlight_aw36518 Exit done.\n");
+	pr_debug("flashlight_aw36518 Exit done.\n");
 }
 
 module_init(flashlight_aw36518_init);
