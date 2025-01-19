@@ -90,7 +90,7 @@ static char *I2CDMAReadBuf; /*= NULL;*/ /* unnecessary initialise */
 static unsigned int I2CDMAReadBuf_pa; /* = NULL; */
 #endif /* KRNMTKLEGACY_I2C */
 
-static bool enable_debug_log;
+static bool enable_debug_log = false;
 
 /*The enum is used to index a pw_states array, the values matter here*/
 enum st21nfc_power_state {
