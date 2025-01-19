@@ -3066,15 +3066,15 @@ void nicRxProcessEventPacket(IN struct ADAPTER *prAdapter,
 					if (*(pucChr - 1) == '\n')
 						*(pucChr - 1) = '\0';
 
-					DBGLOG(SW4, INFO, "<FW>%s\n", pucMsg);
+//					DBGLOG(SW4, INFO, "<FW>%s\n", pucMsg);
 				} else if (ucMsgType == DEBUG_MSG_TYPE_MEM8) {
-					DBGLOG(SW4, INFO, "<FW>Dump MEM8\n");
-					DBGLOG_MEM8(SW4, INFO,
-						pucMsg, u2MsgSize);
+//					DBGLOG(SW4, INFO, "<FW>Dump MEM8\n");
+//					DBGLOG_MEM8(SW4, INFO,
+//						pucMsg, u2MsgSize);
 				} else {
-					DBGLOG(SW4, INFO, "<FW>Dump MEM32\n");
-					DBGLOG_MEM32(SW4, INFO, pucMsg,
-						u2MsgSize);
+//					DBGLOG(SW4, INFO, "<FW>Dump MEM32\n");
+//					DBGLOG_MEM32(SW4, INFO, pucMsg,
+//						u2MsgSize);
 				}
 			} /* DEBUG_MSG_SIZE_MAX */
 			else

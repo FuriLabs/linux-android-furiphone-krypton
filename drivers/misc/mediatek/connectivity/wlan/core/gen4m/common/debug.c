@@ -858,7 +858,7 @@ void wlanPrintFwLog(uint8_t *pucLogContent,
 		if (*(pucChr - 1) == '\n')
 			*(pucChr - 1) = '\0';
 
-		LOG_FUNC("<FW>%s\n", pucLogContent);
+//		LOG_FUNC("<FW>%s\n", pucLogContent);
 	}
 	break;
 	case DEBUG_MSG_TYPE_DRIVER:
