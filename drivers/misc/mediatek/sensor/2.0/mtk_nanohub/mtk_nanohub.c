@@ -398,7 +398,7 @@ static void mtk_nanohub_notify_cmd(union SCP_SENSOR_HUB_DATA *rsp,
 	case SCP_NOTIFY:
 		break;
 	case SCP_INIT_DONE:
-		pr_info("notify cmd SCP_INIT_DONE\n");
+		pr_debug("notify cmd SCP_INIT_DONE\n");
 		spin_lock_irqsave(&scp_state_lock, flags);
 		WRITE_ONCE(scp_chre_ready, true);
 		if (READ_ONCE(scp_system_ready) && READ_ONCE(scp_chre_ready)) {
@@ -784,7 +784,7 @@ static int mtk_nanohub_report_data(struct data_unit_t *data_t)
 		if (data_t->flush_action == DATA_ACTION && !err) {
 			if (unlikely(raw_time <
 					raw_ts_reverse_debug[sensor_type])) {
-				pr_err("raw reverse %d,%lld,%lld\n",
+				pr_debug("raw reverse %d,%lld,%lld\n",
 					sensor_type,
 					raw_ts_reverse_debug[sensor_type],
 					raw_time);
@@ -792,7 +792,7 @@ static int mtk_nanohub_report_data(struct data_unit_t *data_t)
 			raw_ts_reverse_debug[sensor_type] = raw_time;
 			if (unlikely(comp_time <
 					comp_ts_reverse_debug[sensor_type])) {
-				pr_err("comp reverse %d,%lld,%lld,%lld\n",
+				pr_debug("comp reverse %d,%lld,%lld,%lld\n",
 					sensor_type,
 					raw_ts_reverse_debug[sensor_type],
 					comp_ts_reverse_debug[sensor_type],
@@ -889,7 +889,7 @@ static int mtk_nanohub_send_dram_info_to_hub(void)
 		break;
 	}
 	if (retry < total)
-		pr_notice("%s success\n", __func__);
+		pr_debug("%s success\n", __func__);
 	return SCP_SENSOR_HUB_SUCCESS;
 }
 
@@ -1701,7 +1701,7 @@ int mtk_nanohub_set_cmd_to_hub(uint8_t sensor_id,
 	case CUST_ACTION_GET_SENSOR_INFO:
 		if (req.set_cust_rsp.getInfo.action !=
 			CUST_ACTION_GET_SENSOR_INFO) {
-			pr_info("get_info failed!\n");
+			pr_debug("get_info failed!\n");
 			return -1;
 		}
 		memcpy((struct sensorInfo_t *)data,
@@ -1713,7 +1713,7 @@ int mtk_nanohub_set_cmd_to_hub(uint8_t sensor_id,
 	case CUST_ACTION_GET_PRIZE_HARDWARE_INFO:
 		if (req.set_cust_rsp.gethardwareInfo.action !=
 			CUST_ACTION_GET_PRIZE_HARDWARE_INFO) {
-			pr_info("scp_sensorHub_req_send failed action!\n");
+			pr_debug("scp_sensorHub_req_send failed action!\n");
 			return -1;
 		}
 		memcpy((struct sensor_hardware_info_t *)data,
@@ -1805,15 +1805,15 @@ static void sensorHub_get_hardware_info(void)
 		sensor = id_to_type(id);
 		if (sensorlist_sensor_to_handle(sensor) < 0)
 		{
-			pr_err("create attribute err continue id=%d  %s %d \n",id,__func__,__LINE__);
+			pr_debug("create attribute err continue id=%d  %s %d \n",id,__func__,__LINE__);
 			continue;
 		}
 	memset(&info, 0, sizeof(struct sensor_hardware_info_t));
-	//printk("sensorHub_get_hardware_info start_1 \n");
+	//pr_debug("sensorHub_get_hardware_info start_1 \n");
 	err = mtk_nanohub_set_cmd_to_hub(id,
 		CUST_ACTION_GET_PRIZE_HARDWARE_INFO, &info);
 	if (err < 0) {
-		printk("sensor(%d) not register\n", sensor);
+		pr_debug("sensor(%d) not register\n", sensor);
 		//return err;
 	}
 	else
@@ -2062,7 +2062,7 @@ static int mtk_nanohub_ready_event(struct notifier_block *this,
 {
 	unsigned long flags = 0;
 
-	pr_info("notify event:%lu\n", event);
+	pr_debug("notify event:%lu\n", event);
 	if (event == SCP_EVENT_STOP) {
 		spin_lock_irqsave(&scp_state_lock, flags);
 		WRITE_ONCE(scp_system_ready, false);
@@ -2099,7 +2099,7 @@ static int mtk_nanohub_enable(struct hf_device *hfdev,
 {
 	if (sensor_type <= 0)
 		return 0;
-	/* pr_notice("%s [%d,%d]\n", __func__, sensor_type, en); */
+	/* pr_debug("%s [%d,%d]\n", __func__, sensor_type, en); */
 	return mtk_nanohub_enable_to_hub(type_to_id(sensor_type), en);
 }
 
@@ -2108,7 +2108,7 @@ static int mtk_nanohub_batch(struct hf_device *hfdev,
 {
 	if (sensor_type <= 0)
 		return 0;
-	/* pr_notice("%s [%d,%lld,%lld]\n", __func__,
+	/* pr_debug("%s [%d,%lld,%lld]\n", __func__,
 	 *	sensor_type, delay, latency);
 	 */
 	return mtk_nanohub_batch_to_hub(type_to_id(sensor_type),
@@ -2120,7 +2120,7 @@ static int mtk_nanohub_flush(struct hf_device *hfdev,
 {
 	if (sensor_type <= 0)
 		return 0;
-	pr_notice("%s [%d]\n", __func__, sensor_type);
+	pr_debug("%s [%d]\n", __func__, sensor_type);
 	return mtk_nanohub_flush_to_hub(type_to_id(sensor_type));
 }
 
@@ -2129,7 +2129,7 @@ static int mtk_nanohub_calibration(struct hf_device *hfdev,
 {
 	if (sensor_type <= 0)
 		return 0;
-	pr_notice("%s [%d]\n", __func__, sensor_type);
+	pr_debug("%s [%d]\n", __func__, sensor_type);
 	return mtk_nanohub_calibration_to_hub(type_to_id(sensor_type));
 }
 
@@ -2141,7 +2141,7 @@ static int mtk_nanohub_config(struct hf_device *hfdev,
 	if (sensor_type <= 0)
 		return 0;
 
-	pr_notice("%s [%d]\n", __func__, sensor_type);
+	pr_debug("%s [%d]\n", __func__, sensor_type);
 	switch (type_to_id(sensor_type)) {
 	case ID_ACCELEROMETER:
 		if (sizeof(device->acc_config_data) < length)
@@ -2213,7 +2213,7 @@ static int mtk_nanohub_selftest(struct hf_device *hfdev,
 {
 	if (sensor_type <= 0)
 		return 0;
-	pr_notice("%s [%d]\n", __func__, sensor_type);
+	pr_debug("%s [%d]\n", __func__, sensor_type);
 	return mtk_nanohub_selftest_to_hub(type_to_id(sensor_type));
 }
 
@@ -2222,7 +2222,7 @@ static int mtk_nanohub_rawdata(struct hf_device *hfdev,
 {
 	if (sensor_type <= 0)
 		return 0;
-	pr_notice("%s [%d,%d]\n", __func__, sensor_type, en);
+	pr_debug("%s [%d,%d]\n", __func__, sensor_type, en);
 	return mtk_nanohub_enable_rawdata_to_hub(type_to_id(sensor_type), en);
 }
 
@@ -2323,12 +2323,12 @@ static int mtk_nanohub_custom_cmd(struct hf_device *hfdev,
 			spin_unlock(&config_data_lock);
 			break;
 		default:
-			pr_notice("SensorType:%d not support CUST_CMD_CALI!\n",
+			pr_debug("SensorType:%d not support CUST_CMD_CALI!\n",
 				sensor_type);
 			break;
 		}
 	} else {
-		pr_notice("CUSTOM_CMD(%d) need implementation\n", cust_action);
+		pr_debug("CUSTOM_CMD(%d) need implementation\n", cust_action);
 		ret = -1;
 	}
 	return ret;
@@ -2718,18 +2718,18 @@ static ssize_t trace_store(struct device_driver *ddri,
 	int res = 0;
 
 	if (sscanf(buf, "%d,%d", &id, &trace) != 2) {
-		pr_info("invalid content: '%s', length = %zu\n", buf, count);
+		pr_debug("invalid content: '%s', length = %zu\n", buf, count);
 		goto err_out;
 	}
 
 	if (id < 0 || id >= ID_SENSOR_MAX) {
-		pr_info("invalid id value:%d,should be '0<=id<=%d'\n",
+		pr_debug("invalid id value:%d,should be '0<=id<=%d'\n",
 			trace, ID_SENSOR_MAX);
 		goto err_out;
 	}
 
 	if (trace != 0 && trace != 1) {
-		pr_info("invalid trace value:%d,trace should be '0' or '1'",
+		pr_debug("invalid trace value:%d,trace should be '0' or '1'",
 			trace);
 		goto err_out;
 	}
@@ -2737,7 +2737,7 @@ static ssize_t trace_store(struct device_driver *ddri,
 	res = mtk_nanohub_set_cmd_to_hub(id,
 			CUST_ACTION_SET_TRACE, &trace);
 	if (res < 0) {
-		pr_info("cmd_to_hub fail.ID: %d,action:%d,err: %d\n", id,
+		pr_debug("cmd_to_hub fail.ID: %d,action:%d,err: %d\n", id,
 					CUST_ACTION_SET_TRACE, res);
 	} else
 		atomic_set(&device->traces[id], trace);
