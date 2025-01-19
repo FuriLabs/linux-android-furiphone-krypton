@@ -325,7 +325,7 @@ int AW8601CSR_Release(struct inode *a_pstInode, struct file *a_pstFile)
 
 int AW8601CSR_SetI2Cclient(struct i2c_client *pstAF_I2Cclient, spinlock_t *pAF_SpinLock, int *pAF_Opened)
 {
-	pr_info("aw8601 driver version %s\n", AW8601_DRIVER_VERSION);
+	pr_debug("aw8601 driver version %s\n", AW8601_DRIVER_VERSION);
 	g_pstAF_I2Cclient = pstAF_I2Cclient;
 	g_pAF_SpinLock = pAF_SpinLock;
 	g_pAF_Opened = pAF_Opened;

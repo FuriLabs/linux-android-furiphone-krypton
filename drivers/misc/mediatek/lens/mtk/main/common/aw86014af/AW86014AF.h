@@ -7,7 +7,7 @@
 //#define AW_AF_DEBUG
 #ifdef AW_AF_DEBUG
 #define AW_LOG_INF(format, args...) \
-	pr_info(AF_DRVNAME " [%s] " format, __func__, ##args)
+	pr_debug(AF_DRVNAME " [%s] " format, __func__, ##args)
 #else
 #define AW_LOG_INF(format, args...)
 #endif

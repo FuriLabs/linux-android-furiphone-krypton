@@ -39,7 +39,7 @@
 #define AF_DEBUG
 #ifdef AF_DEBUG
 #define LOG_INF(format, args...)                                               \
-	pr_info(AF_DRVNAME " [%s] " format, __func__, ##args)
+	pr_debug(AF_DRVNAME " [%s] " format, __func__, ##args)
 #else
 #define LOG_INF(format, args...)
 #endif
@@ -412,7 +412,7 @@ long DW9781CAF_Ioctl(struct file *a_pstFile, unsigned int a_u4Command,
 		calibration_save();
 		if (copy_to_user((void __user *)a_u4Param, (void *)&result,
 						sizeof(unsigned int))) {
-				pr_info("Failed to copy result to user\n");
+				pr_debug("Failed to copy result to user\n");
 				return -EFAULT;
 			}
 		break;
