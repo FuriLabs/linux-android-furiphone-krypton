@@ -20,11 +20,11 @@
 
 
 #define DEBUG_ON		0
-#define HW_PRINT(fmt,arg...)           printk("[HW_INFO] "fmt"\n",##arg)
-#define HW_ERROR(fmt,arg...)          printk("[HW_INFO] ERROR:"fmt"\n",##arg)
+#define HW_PRINT(fmt,arg...)           pr_debug("[HW_INFO] "fmt"\n",##arg)
+#define HW_ERROR(fmt,arg...)          pr_debug("[HW_INFO] ERROR:"fmt"\n",##arg)
 #define HW_DEBUG(fmt,arg...)          do{\
 	if(DEBUG_ON)\
-		printk("[HW_INFO] [%d]"fmt"\n",__LINE__, ##arg);\
+		pr_debug("[HW_INFO] [%d]"fmt"\n",__LINE__, ##arg);\
 		}while(0)
 
 	
