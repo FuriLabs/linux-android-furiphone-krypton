@@ -811,14 +811,14 @@ firmwareHexDump(const uint8_t *pucPreFix,
 
 		switch (i4PreFixType) {
 		case DUMP_PREFIX_ADDRESS:
-			pr_info("%s%p: %s\n",
+			pr_debug("%s%p: %s\n",
 				pucPreFix, pucPtr + i, ucLineBuf);
 			break;
 		case DUMP_PREFIX_OFFSET:
-			pr_info("%s%.8x: %s\n", pucPreFix, i, ucLineBuf);
+			pr_debug("%s%.8x: %s\n", pucPreFix, i, ucLineBuf);
 			break;
 		default:
-			pr_info("%s%s\n", pucPreFix, ucLineBuf);
+			pr_debug("%s%s\n", pucPreFix, ucLineBuf);
 			break;
 		}
 	}

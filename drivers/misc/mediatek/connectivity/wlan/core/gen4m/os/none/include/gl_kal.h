@@ -650,8 +650,8 @@ int8_t kal_atoi(uint8_t ch);
 #define kalGetTimeTick() KAL_NEED_IMPLEMENT(__FILE__, __func__, __LINE__)
 
 #define WLAN_TAG                        "[wlan]"
-#define kalPrint(_Fmt...) printf(WLAN_TAG _Fmt)
-#define kalPrintLimited(_Fmt...) printf(WLAN_TAG _Fmt)
+#define kalPrint(_Fmt...) pr_debug(WLAN_TAG _Fmt)
+#define kalPrintLimited(_Fmt...) pr_debug(WLAN_TAG _Fmt)
 
 #define kalBreakPoint() \
 do { \
