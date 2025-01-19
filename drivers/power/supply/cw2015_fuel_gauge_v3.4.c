@@ -1127,7 +1127,7 @@ static int cw2015_probe(struct i2c_client *client, const struct i2c_device_id *i
 				if (!ret){
 					memcpy(config_info,buf,size);
 					for(i=0;i<size;i++){
-						printk("cw2015_probe get %s [%d] %x ",fuelguage_name[cw2015fuelguage.bat_id],i,config_info[i]);
+						cw_printk(1, "cw2015_probe get %s [%d] %x ",fuelguage_name[cw2015fuelguage.bat_id],i,config_info[i]);
 			    }
 				cw_printk(1,"cw_bat get %s batinfo sucess size(%d)!\n",fuelguage_name[cw2015fuelguage.bat_id],size);
 				}else{
@@ -1145,7 +1145,7 @@ static int cw2015_probe(struct i2c_client *client, const struct i2c_device_id *i
 			if (!ret){
 				memcpy(config_info,buf,size);
 				for(i=0;i<size;i++){
-					printk("cw2015_probe[%d] %x ",i,config_info[i]);
+					cw_printk(1, "cw2015_probe[%d] %x ",i,config_info[i]);
 			    }
 				cw_printk(1,"cw_bat get batinfo sucess size(%d)!\n",size);
 			}else{
