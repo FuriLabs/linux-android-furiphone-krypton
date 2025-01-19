@@ -44,8 +44,6 @@ LDO3-7 voltage output Range 1.504v ~ 3.544v
 VOUT3/7 = 1.504V+LDO3/7_VOUT[7:0]*0.008V
 */
 
-#undef pr_debug
-#define pr_debug pr_err
 /*!
  * reg_value struct
  */
