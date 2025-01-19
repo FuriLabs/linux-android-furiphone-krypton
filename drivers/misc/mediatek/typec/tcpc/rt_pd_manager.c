@@ -60,7 +60,7 @@ struct rt_pd_manager_data {
 
 void __attribute__((weak)) usb_dpdm_pulldown(bool enable)
 {
-	pr_notice("%s is not defined\n", __func__);
+	pr_debug("%s is not defined\n", __func__);
 }
 
 static int pd_tcp_notifier_call(struct notifier_block *nb,
