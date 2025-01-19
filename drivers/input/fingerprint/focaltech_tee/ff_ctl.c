@@ -134,18 +134,18 @@ int ff_log_printf(ff_log_level_t level, const char *tag, const char *fmt, ...)
     /* Native output. */
     switch (level) {
     case FF_LOG_LEVEL_ERR:
-        n = printk(KERN_ERR FF_DRV_NAME": %s\n", ptr);
+        n = pr_err(KERN_ERR FF_DRV_NAME": %s\n", ptr);
         break;
     case FF_LOG_LEVEL_WRN:
-        n = printk(KERN_WARNING FF_DRV_NAME": %s\n", ptr);
+        n = pr_warn(KERN_WARNING FF_DRV_NAME": %s\n", ptr);
         break;
     case FF_LOG_LEVEL_INF:
-        n = printk(KERN_INFO FF_DRV_NAME": %s\n", ptr);
+        n = pr_debug(KERN_INFO FF_DRV_NAME": %s\n", ptr);
         break;
     case FF_LOG_LEVEL_DBG:
     case FF_LOG_LEVEL_VBS:
     default:
-        n = printk(KERN_DEBUG FF_DRV_NAME": %s\n", ptr);
+        n = pr_debug(KERN_DEBUG FF_DRV_NAME": %s\n", ptr);
         break;
     }
     return n;
