@@ -43,7 +43,7 @@
 #define LOG_1 LOG_INF("BF2253Lmacro, MIPI 1LANE\n")
 /****************************   Modify end    *******************************************/
 
-#define LOG_INF(format, args...)    pr_err(PFX "[%s] " format, __func__, ##args)
+#define LOG_INF(format, args...)    pr_debug(PFX "[%s] " format, __func__, ##args)
 #define BF2253LMACRO_MIRROR_FLIP 0
 
 static DEFINE_SPINLOCK(imgsensor_drv_lock);

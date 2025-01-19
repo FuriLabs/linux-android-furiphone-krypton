@@ -46,7 +46,7 @@ extern int curr_sensor_id;
 #define BF2253LMACRO_MIRROR_ENABLE 0
 #define BF2253LMACRO_FLIP_ENABLE 0
 
-#define LOG_INF(format, args...)    pr_err(PFX "[%s] " format, __func__, ##args)
+#define LOG_INF(format, args...)    pr_debug(PFX "[%s] " format, __func__, ##args)
 #define SHUTTER_MAX 16383
 #define VB_MIN 0 //326 for 24fps,0 for 30fps
 #define BASIC_LINE 1236
