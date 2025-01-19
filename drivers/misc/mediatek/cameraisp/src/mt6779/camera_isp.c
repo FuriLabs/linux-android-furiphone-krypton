@@ -132,16 +132,16 @@
 #define ISP_DEBUG
 #ifdef ISP_DEBUG
 #define LOG_DBG(format, args...)    \
-	pr_info(MyTag "[%s] " format, __func__, ##args)
+	pr_debug(MyTag "[%s] " format, __func__, ##args)
 #else
 #define LOG_DBG(format, args...)
 #endif
 
 #define LOG_INF(format, args...)    \
-	pr_info(MyTag "[%s] " format, __func__, ##args)
+	pr_debug(MyTag "[%s] " format, __func__, ##args)
 
 #define LOG_NOTICE(format, args...)    \
-	pr_notice(MyTag "[%s] " format, __func__, ##args)
+	pr_debug(MyTag "[%s] " format, __func__, ##args)
 
 
 /******************************************************************************
@@ -1169,7 +1169,7 @@ static int32_t ISP_GetWaitQCamIndex(enum ISP_IRQ_TYPE_ENUM type)
 	int32_t index = type - ISP_IRQ_TYPE_INT_CAM_A_ST;
 
 	if (index >= CAM_AMOUNT)
-		pr_info("waitq cam index out of range:%d", index);
+		pr_debug("waitq cam index out of range:%d", index);
 
 	return index;
 }
@@ -1182,7 +1182,7 @@ static int32_t ISP_GetWaitQCamsvIndex(enum ISP_IRQ_TYPE_ENUM type)
 	int32_t index = type - ISP_IRQ_TYPE_INT_CAMSV_0_ST;
 
 	if (index >= CAMSV_AMOUNT)
-		pr_info("waitq camsv index out of range:%d", index);
+		pr_debug("waitq camsv index out of range:%d", index);
 
 	return index;
 }
@@ -1214,7 +1214,7 @@ static int32_t ISP_GetWaitQCamIrqIndex(
 	}
 
 	if (index == ISP_WAITQ_HEAD_IRQ_AMOUNT)
-		pr_info("waitq cam irq index out of range:%d_%d",
+		pr_debug("waitq cam irq index out of range:%d_%d",
 				st_type, status);
 
 	return index;
@@ -1236,7 +1236,7 @@ static int32_t ISP_GetWaitQCamsvIrqIndex(
 	}
 
 	if (index == ISP_WAITQ_HEAD_IRQ_SV_AMOUNT)
-		pr_info("waitq camsv irq index out of range:%d_%d",
+		pr_debug("waitq camsv irq index out of range:%d_%d",
 				st_type, status);
 
 	return index;
@@ -6021,7 +6021,7 @@ static int ISP_probe(struct platform_device *pDev)
 	/* Get platform_device parameters */
 #ifdef CONFIG_OF
 	if (pDev == NULL) {
-		dev_info(&pDev->dev, "pDev is NULL");
+		dev_dbg(&pDev->dev, "pDev is NULL");
 		return -ENXIO;
 	}
 
@@ -6032,7 +6032,7 @@ static int ISP_probe(struct platform_device *pDev)
 		GFP_KERNEL);
 
 	if (!_ispdev) {
-		dev_info(&pDev->dev, "Unable to allocate isp_devs\n");
+		dev_dbg(&pDev->dev, "Unable to allocate isp_devs\n");
 		return -ENOMEM;
 	}
 	isp_devs = _ispdev;
@@ -6045,7 +6045,7 @@ static int ISP_probe(struct platform_device *pDev)
 	isp_dev->regs = of_iomap(pDev->dev.of_node, 0);
 	if (!isp_dev->regs) {
 
-		dev_info(&pDev->dev,
+		dev_dbg(&pDev->dev,
 			"Unable to ioremap registers, of_iomap fail, nr_isp_devs=%d, devnode(%s).\n",
 			nr_isp_devs, pDev->dev.of_node->name);
 
@@ -6064,7 +6064,7 @@ static int ISP_probe(struct platform_device *pDev)
 		if (of_property_read_u32_array(pDev->dev.of_node, "interrupts",
 		    irq_info, ARRAY_SIZE(irq_info))) {
 
-			dev_info(&pDev->dev, "get irq flags from DTS fail!!\n");
+			dev_dbg(&pDev->dev, "get irq flags from DTS fail!!\n");
 			return -ENODEV;
 		}
 
@@ -6080,7 +6080,7 @@ static int ISP_probe(struct platform_device *pDev)
 					NULL);
 
 				if (Ret) {
-					dev_info(&pDev->dev,
+					dev_dbg(&pDev->dev,
 					"request_irq fail, nr_isp_devs=%d, devnode(%s), irq=%d, ISR: %s\n",
 					nr_isp_devs, pDev->dev.of_node->name,
 					isp_dev->irq,
@@ -6116,7 +6116,7 @@ static int ISP_probe(struct platform_device *pDev)
 		/* Register char driver */
 		Ret = ISP_RegCharDev();
 		if ((Ret)) {
-			dev_info(&pDev->dev, "register char failed");
+			dev_dbg(&pDev->dev, "register char failed");
 			return Ret;
 		}
 
@@ -6132,7 +6132,7 @@ static int ISP_probe(struct platform_device *pDev)
 
 		if (IS_ERR(dev)) {
 			Ret = PTR_ERR(dev);
-			dev_info(&pDev->dev,
+			dev_dbg(&pDev->dev,
 				"Failed to create device: /dev/%s, err = %d",
 				ISP_DEV_NAME, Ret);
 
