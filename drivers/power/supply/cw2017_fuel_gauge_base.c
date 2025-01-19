@@ -77,7 +77,7 @@
 #define cw_printk(fmt, arg...)        \
 	({                                    \
 		if(CWFG_ENABLE_LOG){              \
-			printk("FG_CW2017 : %s-%d : " fmt, __FUNCTION__ ,__LINE__,##arg);  \
+			pr_debug("FG_CW2017 : %s-%d : " fmt, __FUNCTION__ ,__LINE__,##arg);  \
 		}else{}                           \
 	})     //need check by Chaman
 
@@ -198,7 +198,7 @@ static int cw_read(struct i2c_client *client, unsigned char reg, unsigned char b
 	int ret = 0;
 	ret = i2c_smbus_read_i2c_block_data( client, reg, 1, buf);
 	if(ret < 0){
-		printk("IIC error %d\n", ret);
+		cw_printk("IIC error %d\n", ret);
 	}
 	return ret;
 }
@@ -208,7 +208,7 @@ static int cw_write(struct i2c_client *client, unsigned char reg, unsigned char 
 	int ret = 0;
 	ret = i2c_smbus_write_i2c_block_data( client, reg, 1, &buf[0] );
 	if(ret < 0){
-		printk("IIC error %d\n", ret);
+		cw_printk("IIC error %d\n", ret);
 	}
 	return ret;
 }
@@ -218,7 +218,7 @@ static int cw_read_word(struct i2c_client *client, unsigned char reg, unsigned c
 	int ret = 0;
 	ret = i2c_smbus_read_i2c_block_data( client, reg, 2, buf );
 	if(ret < 0){
-		printk("IIC error %d\n", ret);
+		cw_printk("IIC error %d\n", ret);
 	}
 	return ret;
 }
@@ -227,7 +227,7 @@ static int cw2017_enable(struct cw_battery *cw_bat)
 {
 	int ret;
     unsigned char reg_val = MODE_DEFAULT;
-	printk("cw2017_enable!!!\n");
+	cw_printk("cw2017_enable!!!\n");
 
 	ret = cw_write(cw_bat->client, REG_MODE_CONFIG, &reg_val);
 	if(ret < 0)
@@ -260,7 +260,7 @@ static int cw_get_version(struct cw_battery *cw_bat)
 		return INT_MAX;
 	
 	version = reg_val;	 
-	printk("version = %d\n", version);
+	cw_printk("version = %d\n", version);
 	return version;	
 }
 
@@ -326,10 +326,10 @@ static int cw_get_capacity(struct cw_battery *cw_bat)
 		
 	if(soc > 100){		
 		reset_loop++;
-		printk("IC error read soc error %d times\n", reset_loop);
+		cw_printk("IC error read soc error %d times\n", reset_loop);
 		if(reset_loop > 5){
 			reset_loop = 0;
-			printk("IC error. please reset IC");
+			cw_printk("IC error. please reset IC");
 			cw2017_enable(cw_bat); //here need modify
 		}
 		return cw_bat->capacity;
@@ -344,7 +344,7 @@ static int cw_get_capacity(struct cw_battery *cw_bat)
 	
 	/* case 1 : aviod swing */
 	if(UI_SOC >= 100){
-		printk(KERN_INFO "CW2017[%d]: UI_SOC = %d larger 100!!!!\n", __LINE__, UI_SOC);
+		cw_printk("CW2017[%d]: UI_SOC = %d larger 100!!!!\n", __LINE__, UI_SOC);
 		UI_SOC = 100;
 	}else if((UI_SOC >= (cw_bat->capacity - 1)) && (UI_SOC <= (cw_bat->capacity + 1)) 
 		&& ((UI_decimal > DECIMAL_MAX) || (UI_decimal < DECIMAL_MIN)) && (UI_SOC != 100)){
@@ -524,7 +524,7 @@ static void cw_update_data(struct cw_battery *cw_bat)
 	}
 	
 	cw_bat->temp = cw_get_temp(cw_bat);
-	printk("vol = %d  cap = %d temp = %d RSOC = %d charger_mode = %d\n", 
+	cw_printk("vol = %d  cap = %d temp = %d RSOC = %d charger_mode = %d\n", 
 		cw_bat->voltage, cw_bat->capacity, cw_bat->temp, cw_bat->RSOC, cw_bat->charger_mode);
 //prize-Solve the problem of sudden change of power when the electricity meter is 0% turned off and turned on-20210908-pengzhipeng-end
 }
@@ -585,7 +585,7 @@ static int cw_init_data(struct cw_battery *cw_bat)
 	if(cw_bat->version == INT_MAX){
 		return -1;
 	}
-	printk("ver = %d vol = %d  cap = %d temp = %d real_SOC = %d\n", 
+	cw_printk("ver = %d vol = %d  cap = %d temp = %d real_SOC = %d\n", 
 		cw_bat->version, cw_bat->voltage, cw_bat->capacity, cw_bat->temp, real_SOC);
 	return 0;
 }
@@ -655,7 +655,7 @@ static int cw_update_config_info(struct cw_battery *cw_bat)
 		ret = cw_write(cw_bat->client, REG_BATINFO + i, &reg_val);
         if(ret < 0) 
 			return ret;
-		printk("w reg[%02X] = %02X\n", REG_BATINFO +i, reg_val);
+		cw_printk("w reg[%02X] = %02X\n", REG_BATINFO +i, reg_val);
 	}
 	
 	ret = cw_read(cw_bat->client, REG_SOC_ALERT, &reg_val);
@@ -687,7 +687,7 @@ static int cw_update_config_info(struct cw_battery *cw_bat)
 		msleep(100);
         ret = cw_read(cw_bat->client, REG_SOC_INT, &reg_val);
         ret = cw_read(cw_bat->client, REG_SOC_INT + 1, &reg_val_dig);
-		printk("i = %d soc = %d, .soc = %d\n", i, reg_val, reg_val_dig);
+		cw_printk("i = %d soc = %d, .soc = %d\n", i, reg_val, reg_val_dig);
         if (ret < 0)
             return ret;
         else if (reg_val <= 100) 
@@ -724,7 +724,7 @@ static int cw_init(struct cw_battery *cw_bat)
 			if(ret < 0)
 				return ret;
 			
-			printk("r reg[%02X] = %02X\n", REG_BATINFO +i, reg_val);
+			cw_printk("r reg[%02X] = %02X\n", REG_BATINFO +i, reg_val);
 			if(config_info[i] != reg_val)
 			{
 				break;
@@ -1109,7 +1109,7 @@ static int cw2017_probe(struct i2c_client *client, const struct i2c_device_id *i
 			if (!ret){
 				memcpy(config_info,buf,size);
 				for(i=0;i<size;i++){
-					printk("cw2017_probe[%d] %x ",i,config_info[i]);
+					cw_printk("cw2017_probe[%d] %x ",i,config_info[i]);
 			    }
 				cw_printk("cw_bat get batinfo sucess size(%d)!\n",size);
 			}else{
@@ -1130,19 +1130,19 @@ static int cw2017_probe(struct i2c_client *client, const struct i2c_device_id *i
         ret = cw_init(cw_bat);
     }
     if (ret) {
-		printk("%s : cw2017 init fail!\n", __func__);
+		cw_printk("%s : cw2017 init fail!\n", __func__);
         return ret;	
     }
 	
 	ret = cw_init_config(cw_bat);
 	if (ret) {
-		printk("%s : cw2017 init config fail!\n", __func__);
+		cw_printk("%s : cw2017 init config fail!\n", __func__);
 		return ret;
 	}
 	
 	ret = cw_init_data(cw_bat);
     if (ret) {
-		printk("%s : cw2017 init data fail!\n", __func__);
+		cw_printk("%s : cw2017 init data fail!\n", __func__);
         return ret;	
     }
 
@@ -1172,7 +1172,7 @@ static int cw2017_probe(struct i2c_client *client, const struct i2c_device_id *i
 	cw_bat->cw_bat = power_supply_register(&client->dev, psy_desc, &psy_cfg);
 	if(IS_ERR(cw_bat->cw_bat)) {
 		ret = PTR_ERR(cw_bat->cw_bat);
-	    printk(KERN_ERR"failed to register battery: %d\n", ret);
+	    cw_printk(KERN_ERR"failed to register battery: %d\n", ret);
 	    return ret;
 	}
 #endif
@@ -1189,7 +1189,7 @@ static int cw2017_probe(struct i2c_client *client, const struct i2c_device_id *i
 			irq = client->irq;
 			ret = request_irq(irq, ops_cw2017_int_handler_int_handler, IRQF_TRIGGER_FALLING, "cw2017_detect", cw_bat);
 			if (ret < 0) {
-					printk(KERN_ERR"fault interrupt registration failed err = %d\n", ret);
+					cw_printk(KERN_ERR"fault interrupt registration failed err = %d\n", ret);
 			}
 			enable_irq_wake(irq);
 	}

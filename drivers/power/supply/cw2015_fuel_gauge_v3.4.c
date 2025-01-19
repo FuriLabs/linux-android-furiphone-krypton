@@ -62,7 +62,7 @@ extern struct hardware_info current_coulo_info;
 #define cw_printk(flg, fmt, arg...)        \
 	({                                    \
 		if(flg >= CWFG_ENABLE_LOG){\
-			printk("FG_CW2015 : %s : " fmt, __FUNCTION__ ,##arg);\
+			pr_debug("FG_CW2015 : %s : " fmt, __FUNCTION__ ,##arg);\
 		}else{}                           \
 	})     //need check by Chaman
 
@@ -190,7 +190,7 @@ int cw_update_config_info(struct cw_battery *cw_bat)
 
     cw_printk(1,"\n");
     cw_printk(1,"[FGADC] test config_info = 0x%x\n",config_info[0]);
-	printk(KERN_ERR"%s\n", __func__);
+	cw_printk(1, "%s\n", __func__);
 
     
     // make sure no in sleep mode
@@ -206,7 +206,7 @@ int cw_update_config_info(struct cw_battery *cw_bat)
 
     // update new battery info
     for (i = 0; i < SIZE_BATINFO; i++) {
-		printk(KERN_ERR"%X\n", config_info[i]);
+		cw_printk(1, "%X\n", config_info[i]);
         ret = cw_write(cw_bat->client, REG_BATINFO + i, &config_info[i]);
         if(ret < 0) 
 			return ret;
@@ -225,12 +225,12 @@ int cw_update_config_info(struct cw_battery *cw_bat)
     }
 
     if (!(reg_val & CONFIG_UPDATE_FLG)) {
-		printk("Error: The new config set fail\n");
+		cw_printk(1, "Error: The new config set fail\n");
 		//return -1;
     }
 
     if ((reg_val & 0xf8) != ATHD) {
-		printk("Error: The new ATHD set fail\n");
+		cw_printk(1, "Error: The new ATHD set fail\n");
 		//return -1;
     }
 
@@ -283,7 +283,7 @@ static int cw_init(struct cw_battery *cw_bat)
 		cw_printk(1,"update config flg is true, need update config\n");
         ret = cw_update_config_info(cw_bat);
         if (ret < 0) {
-			printk("%s : update config fail\n", __func__);
+			cw_printk(1, "%s : update config fail\n", __func__);
             return ret;
         }
     } else {
@@ -293,7 +293,7 @@ static int cw_init(struct cw_battery *cw_bat)
 	        	return ret;
 	        }
 	        
-			printk(KERN_ERR"%X\n", reg_val);
+			cw_printk(1, "%X\n", reg_val);
 	        if (config_info[i] != reg_val)
 	            break;
         }
@@ -450,7 +450,7 @@ void set_charger_state(int state)
 {
 	
 	charger_status = state;
-	//printk("set_charger_state =%d\n", charger_status);
+	//cw_printk(1, "set_charger_state =%d\n", charger_status);
 }
 #define  LOW_TEMPERATURE_POWER_OFF 0xf0
 extern int read_tbat_value(void);
@@ -475,7 +475,7 @@ static int cw_get_capacity(struct cw_battery *cw_bat)
 	
 	ret = cw_read_word(cw_bat->client, REG_SOC, reg_val);
 	if (ret < 0){
-		printk("pzp cw_bat->capacity=%d\n", cw_bat->capacity);
+		cw_printk(1, "pzp cw_bat->capacity=%d\n", cw_bat->capacity);
 		return ret;
 	}
 	
@@ -488,7 +488,7 @@ static int cw_get_capacity(struct cw_battery *cw_bat)
 	
 	if(gm_info != NULL){
 	   temperature = gm_info->cur_bat_temp;
-       //printk("cw_get_capacity  temperature= %d gm_info->cur_bat_temp =%d\n", temperature,gm_info->cur_bat_temp);
+       //cw_printk(1, "cw_get_capacity  temperature= %d gm_info->cur_bat_temp =%d\n", temperature,gm_info->cur_bat_temp);
 	}
 
 	if ((temperature < -1) && (cw_capacity == 0))
@@ -502,7 +502,7 @@ static int cw_get_capacity(struct cw_battery *cw_bat)
         ret = cw_write(cw_bat->client, REG_CONFIG, &temp_val);
 		if (ret < 0) 
 			return ret;
-		printk("pzp low temper  set ATHD  cw_bat->capacity=%d\n", cw_bat->capacity);
+		cw_printk(1, "pzp low temper  set ATHD  cw_bat->capacity=%d\n", cw_bat->capacity);
 
 	}
 	
@@ -534,14 +534,14 @@ static int cw_get_capacity(struct cw_battery *cw_bat)
 			if (ret < 0) 
 				return ret;
 			cw_capacity = reg_val[0];
-			printk("pzp low temper cw_bat->capacity=%d\n", cw_bat->capacity);
+			cw_printk(1, "pzp low temper cw_bat->capacity=%d\n", cw_bat->capacity);
 		}
 		
 	}
 	
 	if ((cw_bat->capacity > 5) && (cw_capacity == 0))
 		return cw_bat->capacity;
-	//printk("pzp cw_capacity = %d temperature=%d\n", cw_capacity, temperature);
+	//cw_printk(1, "pzp cw_capacity = %d temperature=%d\n", cw_capacity, temperature);
 	if ((cw_capacity < 0) || (cw_capacity > 100)) {
 		cw_printk(1,"Error:  cw_capacity = %d\n", cw_capacity);
 		reset_loop++;			
@@ -564,7 +564,7 @@ static int cw_get_capacity(struct cw_battery *cw_bat)
 	/* case 1 : aviod swing */
 	remainder = (((real_SOC * 256 + digit_SOC) * 100) / 256) % 100;
 		
-	printk(KERN_ERR"real_SOC = %d, digit_SOC = %d, remainder = %d, cw_capacity = %d, cw_bat->capacity = %d\n", 
+	cw_printk(1, "real_SOC = %d, digit_SOC = %d, remainder = %d, cw_capacity = %d, cw_bat->capacity = %d\n", 
 		real_SOC, digit_SOC, remainder, cw_capacity, cw_bat->capacity);
 		
 	if((remainder > 70 || remainder < 30) && (cw_capacity >= (cw_bat->capacity - 1)) && (cw_capacity <= (cw_bat->capacity + 1)) && (cw_capacity != 100))
@@ -791,8 +791,8 @@ static void cw_update_capacity(struct cw_battery *cw_bat)
 		cw_bat->change = 1;
 		
 		if(cw_bat->capacity == 0 && capacity_last >= 1){
-			printk("cw_update_capacity bootmdoe = %d\n", gm_info->bootmode);
-			printk("charger_mode = %d, status = %d, capacity = %d, voltage = %d  capacity_last =%d\n", cw_bat->charger_mode, cw_bat->status, cw_bat->capacity, cw_bat->voltage,capacity_last);
+			cw_printk(1, "cw_update_capacity bootmdoe = %d\n", gm_info->bootmode);
+			cw_printk(1, "charger_mode = %d, status = %d, capacity = %d, voltage = %d  capacity_last =%d\n", cw_bat->charger_mode, cw_bat->status, cw_bat->capacity, cw_bat->voltage,capacity_last);
 			more_to_zero =1;
 		}
 		
@@ -1167,7 +1167,7 @@ static int cw2015_probe(struct i2c_client *client, const struct i2c_device_id *i
         ret = cw_init(cw_bat);
     }
     if (ret) {
-		printk("%s : cw2015 init fail!\n", __func__);
+		cw_printk(1, "%s : cw2015 init fail!\n", __func__);
         return ret;	
     }
 
@@ -1197,7 +1197,7 @@ static int cw2015_probe(struct i2c_client *client, const struct i2c_device_id *i
 	cw_bat->cw_bat = power_supply_register(&client->dev, psy_desc, &psy_cfg);
 	if(IS_ERR(cw_bat->cw_bat)) {
 		ret = PTR_ERR(cw_bat->cw_bat);
-	    printk(KERN_ERR"failed to register battery: %d\n", ret);
+	    cw_printk(1, "failed to register battery: %d\n", ret);
 	    return ret;
 	}
 #endif
