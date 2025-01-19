@@ -289,10 +289,10 @@ static void swchg_select_charging_current_limit(struct charger_manager *info)
 		if((info->chr_type == NONSTANDARD_CHARGER) && (get_MT5725_status() == 0)){
 			get_wireless_charge_current(pdata);
 //prize add by lipengpeng 20210611 start 
-		// printk("lpp---tmp=%d\n",battery_get_bat_temperature());
+		// pr_debug("lpp---tmp=%d\n",battery_get_bat_temperature());
 		//if(battery_get_bat_temperature() >= 45)
 		//{
-		//	printk("lpp-1111--pdata->input_current_limit=%d\n",pdata->input_current_limit);
+		//	pr_debug("lpp-1111--pdata->input_current_limit=%d\n",pdata->input_current_limit);
 		//   En_Dis_add_current(0xFF);
 		//  pdata->input_current_limit= 1100000;
 		//	pdata->charging_current_limit = 2500000;	
@@ -302,7 +302,7 @@ static void swchg_select_charging_current_limit(struct charger_manager *info)
 		
 		//}
 //prize add by lipengpeng 20210611 end  
-			chr_err("wireless charge current input_current_limit %d: charging_current_limit %d\n",pdata->input_current_limit,pdata->charging_current_limit);
+			pr_debug("wireless charge current input_current_limit %d: charging_current_limit %d\n",pdata->input_current_limit,pdata->charging_current_limit);
 		}
 #endif
 //prize add by lipengpeng 20220425 end

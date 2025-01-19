@@ -347,7 +347,7 @@ int charger_manager_enable_high_voltage_charging(
 	else if (en && consumer->hv_charging_disabled == true)
 		consumer->hv_charging_disabled = false;
 	else {
-		pr_warn("[%s] already set: %d %d\n", __func__,
+		pr_debug("[%s] already set: %d %d\n", __func__,
 			consumer->hv_charging_disabled, en);
 		return 0;
 	}
@@ -515,9 +515,9 @@ int charger_manager_set_input_current_limit(struct charger_consumer *consumer,
 //prize add  by lipengpeng 202220425 start 
 #if defined(CONFIG_PRIZE_MT5725_SUPPORT_15W)
 	if(get_MT5725_status() == 0){
-		chr_err("%s: 5725_15W  charge \n",__func__);
+		pr_debug("%s: 5725_15W  charge \n",__func__);
 	} else {
-	    chr_err("%s: no  5725_15W  charge \n",__func__);
+	    pr_debug("%s: no  5725_15W  charge \n",__func__);
 		return 0;
 	}
 #endif
@@ -564,9 +564,9 @@ int charger_manager_set_charging_current_limit(
 //prize add  by lipengpeng 202220425 start 
 #if defined(CONFIG_PRIZE_MT5725_SUPPORT_15W)
 		if(get_MT5725_status() == 0){
-			chr_err("%s: 5725_15W  charge \n",__func__);
+			pr_debug("%s: 5725_15W  charge \n",__func__);
 		} else {
-			chr_err("%s: no  5725_15W  charge \n",__func__);
+			pr_debug("%s: no  5725_15W  charge \n",__func__);
 			return 0;
 		}
 #endif

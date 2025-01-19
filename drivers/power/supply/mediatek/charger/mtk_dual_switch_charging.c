@@ -290,7 +290,7 @@ dual_swchg_select_charging_current_limit(struct charger_manager *info)
 #if defined(CONFIG_PRIZE_MT5725_SUPPORT_15W)
 		if((info->chr_type == NONSTANDARD_CHARGER) && (get_MT5725_status() == 0)){
 			get_wireless_charge_current(pdata);
-			chr_err("wireless charge current input_current_limit %d: charging_current_limit %d\n",pdata->input_current_limit,pdata->charging_current_limit);
+			pr_debug("wireless charge current input_current_limit %d: charging_current_limit %d\n",pdata->input_current_limit,pdata->charging_current_limit);
 		}
 #endif
 //prize add by lipengpeng 20210616 end 

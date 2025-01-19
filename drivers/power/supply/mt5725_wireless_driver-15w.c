@@ -282,20 +282,20 @@ static void MT5725_sram_write(u32 addr, u8 *data,u32 len) {
     offset = 0;
     length = 0;
     size = len;
-    pr_info("[%s] Length to write:%d\n",__func__, len);
+    pr_debug("[%s] Length to write:%d\n",__func__, len);
     while(size > 0) {
         if(size > SRAM_PAGE_SIZE) {
             length = SRAM_PAGE_SIZE;
         } else {
             length = size;
         }
-        pr_info("[%s] Length of this write :%d\n",__func__,length);
+        pr_debug("[%s] Length of this write :%d\n",__func__,length);
 		MT5725_write_buffer(mte, addr + offset ,data+offset, length);
         size -= length;
         offset += length;
         msleep(2);
     }
-    pr_info("[%s] Write completion\n",__func__);
+    pr_debug("[%s] Write completion\n",__func__);
 }
 
 
@@ -324,7 +324,7 @@ static void MT5725_run_pgm_fw(void) {
     val.value = MT5725_M0_RESET;
     MT5725_write_buffer(mte, REG_M0_CTRL, val.ptr, 2);
     msleep(50);
-	pr_info("[%s]  finish  \n",__func__);
+	pr_debug("[%s]  finish  \n",__func__);
 }
 
 
@@ -333,10 +333,10 @@ static u8 MT5725_otp_read(u32 addr, u8 * buf , u32 size, u8 mode) {
 	//u32 j;
     vuc val;
     Pgm_Type_t pgm;
-    pr_info("[%s] parameter size :%d\n",__func__,size);
+    pr_debug("[%s] parameter size :%d\n",__func__,size);
     length = (size+(OTP_BLOCK_SIZE-1))/OTP_BLOCK_SIZE*OTP_BLOCK_SIZE;
     MT5725_run_pgm_fw();
-	pr_info("[%s] Calculate the length to read:%d\n",__func__,length);
+	pr_debug("[%s] Calculate the length to read:%d\n",__func__,length);
     for (i = 0; i < length/OTP_BLOCK_SIZE; ++i) {
         pgm.length = OTP_BLOCK_SIZE;
         pgm.addr = addr+i*OTP_BLOCK_SIZE;
@@ -357,7 +357,7 @@ static u8 MT5725_otp_read(u32 addr, u8 * buf , u32 size, u8 mode) {
         while(status == PGM_STATUS_READ) {
             msleep(50);
             MT5725_read_buffer(mte, PGM_STATUS_ADDR, val.ptr, 2);
-			pr_info("[%s] Program reading",__func__);
+			pr_debug("[%s] Program reading",__func__);
             status = val.ptr[0];
             times+=1;
             if (times>100) {
@@ -366,7 +366,7 @@ static u8 MT5725_otp_read(u32 addr, u8 * buf , u32 size, u8 mode) {
             }
         }
         if (status == PGM_STATUS_PROGOK) {
-            pr_info("[%s] PGM_STATUS_PROGOK\n",__func__);
+            pr_debug("[%s] PGM_STATUS_PROGOK\n",__func__);
 			MT5725_read_buffer(mte, PGM_DATA_ADDR, &buf[OTP_BLOCK_SIZE*i], OTP_BLOCK_SIZE);
         } else {
 		    pr_err("[%s] OtpRead error , status = 0x%02x\n",__func__,status);
@@ -389,7 +389,7 @@ static u8 MT5725_otp_write(u32 addr, u8 * buf , u32 len) {
     size = len;
     offset = 0;
     write_size = 0;
-    pr_info("[%s] Size to write:%d\n",__func__,size);
+    pr_debug("[%s] Size to write:%d\n",__func__,size);
     MT5725_run_pgm_fw();
     write_retrycnt = 8;
     while(size>0) {
@@ -440,7 +440,7 @@ static u8 MT5725_otp_write(u32 addr, u8 * buf , u32 len) {
             msleep(50);
             MT5725_read_buffer(mte, PGM_STATUS_ADDR, val.ptr, 2);
             status = val.ptr[0];
-            pr_info("[%s] Program writing\n",__func__);
+            pr_debug("[%s] Program writing\n",__func__);
             times+=1;
             if (times > 100) {
                 pr_err("[%s] Program write timeout\n",__func__);
@@ -451,7 +451,7 @@ static u8 MT5725_otp_write(u32 addr, u8 * buf , u32 len) {
         if (status == PGM_STATUS_PROGOK) {
             size-=write_size;
             offset+=write_size;
-            pr_info("[%s] PGM_STATUS_PROGOK\n",__func__);
+            pr_debug("[%s] PGM_STATUS_PROGOK\n",__func__);
         } else if (status == PGM_STATUS_ERRCS) {
             if (write_retrycnt > 0) {
                 write_retrycnt--;
@@ -493,11 +493,11 @@ static u8 MT5725_otp_write_check(u32 flagaddr) {
     MT5725_otp_read(flagaddr, otpwrite_flagread,4,1);
     for (i = 0; i < 4; ++i) {
         if (otpwrite_flagread[i] != otpwrite_flagdata[i]) {
-            pr_info("[%s] MT5725 OTP  Flag not written: %d\n",__func__,i);
+            pr_debug("[%s] MT5725 OTP  Flag not written: %d\n",__func__,i);
             return FALSE;
         }
     }
-    printk("[%s] MT5725 OTP Flag has been written",__func__);
+    pr_debug("[%s] MT5725 OTP Flag has been written",__func__);
 	kfree(otpwrite_flagread);
     return TRUE;
 }
@@ -531,7 +531,7 @@ static u8 MT5725_otp_verify(u32 addr,u8 * data,u32 len) {
         }
     }/**/
     kfree(otp_read_temp);
-    printk("[%s]  success",__func__);
+    pr_debug("[%s]  success",__func__);
     return TRUE;
 }
 
@@ -573,7 +573,7 @@ int Get_adaptertype(void){
     }
     if(mte->fsk_status == FSK_SUCCESS){
         MT5725_read_buffer(mte,REG_BC,fsk_msg,10);
-        pr_info("[%s] Information received : 0x%02x 0x%02x 0x%02x \n",__func__,fsk_msg[0],fsk_msg[1],fsk_msg[2]);
+        pr_debug("[%s] Information received : 0x%02x 0x%02x 0x%02x \n",__func__,fsk_msg[0],fsk_msg[1],fsk_msg[2]);
     }
     return fsk_msg[2];
 }
@@ -614,10 +614,10 @@ static ssize_t set_reg(struct device* cd, struct device_attribute* attr, const c
                         MT5725_read_buffer(mte, databuf[0], tmp, 2);
                         regdata = tmp[0] << 8 | tmp[1];
                         val.value |= regdata;
-                        pr_info("get reg: 0x%04x  set reg: 0x%04x \n", regdata, val.value);
+                        pr_debug("get reg: 0x%04x  set reg: 0x%04x \n", regdata, val.value);
                         MT5725_write_buffer(mte, databuf[0], val.ptr, 2);
                     } else {
-                        pr_info("Set reg : [0x%04x]  0x%x \n", databuf[0], val.value);
+                        pr_debug("Set reg : [0x%04x]  0x%x \n", databuf[0], val.value);
                         MT5725_write_buffer(mte, databuf[0], val.ptr, 2);
                     }
                 }
@@ -625,7 +625,7 @@ static ssize_t set_reg(struct device* cd, struct device_attribute* attr, const c
             }
         }
     }else{
-        pr_info("Error \n");
+        pr_debug("Error \n");
     }
     return len;
 }
@@ -640,7 +640,7 @@ static ssize_t fast_charging_store(struct device* dev, struct device_attribute* 
     if (error)
         return error;
     if ((val.value < 0) || (val.value > 20000)) {
-        pr_info("[%s] MT5725 Parameter error\n",__func__);
+        pr_debug("[%s] MT5725 Parameter error\n",__func__);
         return count;
     }
     fast_vfc(val.value);
@@ -688,27 +688,27 @@ static ssize_t brushfirmware(struct device* dev, struct device_attribute* attr, 
     unsigned int pter;
     error = kstrtouint(buf, 10, &pter);
     if(pter == 1){
-        pr_info("[%s] Only brush BOOT program\n",__func__);
-		pr_info("[%s] FW BOOT ERROR \n",__func__);
+        pr_debug("[%s] Only brush BOOT program\n",__func__);
+		pr_debug("[%s] FW BOOT ERROR \n",__func__);
        /* if(MT5725_otp_write(0x0000,(u8 *)MT5725_onlg_boot_bin,sizeof(MT5725_onlg_boot_bin))){
-            pr_info("[%s] Write complete, start verification \n",__func__);
+            pr_debug("[%s] Write complete, start verification \n",__func__);
             if (MT5725_otp_verify(0x0000,(u8 *)MT5725_onlg_boot_bin,sizeof (MT5725_onlg_boot_bin))) {
-                pr_info("[%s] MMT5725_otp_verify OK \n",__func__);
+                pr_debug("[%s] MMT5725_otp_verify OK \n",__func__);
             } else {
                 pr_err("[%s] MT5725_otp_verify check program failed \n",__func__);
             }
         }*/
     }else if(pter == 2){
-        pr_info("[%s] brush FORCEOTP program\n",__func__);
+        pr_debug("[%s] brush FORCEOTP program\n",__func__);
         if (MT5725_otp_write_check(OTP_WRITE_FLAG_ADDR) == TRUE) {
-            pr_info("[%s] MT5725_otp_write_check Done\n",__func__);
+            pr_debug("[%s] MT5725_otp_write_check Done\n",__func__);
         } else {
             if(MT5725_otp_write(0x0000,(u8 *)MT5725_forceotp_bin,sizeof(MT5725_forceotp_bin))){
-                pr_info("[%s] Write complete, start verification \n",__func__);
+                pr_debug("[%s] Write complete, start verification \n",__func__);
                 if (MT5725_otp_verify(0x0000,(u8 *)MT5725_forceotp_bin,sizeof (MT5725_forceotp_bin))) {
-                    pr_info("[%s] MMT5725_otp_verify OK \n",__func__);
+                    pr_debug("[%s] MMT5725_otp_verify OK \n",__func__);
                     MT5725_write_otpok_flag(OTP_WRITE_FLAG_ADDR);
-                    pr_info("[%s] MT5725_write_otp_flag \n",__func__);
+                    pr_debug("[%s] MT5725_write_otp_flag \n",__func__);
                 } else {
                     pr_err("[%s] MT5725_otp_verify check program failed \n",__func__);
                 }
@@ -716,7 +716,7 @@ static ssize_t brushfirmware(struct device* dev, struct device_attribute* attr, 
         }
         
     }
-    pr_info("[%s] Exit this operation \n",__func__);
+    pr_debug("[%s] Exit this operation \n",__func__);
     return count;
 }
 
@@ -732,7 +732,7 @@ void fast_vfc(int vol) {
     MT5725_write_buffer(mte, REG_VFC, val.ptr, 2);
     val.value = FAST_CHARGE;
     MT5725_write_buffer(mte, REG_CMD, val.ptr, 2);
-    pr_info("%s,write reg_cmd : 0x%04x,\n", __func__, val.value);
+    pr_debug("%s,write reg_cmd : 0x%04x,\n", __func__, val.value);
 }
 
 void fastcharge_afc(void) {
@@ -743,15 +743,15 @@ void fastcharge_afc(void) {
     MT5725_read_buffer(mte, REG_INTFLAG, val.ptr, 2);
     fclr.value = FAST_CHARGE;
     if (val.value & INT_AFC) {
-        pr_info("MT5725 %s ,version 0.1 Tx support samsung_afc\n", __func__);
+        pr_debug("MT5725 %s ,version 0.1 Tx support samsung_afc\n", __func__);
         temp.value = 9000;
         MT5725_write_buffer(mte, REG_VFC, temp.ptr, 2);
         scmd.value |= FAST_CHARGE;
         scmd.value |= CLEAR_INT;
         MT5725_write_buffer(mte, REG_INTCLR, fclr.ptr, 2);
-        pr_info("%s,version 0.1 write reg_clr : 0x%04x,\n", __func__, fclr.value);
+        pr_debug("%s,version 0.1 write reg_clr : 0x%04x,\n", __func__, fclr.value);
         MT5725_write_buffer(mte, REG_CMD, scmd.ptr, 2);
-        pr_info("%s,version 0.1 write reg_cmd : 0x%04x,\n", __func__, scmd.value);
+        pr_debug("%s,version 0.1 write reg_cmd : 0x%04x,\n", __func__, scmd.value);
     }
 }
 
@@ -784,7 +784,7 @@ static DEVICE_ATTR(gettxflag, 0644, gettx_flag_show, NULL);
 	gpio_direction_output(chip->otgen_gpio,0);
 	atomic_set(&mte->is_tx_mode,0);
 	mutex_unlock(&chip->ops_mutex);
-	printk(KERN_INFO"mt5725 disable_tx\n");
+	pr_debug(KERN_INFO"mt5725 disable_tx\n");
 	return sprintf(buf, "%d", 1);
 }
 static DEVICE_ATTR(disabletx, 0644, disable_tx_show, NULL);
@@ -804,33 +804,33 @@ static ssize_t enable_tx_store(struct device* dev, struct device_attribute* attr
 	//struct MT5725_dev *chip = i2c_get_clientdata(client);
 
     error = kstrtouint(buf, 10, &temp);
-	printk("LPP---enable_tx_store temp=%d\n",temp);
+	pr_debug("LPP---enable_tx_store temp=%d\n",temp);
 		
     if (error)
         return error;
     if(temp==1) {
 			//mutex_lock(&chip->ops_mutex);
 			mt_vbus_revere_off();
-			printk(KERN_INFO"mt5725 111 enable tx\n");
+			pr_debug(KERN_INFO"mt5725 111 enable tx\n");
 			mdelay(3);
-			printk(KERN_INFO"mt5725 222 enable tx\n");
+			pr_debug(KERN_INFO"mt5725 222 enable tx\n");
 			turn_on_otg_charge_mode(1);  //GPIO109---->high
-			printk(KERN_INFO"mt5725 333 enable tx\n");
+			pr_debug(KERN_INFO"mt5725 333 enable tx\n");
 			turn_on_rever_5725(0);//OD5-->high
-			printk(KERN_INFO"mt5725 444 enable tx\n");
+			pr_debug(KERN_INFO"mt5725 444 enable tx\n");
 			set_otg_gpio(0);//OD7--->low
 			mte->tx_count=0;
-			printk(KERN_INFO"mt5725 555 enable tx\n");
+			pr_debug(KERN_INFO"mt5725 555 enable tx\n");
 			atomic_set(&mte->is_tx_mode,1);
-			printk(KERN_INFO"mt5725 666 enable tx\n");
+			pr_debug(KERN_INFO"mt5725 666 enable tx\n");
 			revere_mode=1;
-			printk(KERN_INFO"mt5725 777 enable tx\n");
+			pr_debug(KERN_INFO"mt5725 777 enable tx\n");
 			mt_vbus_revere_on();// open vbus
 //#if defined (CONFIG_PRIZE_REVERE_CHARGING_MODE)			
 			mt_vbus_reverse_on_limited_current();  // prize add by lipengpeng 20210322 set otg voltage  5.4V
 //#endif
 			//mutex_unlock(&chip->ops_mutex);
-			printk(KERN_INFO"mt5725 888 enable tx\n");
+			pr_debug(KERN_INFO"mt5725 888 enable tx\n");
     }else{
 			turn_on_otg_charge_mode(0);//GPIO109--->low
 			turn_off_rever_5725(0);//OD5-->low
@@ -842,7 +842,7 @@ static ssize_t enable_tx_store(struct device* dev, struct device_attribute* attr
 			mt_vbus_revere_off();
             atomic_set(&mte->is_tx_mode,0);
 			revere_mode=0;
-			printk(KERN_INFO"mt5725 disable_tx\n");
+			pr_debug(KERN_INFO"mt5725 disable_tx\n");
 	}
     return count;
 }
@@ -889,7 +889,7 @@ void MT5725_send_EPT(u8 endreson) {
 
 void Set_staystate_current(void)
 {	
-	pr_info("[%s],call\n", __func__);
+	pr_debug("[%s],call\n", __func__);
 	
 	wireless_charge_chage_current();
 	return;
@@ -925,7 +925,7 @@ void En_Dis_add_current(int i){
 	vuc protocol;
 	protocol.ptr[0] = i; 
 	protocol.ptr[1] = 6;//default value in Firmware IIC address REG_CURFUNC+1
-	printk(" En_Dis_add_current i=%d  protocol.ptr[0]=%02x\n",i,protocol.ptr[0]);
+	pr_debug(" En_Dis_add_current i=%d  protocol.ptr[0]=%02x\n",i,protocol.ptr[0]);
 	MT5725_write_buffer(mte, REG_CURFUNC, protocol.ptr,1);
 }
 EXPORT_SYMBOL(En_Dis_add_current);
@@ -954,19 +954,19 @@ static void MT5725_add_current(void){
 			mte->wireless_max_power = 5;
 			voltage = 5000;
 			maxchargecurrent = 1000000;
-			pr_info("[%s]: BPP Load power is recommended to be less than %dW\n", __func__,mte->wireless_max_power);
+			pr_debug("[%s]: BPP Load power is recommended to be less than %dW\n", __func__,mte->wireless_max_power);
 		 } else if(protocol.ptr[0] == 2){
 		    mte->charge_protocol = AFC;
 			mte->wireless_max_power = 10;
 			voltage = 9000;
 			maxchargecurrent = 1100000;
-			pr_info("[%s]: AFC Load power is recommended to be less than %dW\n", __func__,mte->wireless_max_power);
+			pr_debug("[%s]: AFC Load power is recommended to be less than %dW\n", __func__,mte->wireless_max_power);
 		 } else if(protocol.ptr[0] == 3){
 		    mte->charge_protocol = EPP;
 			MT5725_read_buffer(mte,REG_MAXPOWER,epp.ptr,1);
 		    epp.ptr[0] = epp.ptr[0]/2;
 			voltage = 9000;
-		    pr_info("[%s]: EPP Load power is recommended to be less than %dW\n", __func__,epp.ptr[0]);
+		    pr_debug("[%s]: EPP Load power is recommended to be less than %dW\n", __func__,epp.ptr[0]);
 		    mte->wireless_max_power = epp.ptr[0];
 			//if(mte->wireless_max_power > 15) mte->wireless_max_power = 15;
 			if (mte->wireless_max_power > mte->rx_power_cap){
@@ -993,10 +993,10 @@ static void MT5725_add_current(void){
 	 	powertemp = powertemp + 2000;
 		if(powertemp > maxpower) {
 			powertemp = maxpower;
-			pr_info("[%s] DISABLE_ADD_CURRENT INT!\n", __func__);
+			pr_debug("[%s] DISABLE_ADD_CURRENT INT!\n", __func__);
 			En_Dis_add_current(DISABLE_ADD_CURRENT);
 		}
-		pr_info("[%s] add power  = %d mW\n", __func__,powertemp);
+		pr_debug("[%s] add power  = %d mW\n", __func__,powertemp);
 	 	mte->input_current = powertemp * 1000 / voltage * 1000;
 		if(mte->charge_protocol == BPP){
 			if(mte->input_current > 1000000) mte->input_current = 1000000;
@@ -1013,11 +1013,11 @@ static void MT5725_add_current(void){
 			mte->charge_current = 1500000;
 		}
 //prize add by lipengpeng 20210305 end 
-		pr_info("[%s] Set input_current =  %d, Set charge_current = %d\n", __func__,mte->input_current,mte->charge_current);
+		pr_debug("[%s] Set input_current =  %d, Set charge_current = %d\n", __func__,mte->input_current,mte->charge_current);
 		Set_staystate_current();
 		schedule_delayed_work(&mte->add_current_work,100);
 	 }else{
-	 	pr_info("[%s] return!\n", __func__);
+	 	pr_debug("[%s] return!\n", __func__);
 		En_Dis_add_current(DISABLE_ADD_CURRENT);
 	 	return;
 	 }
@@ -1049,7 +1049,7 @@ void print_curfunc_info(void){
 void set_wireless_disable_flag(bool flag)
 {
 	mte->full_bat_disable_wireless = flag;
-	pr_info("%s: flag = %d\n", __func__, flag);
+	pr_debug("%s: flag = %d\n", __func__, flag);
 }
 EXPORT_SYMBOL(set_wireless_disable_flag);
 #endif /*CONFIG_PRIZE_GIGASET_CHARGE_RESTRICTION*/
@@ -1086,7 +1086,7 @@ void MT5725_irq_handle(void) {
     vuc temp, fclr, scmd;
     int iic_rf;
     scmd.value = 0;
-    pr_info("----------------MT5725_delayed_work-----------------------\n");
+    pr_debug("----------------MT5725_delayed_work-----------------------\n");
     temp.value = MT5725ID;
     iic_rf = MT5725_write_buffer(mte,REG_CHIPID,temp.ptr,2);
     if(iic_rf < 0){
@@ -1094,59 +1094,59 @@ void MT5725_irq_handle(void) {
         return;
     }
     MT5725_read_buffer(mte,REG_FW_VER,temp.ptr,2);
-	printk("%s: fw_ver %x\n",__func__,temp.ptr[0]);
+	pr_debug("%s: fw_ver %x\n",__func__,temp.ptr[0]);
     if(temp.ptr[1] & RXMODE){
-        pr_info("[%s] The chip works in Rx mode\n",__func__);
+        pr_debug("[%s] The chip works in Rx mode\n",__func__);
         MT5725_read_buffer(mte, REG_INTFLAG, val.ptr, 2);
         fclr.value = val.value;
-        pr_info("[%s] REG_INTFLAG value:0x%04x\n", __func__, val.value);
+        pr_debug("[%s] REG_INTFLAG value:0x%04x\n", __func__, val.value);
         if(val.value == 0){
-            pr_info("[%s] There's no interruption here\n", __func__);
+            pr_debug("[%s] There's no interruption here\n", __func__);
             return;
         }
         print_curfunc_info();	
         if(val.value & INT_OCP){
-            pr_info("[%s] Interrupt signal: INT_OCP,Load current too high\n", __func__);
+            pr_debug("[%s] Interrupt signal: INT_OCP,Load current too high\n", __func__);
         }
         if(val.value & INT_PLDO){
-            pr_info("[%s] Interrupt signal: INT_PLDO,LDO over power protection\n", __func__);
+            pr_debug("[%s] Interrupt signal: INT_PLDO,LDO over power protection\n", __func__);
         }
         if (val.value & INT_POWER_ON) {
-			pr_info("[%s] Interrupt signal: PowerON 01\n", __func__);
+			pr_debug("[%s] Interrupt signal: PowerON 01\n", __func__);
 			mte->wireless_max_power = 0;			
 			mte->charge_protocol = PROTOCOL_UNKNOWN;
 			mte->input_current = 500000;
 	        mte->charge_current = 500000;
 			//Set_staystate_current();
-            pr_info("[%s] Interrupt signal: PowerON 02\n", __func__);
+            pr_debug("[%s] Interrupt signal: PowerON 02\n", __func__);
         }
         if (val.value & INT_LDO_ON) {			
-            pr_info("[%s] Interrupt signal:LDO ON\n", __func__);
+            pr_debug("[%s] Interrupt signal:LDO ON\n", __func__);
         }
         if (val.value & INT_RX_READY) {
-            pr_info("[%s] Interrupt signal:MT5725 is Ready\n", __func__);
+            pr_debug("[%s] Interrupt signal:MT5725 is Ready\n", __func__);
         }
         if (val.value & INT_LDO_OFF) {
-            pr_info("[%s] Interrupt signal:MT5725 LDO_OFF\n", __func__);
+            pr_debug("[%s] Interrupt signal:MT5725 LDO_OFF\n", __func__);
         }
         if (val.value & INT_FSK_RECV) {
-            pr_info("[%s] Interrupt signal:FSK received successfully\n", __func__);
+            pr_debug("[%s] Interrupt signal:FSK received successfully\n", __func__);
             mte->fsk_status = FSK_SUCCESS;
             //read REG_BC
         }
         if (val.value & INT_FSK_SUCCESS) {
-            pr_info("[%s] Interrupt signal:FSK received successfully\n", __func__);
+            pr_debug("[%s] Interrupt signal:FSK received successfully\n", __func__);
             mte->fsk_status = FSK_SUCCESS;
             //read REG_BC
         }
         if (val.value & INT_FSK_TIMEOUT) {
-            pr_info("[%s] Interrupt signal:Failed to receive FSK\n", __func__);
+            pr_debug("[%s] Interrupt signal:Failed to receive FSK\n", __func__);
             mte->fsk_status = FSK_FAILED;
             //read REG_BC
         }
         if(val.value & INT_BPP){
-            pr_info("[%s] Interrupt signal:Tx BPP\n", __func__);
-            pr_info("[%s] Load power is recommended to be less than 5W\n", __func__);
+            pr_debug("[%s] Interrupt signal:Tx BPP\n", __func__);
+            pr_debug("[%s] Load power is recommended to be less than 5W\n", __func__);
 			mte->wireless_max_power = 5;
 			mte->charge_protocol = BPP;
 			mte->input_current = 500000;
@@ -1156,10 +1156,10 @@ void MT5725_irq_handle(void) {
         }
         if(val.value & INT_EPP){
             vuc epp;
-            pr_info("[%s] Interrupt signal:Tx EPP\n", __func__);
+            pr_debug("[%s] Interrupt signal:Tx EPP\n", __func__);
             MT5725_read_buffer(mte,REG_MAXPOWER,epp.ptr,1);
             epp.ptr[0] = epp.ptr[0]/2;
-            pr_info("[%s] Load power is recommended to be less than %dW\n", __func__,epp.ptr[0]);
+            pr_debug("[%s] Load power is recommended to be less than %dW\n", __func__,epp.ptr[0]);
 			mte->wireless_max_power = epp.ptr[0];
 			if (mte->wireless_max_power > mte->rx_power_cap){
 				dev_info(mte->dev,"%s: limit rx power to %d from %d\n",mte->rx_power_cap,mte->wireless_max_power);
@@ -1179,8 +1179,8 @@ void MT5725_irq_handle(void) {
 //prize add by lipenpeng 20210419 end 
         }
         if (val.value & INT_AFC) {
-            pr_info("[%s] Interrupt signal:Tx support samsung_afc\n", __func__);
-            pr_info("[%s] Load power recommended to 9W\n", __func__);
+            pr_debug("[%s] Interrupt signal:Tx support samsung_afc\n", __func__);
+            pr_debug("[%s] Load power recommended to 9W\n", __func__);
 			mte->wireless_max_power = 10;
 			mte->charge_protocol = AFC;
 			mte->input_current = 500000;
@@ -1194,51 +1194,51 @@ void MT5725_irq_handle(void) {
 //prize add by lipengpeng 20210419 end 
         }
 		if(val.value & INT_ADDCURRENT){
-			 pr_info("[%s] Add current\n", __func__);
+			 pr_debug("[%s] Add current\n", __func__);
 			 MT5725_add_current();
 		}
-		pr_info("[%s] Get power wireless charging chip %dW\n", __func__,mte->wireless_max_power);
+		pr_debug("[%s] Get power wireless charging chip %dW\n", __func__,mte->wireless_max_power);
     }
     if(temp.ptr[1] & TXMODE){
-        pr_info("[%s] The chip works in Tx mode\n",__func__);
+        pr_debug("[%s] The chip works in Tx mode\n",__func__);
         MT5725_read_buffer(mte, REG_INTFLAG, val.ptr, 2);
         fclr.value = val.value;
-        pr_info("[%s] REG_INTFLAG value:0x%04x\n", __func__, val.value);
+        pr_debug("[%s] REG_INTFLAG value:0x%04x\n", __func__, val.value);
         if(val.value == 0){
-            pr_info("[%s] There's no interruption here\n", __func__);
+            pr_debug("[%s] There's no interruption here\n", __func__);
             return;
         }
         if(val.value & INT_DETECT_RX){
-            pr_info("[%s] Found RX close\n", __func__);
+            pr_debug("[%s] Found RX close\n", __func__);
         }
         if(val.value & INT_OCPFRX){
 
-            pr_info("[%s] TX OCP protection\n", __func__);
+            pr_debug("[%s] TX OCP protection\n", __func__);
         }
         if(val.value & INT_FODDE){
             vuc fod;
-            pr_info("[%s] TX FOD\n", __func__);
+            pr_debug("[%s] TX FOD\n", __func__);
             MT5725_read_buffer(mte,REG_F_TXPOWER,fod.ptr,2);
-            pr_info("[%s] TX_power:%d mW\n", __func__,fod.value);
+            pr_debug("[%s] TX_power:%d mW\n", __func__,fod.value);
             MT5725_read_buffer(mte,REG_F_RXPOWER,fod.ptr,2);
-            pr_info("[%s] RX_power:%d mW\n", __func__,fod.value);
+            pr_debug("[%s] RX_power:%d mW\n", __func__,fod.value);
             MT5725_read_buffer(mte,REG_F_ISTAY,fod.ptr,2);
-            pr_info("[%s] Stay current:%d mA\n", __func__,fod.value);
-            pr_info("[%s] Clear this flag and the system will ping again\n", __func__,fod.value);
-            pr_info("[%s] In case of FOD, there may be metal in the middle, and TX function needs to be turned off\n", __func__,fod.value);
+            pr_debug("[%s] Stay current:%d mA\n", __func__,fod.value);
+            pr_debug("[%s] Clear this flag and the system will ping again\n", __func__,fod.value);
+            pr_debug("[%s] In case of FOD, there may be metal in the middle, and TX function needs to be turned off\n", __func__,fod.value);
         }
         if(val.value & INT_POWER_TRANS){
-            pr_info("[%s] Charge RX normally\n", __func__);
+            pr_debug("[%s] Charge RX normally\n", __func__);
         }
         if(val.value & INT_REMOVE_POEWR){
-            pr_info("[%s] Off charge, RX may be removed, or for other reasons\n", __func__);
+            pr_debug("[%s] Off charge, RX may be removed, or for other reasons\n", __func__);
         }
         if(val.value & INT_CHARGE_STATUS){
             vuc eleq;
-            pr_info("[%s] RX reported the current power\n", __func__);
+            pr_debug("[%s] RX reported the current power\n", __func__);
             MT5725_read_buffer(mte,REG_RXCHARGESTATUS,eleq.ptr,2);
             if(eleq.value >= 100){
-                pr_info("[%s] Off charge,Disconnect wireless charging,now!!!\n", __func__);
+                pr_debug("[%s] Off charge,Disconnect wireless charging,now!!!\n", __func__);
             }
         }
         if(val.value & INT_TXINIT){
@@ -1249,7 +1249,7 @@ void MT5725_irq_handle(void) {
                 if(txinit.value == 0x5555){
                     txinit.value = 0x6666;
                     MT5725_write_buffer(mte,REG_STABILITY,txinit.ptr,2);
-                    pr_info("[%s] TX starts working\n", __func__);
+                    pr_debug("[%s] TX starts working\n", __func__);
                 }
             }
             if(mte->tx_count == 2){
@@ -1262,10 +1262,10 @@ void MT5725_irq_handle(void) {
     //---clrintflag
     //MT5725_write_buffer(mte, REG_INTCLR, fclr.ptr, 2);
     MT5725_write_buffer(mte, REG_INTCLR, fclr.ptr, 2);
-    pr_info("[%s] write REG_INTCLR : 0x%04x,\n", __func__, fclr.value);
+    pr_debug("[%s] write REG_INTCLR : 0x%04x,\n", __func__, fclr.value);
 
     MT5725_write_buffer(mte, REG_CMD, scmd.ptr, 2);
-    pr_info("[%s] write REG_CMD : 0x%04x,\n", __func__, scmd.value);
+    pr_debug("[%s] write REG_CMD : 0x%04x,\n", __func__, scmd.value);
 
     schedule_delayed_work(&mte->eint_work,100);  //Callback check if the interrupt is cleared
 }
@@ -1321,7 +1321,7 @@ int get_MT5725_status(void){
    if(gpio_get_value(mte->statu_gpio)){
       if(MT5725_read_buffer(mte, REG_CHIPID, chipid.ptr,2) == 0){
 	     if(chipid.value == MT5725ID){
-	        pr_err("%s: chipID : %02x%02x  chipid.value =0x%04x\n",__func__,chipid.ptr[0],chipid.ptr[1],chipid.value);
+	        pr_debug("%s: chipID : %02x%02x  chipid.value =0x%04x\n",__func__,chipid.ptr[0],chipid.ptr[1],chipid.value);
 			return 0;
 	     } else {
 		    pr_err("ID error :%d\n ", chipid.value);
@@ -1331,7 +1331,7 @@ int get_MT5725_status(void){
 	   pr_err("MT5725_read_buffer read fail \n ");
 	   return -2;
 	}else{
-	   pr_err("%s: statu_gpio is low\n",__func__);
+	   pr_debug("%s: statu_gpio is low\n",__func__);
 	   return -1;
 	}
    
@@ -1364,7 +1364,7 @@ EXPORT_SYMBOL(reset_mt5725_info);
 int get_wireless_charge_current(struct charger_data *pdata){
 	pdata->input_current_limit = mte->input_current;
 	pdata->charging_current_limit = mte->charge_current;
-	pr_info("[%s] input_current =  %d,charge_current = %d\n", __func__,mte->input_current,mte->charge_current);
+	pr_debug("[%s] input_current =  %d,charge_current = %d\n", __func__,mte->input_current,mte->charge_current);
 	print_curfunc_info();
 	//vuc protocol;
 	//vuc epp;
@@ -1377,16 +1377,16 @@ int get_wireless_charge_current(struct charger_data *pdata){
 		 if(protocol.ptr[0]== 1){
 		 	mte->charge_protocol = BPP;
 			mte->wireless_max_power = 5;
-			pr_info("[%s] BPP Load power is recommended to be less than %dW\n", __func__,mte->wireless_max_power);
+			pr_debug("[%s] BPP Load power is recommended to be less than %dW\n", __func__,mte->wireless_max_power);
 		 } else if(protocol.ptr[0] == 2){
 		    mte->charge_protocol = AFC;
 			mte->wireless_max_power = 9;
-			pr_info("[%s] AFC Load power is recommended to be less than %dW\n", __func__,mte->wireless_max_power);
+			pr_debug("[%s] AFC Load power is recommended to be less than %dW\n", __func__,mte->wireless_max_power);
 		 } else if(protocol.ptr[0] == 3){
 		    mte->charge_protocol = EPP;
 			MT5725_read_buffer(mte,REG_MAXPOWER,epp.ptr,1);
 		    epp.ptr[0] = epp.ptr[0]/2;
-		    pr_info("[%s]  EPP Load power is recommended to be less than %dW\n", __func__,epp.ptr[0]);
+		    pr_debug("[%s]  EPP Load power is recommended to be less than %dW\n", __func__,epp.ptr[0]);
 		    mte->wireless_max_power = epp.ptr[0];
 		 } else {
 			chr_err("%s read 0x0098 info no BPP EPP AFC protocol \n", __func__);
@@ -1426,7 +1426,7 @@ static int MT5725_parse_dt(struct i2c_client *client, struct MT5725_dev *mt5725)
 		pr_err("%s: no dc gpio provided\n", __func__);
 		return -1;
 	} else {
-		pr_info("%s: dc gpio provided ok. mt5715->statu_gpio = %d\n", __func__, mt5725->statu_gpio);
+		pr_debug("%s: dc gpio provided ok. mt5715->statu_gpio = %d\n", __func__, mt5725->statu_gpio);
 		devm_gpio_request_one(&client->dev, mt5725->statu_gpio,GPIOF_DIR_IN, "mt5725_statu");
 	}
 
@@ -1435,7 +1435,7 @@ static int MT5725_parse_dt(struct i2c_client *client, struct MT5725_dev *mt5725)
 		pr_err("%s: no irq gpio provided.\n", __func__);
 		return -1;
 	} else {
-		pr_info("%s: irq gpio provided ok. mt5715->irq_gpio = %d\n", __func__, mt5725->irq_gpio);
+		pr_debug("%s: irq gpio provided ok. mt5715->irq_gpio = %d\n", __func__, mt5725->irq_gpio);
 	}
 	
 	ret = of_property_read_u32(client->dev.of_node,"rx_power_capability",&mt5725->rx_power_cap);
@@ -1567,17 +1567,17 @@ int turn_off_5725(int en){
     if (mte->otg_5725_ctl.gpio_otg_prepare) {
 		if (en) {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.wireless_5725_off);
-			printk("%s: set W_OTG_EN2 to hight\n", __func__);
+			pr_debug("%s: set W_OTG_EN2 to hight\n", __func__);
 			ret =0;
 		}
 		else {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.wireless_5725_on);
-			printk("%s: set W_OTG_EN2 to low\n", __func__);
+			pr_debug("%s: set W_OTG_EN2 to low\n", __func__);
 			ret =0;
 		}
 	}
 	else {
-		printk("%s:, error, gpio otg not prepared\n", __func__);
+		pr_debug("%s:, error, gpio otg not prepared\n", __func__);
 		ret =-1;
 	}
 	return ret;
@@ -1593,17 +1593,17 @@ int turn_on_otg_charge_mode(int en){
     if (mte->otg_5725_ctl.charger_otg_mode_on) {
 		if (en) {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.charger_otg_mode_on);//
-			printk("%s: set W_OTG_EN2 to hight\n", __func__);
+			pr_debug("%s: set W_OTG_EN2 to hight\n", __func__);
 			ret =0;
 		}
 		else {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.charger_otg_mode_off);//
-			printk("%s: set W_OTG_EN2 to low\n", __func__);
+			pr_debug("%s: set W_OTG_EN2 to low\n", __func__);
 			ret =0;
 		}
 	}
 	else {
-		printk("%s:, error, gpio otg not prepared\n", __func__);
+		pr_debug("%s:, error, gpio otg not prepared\n", __func__);
 		ret =-1;
 	}
 	return ret;
@@ -1627,17 +1627,17 @@ int turn_on_rever_5725(int en){
     if (mte->otg_5725_ctl.gpio_otg_prepare) {
 		if (en) {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.wireless_5725_on);//GPOD5  low
-			printk("%s: set W_OTG_EN2 to hight\n", __func__);
+			pr_debug("%s: set W_OTG_EN2 to hight\n", __func__);
 			ret =0;
 		}
 		else {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.wireless_5725_off);//GPOD5  high
-			printk("%s: set W_OTG_EN2 to low\n", __func__);
+			pr_debug("%s: set W_OTG_EN2 to low\n", __func__);
 			ret =0;
 		}
 	}
 	else {
-		printk("%s:, error, gpio otg not prepared\n", __func__);
+		pr_debug("%s:, error, gpio otg not prepared\n", __func__);
 		ret =-1;
 	}
 	return ret;
@@ -1662,17 +1662,17 @@ int turn_off_rever_5725(int en){
     if (mte->otg_5725_ctl.gpio_otg_prepare) {
 		if (en) {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.wireless_5725_off);//GPOD5  low
-			printk("%s: set W_OTG_EN2 to hight\n", __func__);
+			pr_debug("%s: set W_OTG_EN2 to hight\n", __func__);
 			ret =0;
 		}
 		else {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.wireless_5725_on);//GPOD5  high
-			printk("%s: set W_OTG_EN2 to low\n", __func__);
+			pr_debug("%s: set W_OTG_EN2 to low\n", __func__);
 			ret =0;
 		}
 	}
 	else {
-		printk("%s:, error, gpio otg not prepared\n", __func__);
+		pr_debug("%s:, error, gpio otg not prepared\n", __func__);
 		ret =-1;
 	}
 	return ret;
@@ -1698,17 +1698,17 @@ int set_otg_gpio(int en){
     if (mte->otg_5725_ctl.gpio_otg_prepare) {
 		if (en) {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.charger_otg_on);
-			printk("%s: set w_otg_en PIN to high\n", __func__);
+			pr_debug("%s: set w_otg_en PIN to high\n", __func__);
 			ret =0;
 		}
 		else {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.charger_otg_off);
-			printk("%s: set w_otg_en PIN to low\n", __func__);
+			pr_debug("%s: set w_otg_en PIN to low\n", __func__);
 			ret =0;
 		}
 	}
 	else {
-		printk("%s:, error, gpio otg not prepared\n", __func__);
+		pr_debug("%s:, error, gpio otg not prepared\n", __func__);
 		ret =-1;
 	}
 	return ret;
@@ -1801,7 +1801,7 @@ static int MT5725_probe(struct i2c_client *client, const struct i2c_device_id *i
 		}
 		//end   add by sunshuai
     } else {
-		pr_info("%s skipping IRQ registration\n", __func__);
+		pr_debug("%s skipping IRQ registration\n", __func__);
     }
  //prize add by lpp 20210308 start Get whether the device is close when the mobile phone is in a backcharging state
 #if defined (CONFIG_PRIZE_REVERE_CHARGING_MODE)		
@@ -1829,7 +1829,7 @@ static int MT5725_probe(struct i2c_client *client, const struct i2c_device_id *i
 	}
 	
 	i2c_set_clientdata(client,chip);
-	pr_info("%s probe done\n", __func__);
+	pr_debug("%s probe done\n", __func__);
 err:
     return rc;
 }

@@ -300,7 +300,7 @@ static bool select_charging_current_limit(struct mtk_charger *info,
 #if defined(CONFIG_PRIZE_MT5725_SUPPORT_15W_NEW)
 		if((info->chr_type == POWER_SUPPLY_TYPE_USB_FLOAT) && (get_MT5725_status() == 0)){
 			get_wireless_charge_current(pdata);
-			printk(" lpp---wireless charge current input_current_limit %d: charging_current_limit %d\n",pdata->input_current_limit,pdata->charging_current_limit);
+			pr_debug(" lpp---wireless charge current input_current_limit %d: charging_current_limit %d\n",pdata->input_current_limit,pdata->charging_current_limit);
 		}
 #endif
 //prize add by lipengpeng 20210621 end 	
@@ -594,15 +594,15 @@ static int charger_dev_event(struct notifier_block *nb, unsigned long event,
 
 		break;
 	case CHARGER_DEV_NOTIFY_RECHG:
-		pr_info("%s: recharge\n", __func__);
+		pr_debug("%s: recharge\n", __func__);
 		break;
 	case CHARGER_DEV_NOTIFY_SAFETY_TIMEOUT:
 		info->safety_timeout = true;
-		pr_info("%s: safety timer timeout\n", __func__);
+		pr_debug("%s: safety timer timeout\n", __func__);
 		break;
 	case CHARGER_DEV_NOTIFY_VBUS_OVP:
 		info->vbusov_stat = data->vbusov_stat;
-		pr_info("%s: vbus ovp = %d\n", __func__, info->vbusov_stat);
+		pr_debug("%s: vbus ovp = %d\n", __func__, info->vbusov_stat);
 		break;
 	default:
 		return NOTIFY_DONE;

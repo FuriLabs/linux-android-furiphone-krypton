@@ -108,7 +108,7 @@ unsigned int charging_value_to_parameter(const unsigned int *parameter,
 {
 	if (val < array_size)
 		return parameter[val];
-	pr_info("Can't find the parameter\n");
+	pr_debug("Can't find the parameter\n");
 	return parameter[0];
 }
 
@@ -124,7 +124,7 @@ unsigned int charging_parameter_to_value(const unsigned int *parameter,
 			return i;
 	}
 
-	pr_info("NO register value match\n");
+	pr_debug("NO register value match\n");
 	/* TODO: ASSERT(0); not find the value */
 	return 0;
 }
@@ -149,7 +149,7 @@ static unsigned int bmt_find_closest_level(const unsigned int *pList,
 				return pList[i];
 			}
 		}
-		pr_info("Can't find closest level\n");
+		pr_debug("Can't find closest level\n");
 		return pList[0]; /* return 000; */
 	} else {
 		/* max value in the first element */
@@ -157,7 +157,7 @@ static unsigned int bmt_find_closest_level(const unsigned int *pList,
 			if (pList[i] <= level)
 				return pList[i];
 		}
-		pr_info("Can't find closest level\n");
+		pr_debug("Can't find closest level\n");
 		return pList[number - 1];
 		/* return 000; */
 	}
@@ -677,7 +677,7 @@ static int aw32207_dump_register(struct charger_device *chg_dev)
 
 	for (i = 0; i < AW32207_REG_NUM; i++) {
 		aw32207_read_byte(i, &aw32207_reg[i], 1);
-		pr_info("aw32207_dump_kernel_[0x%x]=0x%x\n", i, aw32207_reg[i]);
+		pr_debug("aw32207_dump_kernel_[0x%x]=0x%x\n", i, aw32207_reg[i]);
 	}
 	pr_debug("\n");
 
@@ -688,7 +688,7 @@ static int aw32207_parse_dt(struct aw32207_info *info, struct device *dev)
 {
 	struct device_node *np = dev->of_node;
 
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 
 	if (!np) {
 		pr_err("%s: no of node\n", __func__);
@@ -721,7 +721,7 @@ static int aw32207_do_event(struct charger_device *chg_dev, unsigned int event,
 	if (chg_dev == NULL)
 		return -EINVAL;
 
-	pr_info("%s: event = %d\n", __func__, event);
+	pr_debug("%s: event = %d\n", __func__, event);
 	
 	switch (event) {
 	case EVENT_FULL:
@@ -765,7 +765,7 @@ static int aw32207_set_cv_voltage(struct charger_device *chg_dev, u32 cv)
 
 	register_value = charging_parameter_to_value(VBAT_CVTH, array_size,
 								set_cv_voltage);
-	pr_info("charging_set_cv_voltage register_value=0x%x %d %d\n",
+	pr_debug("charging_set_cv_voltage register_value=0x%x %d %d\n",
 					register_value, cv, set_cv_voltage);
 	aw32207_set_voreg(register_value);
 	return status;
@@ -798,7 +798,7 @@ static int aw32207_set_current(struct charger_device *chg_dev,
 	register_value = charging_parameter_to_value(CSTH56, array_size,
 							set_chr_current);
 	/*register_value = 0x0a;*/ /*0x0=494mA------(0x0A-0XF)=1854mA;*/
-	pr_info("%s current_value = %d, register_value = 0x%x",__func__,current_value,register_value);
+	pr_debug("%s current_value = %d, register_value = 0x%x",__func__,current_value,register_value);
 	aw32207_set_iocharge(register_value);
 	return status;
 }
@@ -833,7 +833,7 @@ static int aw32207_set_input_current(struct charger_device *chg_dev,
 		register_value = charging_parameter_to_value(INPUT_CSTH,
 						array_size, set_chr_current);
 	}
-	pr_info("%s current_value = %d, set_chr_current= %d, register_value=%d\n",__func__,current_value,set_chr_current,register_value);
+	pr_debug("%s current_value = %d, set_chr_current= %d, register_value=%d\n",__func__,current_value,set_chr_current,register_value);
 
 	return status;
 }
@@ -866,7 +866,7 @@ static int aw32207_set_mivr(struct charger_device *chg_dev, u32 uV)
 	int ret = 0;
 //	struct aw32207all_info *chip = dev_get_drvdata(&chg_dev->dev);
 
-//	dev_info(chip->dev,"%s:skip uV:%d\n",__func__,uV);
+//	dev_dbg(chip->dev,"%s:skip uV:%d\n",__func__,uV);
 	return ret;
 }
 
@@ -881,13 +881,13 @@ static int aw32207_get_mivr_state(struct charger_device *chg_dev, bool *in_loop)
 
 static void aw32207_poll(struct timer_list *timer)
 {
-	printk("cxw aw32207_poll..\n");
+	pr_debug("cxw aw32207_poll..\n");
 	schedule_work(&timer_work);
 }
 
 static void timer_work_func(struct work_struct *work)
 {
-	printk("cxw timer_work_func\n");
+	pr_debug("cxw timer_work_func\n");
 	aw32207_set_tmr_rst(1);
 	mod_timer(&timer_aw32207, jiffies + (15*HZ));
 }
@@ -895,10 +895,10 @@ static void timer_work_func(struct work_struct *work)
 static int aw32207_charger_enable_otg(struct charger_device *chg_dev, bool en)
 {
 	//aw32207_set_otg_pl(1);
-	printk("cxw aw32207_enable_otg\n");
+	pr_debug("cxw aw32207_enable_otg\n");
 
 	aw32207_set_otg_en(en);
-	printk("cxw aw32207_enable_otg en = %d...\n", en);
+	pr_debug("cxw aw32207_enable_otg en = %d...\n", en);
 	aw32207_dump_register(chg_dev);
 	return 0;
 }
@@ -1061,7 +1061,7 @@ static int aw32207_charger_get_property(struct power_supply *psy,
 	default:
 		ret = -ENODATA;
 	}
-	printk("%s psp=%d, val->intval=%d\n",__func__,psp,val->intval);
+	pr_debug("%s psp=%d, val->intval=%d\n",__func__,psp,val->intval);
 	return ret;
 
 }
@@ -1083,8 +1083,8 @@ static int aw32207_driver_probe(struct i2c_client *client,
 	struct aw32207_info *info = NULL;
 	struct power_supply_config charger_cfg = {};
 
-	pr_info("[aw32207_driver_probe]\n");
-	pr_info("aw32207 driver version %s\n", AW32207_DRIVER_VERSION);
+	pr_debug("[aw32207_driver_probe]\n");
+	pr_debug("aw32207 driver version %s\n", AW32207_DRIVER_VERSION);
 	info = devm_kzalloc(&client->dev, sizeof(struct aw32207_info),
 								GFP_KERNEL);
 
@@ -1133,7 +1133,7 @@ static int aw32207_driver_probe(struct i2c_client *client,
 //	aw32207_reg_config_interface(AW32207_CON8, 0x8e);
 
 	aw32207_dump_register(info->chg_dev);
-	pr_info("%s done.\n",__func__);
+	pr_debug("%s done.\n",__func__);
 
 	return 0;
 }
@@ -1162,12 +1162,12 @@ static struct i2c_driver aw32207_driver = {
 
 static int __init aw32207_init(void)
 {
-	pr_info("aw32207 driver version %s\n", AW32207_DRIVER_VERSION);
+	pr_debug("aw32207 driver version %s\n", AW32207_DRIVER_VERSION);
 
 	if (i2c_add_driver(&aw32207_driver) != 0)
-		pr_info("Failed to register aw32207 i2c driver.\n");
+		pr_debug("Failed to register aw32207 i2c driver.\n");
 	else
-		pr_info("Success to register aw32207 i2c driver.\n");
+		pr_debug("Success to register aw32207 i2c driver.\n");
 
 	return 0;
 }

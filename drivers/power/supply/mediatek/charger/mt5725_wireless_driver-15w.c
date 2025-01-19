@@ -1528,7 +1528,7 @@ int get_MT5725_status(void){
    if(gpio_get_value(mte->statu_gpio)){
       if(MT5725_read_buffer(mte, REG_CHIPID, chipid.ptr,2) == 0){
 	     if(chipid.value == MT5725ID){
-	        pr_err("%s: chipID : %02x%02x  chipid.value =0x%04x\n",__func__,chipid.ptr[0],chipid.ptr[1],chipid.value);
+	        pr_debug("%s: chipID : %02x%02x  chipid.value =0x%04x\n",__func__,chipid.ptr[0],chipid.ptr[1],chipid.value);
 			return 0;
 	     } else {
 		    pr_err("ID error :%d\n ", chipid.value);
@@ -1538,7 +1538,7 @@ int get_MT5725_status(void){
 	   pr_err("MT5725_read_buffer read fail \n ");
 	   return -2;
 	}else{
-	   pr_err("%s: statu_gpio is low\n",__func__);
+	   pr_debug("%s: statu_gpio is low\n",__func__);
 	   return -1;
 	}
 

@@ -173,17 +173,17 @@ static void hw_bc11_init(struct mtk_charger_type *info)
 #if IS_ENABLED(CONFIG_USB_MTK_HDRC)
 		/* add make sure USB Ready */
 		if (is_usb_rdy() == false) {
-			pr_info("CDP, block\n");
+			pr_debug("CDP, block\n");
 			while (is_usb_rdy() == false && timeout > 0) {
 				msleep(100);
 				timeout--;
 			}
 			if (timeout == 0)
-				pr_info("CDP, timeout\n");
+				pr_debug("CDP, timeout\n");
 			else
-				pr_info("CDP, free\n");
+				pr_debug("CDP, free\n");
 		} else
-			pr_info("CDP, PASS\n");
+			pr_debug("CDP, PASS\n");
 #endif
 		info->first_connect = false;
 	}
@@ -421,7 +421,7 @@ static unsigned int hw_bc11_stepB2(struct mtk_charger_type *info)
 			PMIC_RG_BC11_VSRC_EN_MASK,
 			PMIC_RG_BC11_VSRC_EN_SHIFT,
 			0x2);
-		pr_info("charger type: DCP, keep DM voltage source in stepB2\n");
+		pr_debug("charger type: DCP, keep DM voltage source in stepB2\n");
 	}
 	return wChargerAvail;
 
@@ -475,24 +475,24 @@ static void dump_charger_name(int type)
 {
 	switch (type) {
 	case POWER_SUPPLY_TYPE_UNKNOWN:
-		pr_info("charger type: %d, CHARGER_UNKNOWN\n", type);
+		pr_debug("charger type: %d, CHARGER_UNKNOWN\n", type);
 		break;
 	case POWER_SUPPLY_TYPE_USB:
-		pr_info("charger type: %d, Standard USB Host\n", type);
+		pr_debug("charger type: %d, Standard USB Host\n", type);
 		break;
 	case POWER_SUPPLY_TYPE_USB_CDP:
-		pr_info("charger type: %d, Charging USB Host\n", type);
+		pr_debug("charger type: %d, Charging USB Host\n", type);
 		break;
 #ifdef FIXME
 	case POWER_SUPPLY_TYPE_USB_FLOAT:
-		pr_info("charger type: %d, Non-standard Charger\n", type);
+		pr_debug("charger type: %d, Non-standard Charger\n", type);
 		break;
 #endif
 	case POWER_SUPPLY_TYPE_USB_DCP:
-		pr_info("charger type: %d, Standard Charger\n", type);
+		pr_debug("charger type: %d, Standard Charger\n", type);
 		break;
 	default:
-		pr_info("charger type: %d, Not Defined!!!\n", type);
+		pr_debug("charger type: %d, Not Defined!!!\n", type);
 		break;
 	}
 }
@@ -523,7 +523,7 @@ static int get_charger_type(struct mtk_charger_type *info)
 	if (type != POWER_SUPPLY_USB_TYPE_DCP)
 		hw_bc11_done(info);
 	else
-		pr_info("charger type: skip bc11 release for BC12 DCP SPEC\n");
+		pr_debug("charger type: skip bc11 release for BC12 DCP SPEC\n");
 
 	dump_charger_name(info->psy_desc.type);
 
@@ -559,7 +559,7 @@ void do_charger_detect(struct mtk_charger_type *info, bool en)
 
 #ifndef CONFIG_TCPC_CLASS
 	if (!mt_usb_is_device()) {
-		pr_info("charger type: UNKNOWN, Now is usb host mode. Skip detection\n");
+		pr_debug("charger type: UNKNOWN, Now is usb host mode. Skip detection\n");
 		return;
 	}
 #endif
@@ -602,10 +602,10 @@ __maybe_unused static void do_charger_detection_work(struct work_struct *data)	/
 		/* 8 = KERNEL_POWER_OFF_CHARGING_BOOT */
 		/* 9 = LOW_POWER_OFF_CHARGING_BOOT */
 		if (info->bootmode == 8 || info->bootmode == 9) {
-			pr_info("%s: Unplug Charger/USB\n", __func__);
+			pr_debug("%s: Unplug Charger/USB\n", __func__);
 
 #ifndef CONFIG_TCPC_CLASS
-			pr_info("%s: system_state=%d\n", __func__,
+			pr_debug("%s: system_state=%d\n", __func__,
 				system_state);
 			if (system_state != SYSTEM_POWER_OFF)
 				kernel_power_off();
@@ -629,10 +629,10 @@ irqreturn_t chrdet_int_handler(int irq, void *data)
 		/* 8 = KERNEL_POWER_OFF_CHARGING_BOOT */
 		/* 9 = LOW_POWER_OFF_CHARGING_BOOT */
 		if (info->bootmode == 8 || info->bootmode == 9) {
-			pr_info("%s: Unplug Charger/USB\n", __func__);
+			pr_debug("%s: Unplug Charger/USB\n", __func__);
 
 #ifndef CONFIG_TCPC_CLASS
-			pr_info("%s: system_state=%d\n", __func__,
+			pr_debug("%s: system_state=%d\n", __func__,
 				system_state);
 			if (system_state != SYSTEM_POWER_OFF)
 				kernel_power_off();

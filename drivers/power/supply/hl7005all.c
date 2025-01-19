@@ -172,7 +172,7 @@ unsigned int charging_value_to_parameter(const unsigned int *parameter, const un
 {
 	if (val < array_size)
 		return parameter[val];
-	printk("Can't find the parameter\n");
+	pr_debug("Can't find the parameter\n");
 	return parameter[0];
 }
 
@@ -188,7 +188,7 @@ unsigned int charging_parameter_to_value(const unsigned int *parameter, const un
 			return i;
 	}
 
-	printk("NO register value match\n");
+	pr_debug("NO register value match\n");
 	/* TODO: ASSERT(0);	// not find the value */
 	return 0;
 }
@@ -211,7 +211,7 @@ static unsigned int bmt_find_closest_level(const unsigned int *pList, unsigned i
 				return pList[i];
 			}
 		}
-		printk("Can't find closest level\n");
+		pr_debug("Can't find closest level\n");
 		return pList[0];
 		/* return 000; */
 	} else {
@@ -219,7 +219,7 @@ static unsigned int bmt_find_closest_level(const unsigned int *pList, unsigned i
 			if (pList[i] <= level)
 				return pList[i];
 		}
-		printk("Can't find closest level\n");
+		pr_debug("Can't find closest level\n");
 		return pList[number - 1];
 		/* return 000; */
 	}
@@ -330,7 +330,7 @@ unsigned int hl7005_config_interface(unsigned char reg_num, unsigned char val, u
 			hl7005_reg, hl7005_reg_ori);
 	/* Check */
 	/* hl7005_read_byte(reg_num, &hl7005_reg, 1); */
-	/* printk("[hl7005_config_interface] Check Reg[%x]=0x%x\n", reg_num, hl7005_reg); */
+	/* pr_debug("[hl7005_config_interface] Check Reg[%x]=0x%x\n", reg_num, hl7005_reg); */
 
 	return ret;
 }
@@ -720,14 +720,14 @@ static int hl7005_dump_register(struct charger_device *chg_dev)
 		for (i = 0; i < HL7005_REG_NUM+1; i++) {
 			hl7005_read_byte(i, &hl7005_reg[i], 1);
 		}
-		printk("[HL7005]dump: %02x %02x %02x %02x %02x %02x %02x %02x\n",
+		pr_debug("[HL7005]dump: %02x %02x %02x %02x %02x %02x %02x %02x\n",
 					hl7005_reg[0],hl7005_reg[1],hl7005_reg[2],hl7005_reg[3],
 					hl7005_reg[4],hl7005_reg[5],hl7005_reg[6],hl7005_reg[7]);
 	}else{
 		for (i = 0; i < HL7005_REG_NUM; i++) {
 			hl7005_read_byte(i, &hl7005_reg[i], 1);
 		}
-		printk("[HL7005]dump: %02x %02x %02x %02x %02x %02x %02x\n",
+		pr_debug("[HL7005]dump: %02x %02x %02x %02x %02x %02x %02x\n",
 					hl7005_reg[0],hl7005_reg[1],hl7005_reg[2],hl7005_reg[3],
 					hl7005_reg[4],hl7005_reg[5],hl7005_reg[6]);
 	}
@@ -739,7 +739,7 @@ static int hl7005_parse_dt(struct hl7005all_info *info, struct device *dev)
 {
 	struct device_node *np = dev->of_node;
 
-	printk("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 
 	if (!np) {
 		pr_err("%s: no of node\n", __func__);
@@ -764,7 +764,7 @@ static int hl7005_do_event(struct charger_device *chg_dev, unsigned int event, u
 	if (chg_dev == NULL)
 		return -EINVAL;
 
-	printk("%s: event = %d\n", __func__, event);
+	pr_debug("%s: event = %d\n", __func__, event);
 
 	switch (event) {
 /*prize add by zhaopengge----20201030-------start*/
@@ -786,24 +786,24 @@ static int hl7005_enable_charging(struct charger_device *chg_dev, bool en)
 {
 	unsigned int status = 0;
 
-    printk("LPP----hl7005_enable_charging=%d\n",en);
+    pr_debug("LPP----hl7005_enable_charging=%d\n",en);
 	if (en) {
 		if (((struct hl7005all_info *)chg_dev->dev.driver_data)->dev_model == DEVICE_ETA6937){
 
 			hl7005_reg_config_interface(0x06, 0xAB);	//set vsafe 4.42 ,actually 4.4 due to deviation //safe set to 4.4v  7A---2A
-          printk("LPP--000--hl7005_enable_charging=%d\n",en);
+          pr_debug("LPP--000--hl7005_enable_charging=%d\n",en);
 			hl7005_set_iocharge_offset(0);  //set 0:550mA  1:650mA
 			hl7005_set_vsp(3);      // n*80mV+4.2v
 			hl7005_set_iterm(2);    // n*50mA
 			hl7005_set_te(1);
 		}
-		printk("LPP--1111--hl7005_enable_charging=%d\n",en);
+		pr_debug("LPP--1111--hl7005_enable_charging=%d\n",en);
 		hl7005_set_ce(0);
 		hl7005_set_hz_mode(0);
 		hl7005_set_opa_mode(0);
 		
 	} else {
-		printk("LPP--3333--hl7005_enable_charging=%d\n",en);
+		pr_debug("LPP--3333--hl7005_enable_charging=%d\n",en);
 		hl7005_set_ce(1);
 	}
 
@@ -823,7 +823,7 @@ static int hl7005_set_cv_voltage(struct charger_device *chg_dev, u32 cv)
 
 	register_value =
 	charging_parameter_to_value(VBAT_CVTH, array_size, set_cv_voltage);
-	printk("charging_set_cv_voltage register_value=0x%x %d %d\n",
+	pr_debug("charging_set_cv_voltage register_value=0x%x %d %d\n",
 	 register_value, cv, set_cv_voltage);
 	hl7005_set_oreg(register_value);
 
@@ -1031,7 +1031,7 @@ static int hl7005_set_mivr(struct charger_device *chg_dev, u32 uV)
 	int ret = 0;
 	struct hl7005all_info *chip = dev_get_drvdata(&chg_dev->dev);
 
-	dev_info(chip->dev,"%s:skip uV:%d\n",__func__,uV);
+	dev_dbg(chip->dev,"%s:skip uV:%d\n",__func__,uV);
 	return ret;
 }
 
@@ -1046,13 +1046,13 @@ static int hl7005_get_mivr_state(struct charger_device *chg_dev, bool *in_loop)
 
 static void hl7005_poll(struct timer_list *timer)
 {
-	printk("cxw hl7005_poll..\n");
+	pr_debug("cxw hl7005_poll..\n");
 	schedule_work(&timer_work);
 }
 
 static void timer_work_func(struct work_struct *work)
 {
-	printk("cxw timer_work_func\n");
+	pr_debug("cxw timer_work_func\n");
 	hl7005_set_tmr_rst(1);
 	mod_timer(&timer_hl7005, jiffies + (15*HZ));
 }
@@ -1060,7 +1060,7 @@ static void timer_work_func(struct work_struct *work)
 static int hl7005_enable_otg(struct charger_device *chg_dev, bool en)
 {
 	//hl7005_set_otg_pl(1);
-	printk("cxw hl7005_enable_otg\n");
+	pr_debug("cxw hl7005_enable_otg\n");
 	if (((struct hl7005all_info *)chg_dev->dev.driver_data)->dev_model == DEVICE_ETA6937){
 		if (1==en){
 			timer_setup(&timer_hl7005,hl7005_poll,0);
@@ -1074,7 +1074,7 @@ static int hl7005_enable_otg(struct charger_device *chg_dev, bool en)
 		}
 	}
 	hl7005_set_otg_en(en);
-	printk("cxw hl7005_enable_otg en = %d...\n", en);
+	pr_debug("cxw hl7005_enable_otg en = %d...\n", en);
 	hl7005_dump_register(chg_dev);
 	return 0;
 }
@@ -1118,7 +1118,7 @@ static int hl7005_driver_probe(struct i2c_client *client, const struct i2c_devic
 	struct hl7005all_info *info = NULL;
 	unsigned int ven = 0, pn = 0;
 
-	printk("[hl7005_driver_probe]\n");
+	pr_debug("[hl7005_driver_probe]\n");
 	info = devm_kzalloc(&client->dev, sizeof(struct hl7005all_info), GFP_KERNEL);
 
 	if (!info)
@@ -1143,10 +1143,10 @@ static int hl7005_driver_probe(struct i2c_client *client, const struct i2c_devic
 
 	ven = hl7005_get_vender_code();
 	pn = hl7005_get_pn();
-	printk("%s VendorID %02X\n",__func__,ven);
-	printk("%s info->chg_dev_name %s\n",__func__,info->chg_dev_name);
-	printk("%s Product Number %02X\n",__func__,pn);
-	printk("%s IC Revision %02X\n",__func__,hl7005_get_revision());
+	pr_debug("%s VendorID %02X\n",__func__,ven);
+	pr_debug("%s info->chg_dev_name %s\n",__func__,info->chg_dev_name);
+	pr_debug("%s Product Number %02X\n",__func__,pn);
+	pr_debug("%s IC Revision %02X\n",__func__,hl7005_get_revision());
 	if ((ven & 0b111) == 0b111){
 	#if defined(CONFIG_MTK_DUAL_CHARGER_SUPPORT)
 		is_chg2_exist=0;
@@ -1178,7 +1178,7 @@ static int hl7005_driver_probe(struct i2c_client *client, const struct i2c_devic
 
 #ifdef CONFIG_OF
 	hl7005_cd_pin = of_get_named_gpio(client->dev.of_node,"hl7005,cd_pin",0);
-	printk("%s get cd_pin(%d)\n",__func__,hl7005_cd_pin);
+	pr_debug("%s get cd_pin(%d)\n",__func__,hl7005_cd_pin);
 	gpio_request(hl7005_cd_pin,"hl7005");
 	gpio_direction_output(hl7005_cd_pin,0);
 #endif
@@ -1275,9 +1275,9 @@ static int __init hl7005_init(void)
 {
 
 	if (i2c_add_driver(&hl7005_driver) != 0)
-		printk("Failed to register hl7005 i2c driver.\n");
+		pr_debug("Failed to register hl7005 i2c driver.\n");
 	else
-		printk("Success to register hl7005 i2c driver.\n");
+		pr_debug("Success to register hl7005 i2c driver.\n");
 
 	return 0;
 }

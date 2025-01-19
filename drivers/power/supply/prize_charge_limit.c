@@ -58,7 +58,7 @@
 
 #include "prize_charge_limit.h"
 
-#define prize_printk(fmt, arg...)  printk("prize_charge_limit : %s : " fmt, __FUNCTION__ ,##arg);
+#define prize_pr_debug(fmt, arg...)  pr_debug("prize_charge_limit : %s : " fmt, __FUNCTION__ ,##arg);
 
 static struct prize_charge_limit_manager *limit_pinfo;
 
@@ -98,7 +98,7 @@ void prize_charger_check_step(struct mtk_charger *info){
 		}
     }
 	
-	prize_printk("%s: current_step [%d] temperature[%d]\n", __func__,limit_pinfo->current_step,temperature);
+	prize_pr_debug("%s: current_step [%d] temperature[%d]\n", __func__,limit_pinfo->current_step,temperature);
 }
 EXPORT_SYMBOL(prize_charger_check_step);
 
@@ -117,7 +117,7 @@ void prize_set_charge_limit(struct charger_data *pdata){
 	   	 pdata->charging_current_limit = limit_pinfo->step3_vot1_current;  	
 	}
 
-	prize_printk("%s: current_step [%d] charging_current_limit[%d]\n", __func__,limit_pinfo->current_step,pdata->charging_current_limit);
+	prize_pr_debug("%s: current_step [%d] charging_current_limit[%d]\n", __func__,limit_pinfo->current_step,pdata->charging_current_limit);
 }
 EXPORT_SYMBOL(prize_set_charge_limit);
 
@@ -137,7 +137,7 @@ u32 prize_get_cv_limit(struct mtk_charger *info){
 	   	    constant_voltage = limit_pinfo->temp_stp3_cv_voltage*1000;
     }
 
-	prize_printk("%s: constant_voltage [%d] battery_cv [%d] g_cw2015_vol[%d] change_cv_cap_capacity [%d]\n", __func__,constant_voltage,info->data.battery_cv,g_cw2015_vol,limit_pinfo->change_cv_cap_capacity);
+	prize_pr_debug("%s: constant_voltage [%d] battery_cv [%d] g_cw2015_vol[%d] change_cv_cap_capacity [%d]\n", __func__,constant_voltage,info->data.battery_cv,g_cw2015_vol,limit_pinfo->change_cv_cap_capacity);
 
 	return constant_voltage;
 		
@@ -159,7 +159,7 @@ static int charge_limit_probe(struct platform_device *pdev)
 	u32 val;
 	//int ret =0;
 	
-	prize_printk("%s: starts\n", __func__);
+	prize_pr_debug("%s: starts\n", __func__);
 
 	limit_info = devm_kzalloc(&pdev->dev, sizeof(*limit_info), GFP_KERNEL);
 	if (!limit_info)
@@ -169,7 +169,7 @@ static int charge_limit_probe(struct platform_device *pdev)
 	np = pdev->dev.of_node;
 
 	if (!np) {
-		prize_printk("%s: no device node\n", __func__);
+		prize_pr_debug("%s: no device node\n", __func__);
 		return -EINVAL;
 	}
 
@@ -177,7 +177,7 @@ static int charge_limit_probe(struct platform_device *pdev)
 	if (of_property_read_u32(np, "start_step1_temp", &val) >= 0) {
 			limit_info->start_step1_temp = val;
 		} else {
-			prize_printk(
+			prize_pr_debug(
 				"use default start_step1_temp:%d\n", -5);
 			limit_info->start_step1_temp = -5;
 	}
@@ -185,7 +185,7 @@ static int charge_limit_probe(struct platform_device *pdev)
 	if (of_property_read_u32(np, "start_step2_temp", &val) >= 0) {
 			limit_info->start_step2_temp = val;
 	} else {
-			prize_printk(
+			prize_pr_debug(
 				"use default start_step2_temp:%d\n", 10);
 			limit_info->start_step2_temp = 10;
 	}
@@ -193,7 +193,7 @@ static int charge_limit_probe(struct platform_device *pdev)
 	if (of_property_read_u32(np, "start_step3_temp", &val) >= 0) {
 			limit_info->start_step3_temp = val;
 	} else {
-			prize_printk(
+			prize_pr_debug(
 				"use default start_step3_temp:%d\n", 45);
 			limit_info->start_step3_temp = 45;
 	}
@@ -201,7 +201,7 @@ static int charge_limit_probe(struct platform_device *pdev)
 	if (of_property_read_u32(np, "step1_max_current", &val) >= 0) {
 			limit_info->step1_max_current = val;
 	} else {
-			prize_printk(
+			prize_pr_debug(
 				"use default end_step1_max_current %d\n", 1260000);
 			limit_info->step1_max_current = 1260000;
 	}
@@ -209,7 +209,7 @@ static int charge_limit_probe(struct platform_device *pdev)
 	if (of_property_read_u32(np, "step3_vot1_current", &val) >= 0) {
 			limit_info->step3_vot1_current = val;
 	} else {
-			prize_printk(
+			prize_pr_debug(
 				"use default step3_vot1_current %d\n", 1470000);
 			limit_info->step3_vot1_current = 1470000;
 	}
@@ -218,7 +218,7 @@ static int charge_limit_probe(struct platform_device *pdev)
     if (of_property_read_u32(np, "temp_stp3_cv_voltage", &val) >= 0) {
 			limit_info->temp_stp3_cv_voltage = val;
 	} else {
-			prize_printk(
+			prize_pr_debug(
 				"use default temp_stp3_cv_voltage:%d\n", 4450000);
 			limit_info->temp_stp3_cv_voltage = 4450000;
 	}
@@ -227,12 +227,12 @@ static int charge_limit_probe(struct platform_device *pdev)
 	limit_info->change_cv_cap_capacity = 0;
 	is_probe_done =true;
 	
-	prize_printk("info->step_info.start_step1_temp:%d\n", limit_info->start_step1_temp);
-	prize_printk("info->step_info.start_step2_temp:%d\n", limit_info->start_step2_temp);
-	prize_printk("info->step_info.start_step3_temp:%d\n", limit_info->start_step3_temp);
-	prize_printk("info->step_info.step1_max_current:%d\n", limit_info->step1_max_current);
-	prize_printk("info->step_info.step3_vot1_current:%d\n", limit_info->step3_vot1_current);
-	prize_printk("info->step_info.temp_stp3_cv_voltage:%d\n", limit_info->temp_stp3_cv_voltage);
+	prize_pr_debug("info->step_info.start_step1_temp:%d\n", limit_info->start_step1_temp);
+	prize_pr_debug("info->step_info.start_step2_temp:%d\n", limit_info->start_step2_temp);
+	prize_pr_debug("info->step_info.start_step3_temp:%d\n", limit_info->start_step3_temp);
+	prize_pr_debug("info->step_info.step1_max_current:%d\n", limit_info->step1_max_current);
+	prize_pr_debug("info->step_info.step3_vot1_current:%d\n", limit_info->step3_vot1_current);
+	prize_pr_debug("info->step_info.temp_stp3_cv_voltage:%d\n", limit_info->temp_stp3_cv_voltage);
 
 	return 0;
 }
@@ -263,7 +263,7 @@ static int __init charge_limit_init(void)
 
 	ret = platform_driver_register(&charge_limit_driver);
 
-	prize_printk("[%s] Initialization : DONE\n",__func__);
+	prize_pr_debug("[%s] Initialization : DONE\n",__func__);
 
 	return 0;
 }
@@ -271,7 +271,7 @@ static int __init charge_limit_init(void)
 static void __exit charge_limit_exit(void)
 {
   	platform_driver_unregister(&charge_limit_driver);
-	prize_printk("[%s]\n",__func__);
+	prize_pr_debug("[%s]\n",__func__);
 }
 module_init(charge_limit_init);
 module_exit(charge_limit_exit);

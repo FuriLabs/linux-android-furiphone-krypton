@@ -1472,7 +1472,7 @@ static int mtk_charger_plug_out(struct mtk_charger *info)
 #ifdef CONFIG_PRIZE_WIRELESS_OTG_CHECK
 	   wireless_flag=0;
 #endif
-	   printk("lpp--- plug out enable add current\n");
+	   pr_debug("lpp--- plug out enable add current\n");
 #endif
 //prize add by lipengpeng 20210621 end 
 
@@ -1507,7 +1507,7 @@ static int mtk_charger_plug_in(struct mtk_charger *info,
 #if defined(CONFIG_PRIZE_MT5725_SUPPORT_15W_NEW)
     if((info->chr_type == POWER_SUPPLY_TYPE_USB_FLOAT) && (get_MT5725_status() == 0))
 	{
-		printk("lpp--- plug in enable add current\n");
+		pr_debug("lpp--- plug in enable add current\n");
 		En_Dis_add_current(0x00);
 	}
 #endif

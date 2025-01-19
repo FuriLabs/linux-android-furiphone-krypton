@@ -2346,7 +2346,7 @@ static int bat_vol_get(struct mtk_gauge *gauge,
 	if(bat_psy != NULL && !IS_ERR(bat_psy)) {
 		power_supply_get_property(bat_psy,POWER_SUPPLY_PROP_VOLTAGE_NOW,&propval);
 		*val = propval.intval;
-		pr_info("%s *val=%d\n",__func__,*val);
+		pr_debug("%s *val=%d\n",__func__,*val);
 	}
 #endif
 	/* prize modify by liaoxingen end */
@@ -3063,7 +3063,7 @@ static long adc_cali_ioctl(
 //prize add by lipengpeng 20210819 start 
 		}else{
 		adc_out_data[0] = gm->ui_soc;
-			printk("lpp--cw2015 not loader adc_out_data[0]=%d\n",adc_out_data[0]);
+			pr_debug("lpp--cw2015 not loader adc_out_data[0]=%d\n",adc_out_data[0]);
 		}
 //prize add by lipengpeng 20210819 end 
 	#endif
@@ -3073,7 +3073,7 @@ static long adc_cali_ioctl(
 //prize add by lipengpeng 20210819 start 
 		}else{
 		adc_out_data[0] = gm->ui_soc;
-			printk("lpp--cw2015 not loader adc_out_data[0]=%d\n",adc_out_data[0]);
+			pr_debug("lpp--cw2015 not loader adc_out_data[0]=%d\n",adc_out_data[0]);
 		}
 //prize add by lipengpeng 20210819 end 
 	#endif
@@ -3084,7 +3084,7 @@ static long adc_cali_ioctl(
 		if(bat_psy != NULL && !IS_ERR(bat_psy)) {
 			power_supply_get_property(bat_psy,POWER_SUPPLY_PROP_CAPACITY,&propval);
 			adc_out_data[0] = propval.intval;
-			pr_info("%s adc_out_data[0]=%d\n",__func__,adc_out_data[0]);
+			pr_debug("%s adc_out_data[0]=%d\n",__func__,adc_out_data[0]);
 		}
 #endif
 	/* prize modify by liaoxingen end */

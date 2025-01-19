@@ -2918,7 +2918,7 @@ static int shutdown_event_handler(struct mtk_battery *gm)
 		power_supply_get_property(bat_psy,POWER_SUPPLY_PROP_CAPACITY,&val);
 	    current_ui_soc = val.intval;
 	    current_soc = val.intval;
-		pr_info("%s current_soc=%d\n",__func__,current_soc);
+		pr_debug("%s current_soc=%d\n",__func__,current_soc);
 	}
 #endif
 	/* prize modify by liaoxingen end */
