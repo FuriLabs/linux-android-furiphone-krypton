@@ -408,7 +408,7 @@ long DW9781CAF_Ioctl(struct file *a_pstFile, unsigned int a_u4Command,
 		mdelay(100);
 		ois_reset();//Main_OIS();
 		result = gyro_offset_calibrtion();
-		printk("zzj debug a_u4Param=%ld",result);
+		pr_debug("zzj debug a_u4Param=%ld",result);
 		calibration_save();
 		if (copy_to_user((void __user *)a_u4Param, (void *)&result,
 						sizeof(unsigned int))) {
