@@ -59,17 +59,17 @@ struct work_struct getFwVerQ;
 #define WIFI_DBG_FUNC(fmt, arg...)	\
 	do { \
 		if (fwDbgLevel >= WIFI_FW_LOG_DBG) \
-			pr_info(PFX "%s[I]: " fmt, __func__, ##arg); \
+			pr_debug(PFX "%s[I]: " fmt, __func__, ##arg); \
 	} while (0)
 #define WIFI_DBG_FUNC_LIMITED(fmt, arg...)	\
 	do { \
 		if (fwDbgLevel >= WIFI_FW_LOG_DBG) \
-			pr_info_ratelimited(PFX "%s[L]: " fmt, __func__, ##arg); \
+			pr_debug(PFX "%s[L]: " fmt, __func__, ##arg); \
 	} while (0)
 #define WIFI_WARN_FUNC(fmt, arg...)	\
 	do { \
 		if (fwDbgLevel >= WIFI_FW_LOG_WARN) \
-			pr_warn(PFX "%s[W]: " fmt, __func__, ##arg); \
+			pr_debug(PFX "%s[W]: " fmt, __func__, ##arg); \
 	} while (0)
 #define WIFI_ERR_FUNC(fmt, arg...)	\
 	do { \
