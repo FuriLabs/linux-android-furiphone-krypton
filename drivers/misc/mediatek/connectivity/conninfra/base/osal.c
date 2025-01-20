@@ -102,7 +102,9 @@ static unsigned short const crc16_table[256] = {
 
 int ftrace_flag = 1;
 
+#ifdef CONFIG_TRACING
 static unsigned long __read_mostly mark_addr;
+#endif
 static unsigned int g_pid;
 /*******************************************************************************
 *                  F U N C T I O N   D E C L A R A T I O N S
@@ -1561,6 +1563,7 @@ static inline void osal_systrace_prepare(void)
 		g_pid = task_pid_nr(current);
 }
 
+#ifdef CONFIG_TRACING
 static void osal_systrace_b(const char *log)
 {
 	osal_systrace_prepare();
@@ -1568,15 +1571,19 @@ static void osal_systrace_b(const char *log)
 	KERNEL_event_trace_printk(mark_addr, "B|%d|%s\n", g_pid, log);
 	preempt_enable();
 }
+#endif
 
 
+#ifdef CONFIG_TRACING
 static void osal_systrace_e(void)
 {
 	preempt_disable();
 	KERNEL_event_trace_printk(mark_addr, "E\n");
 	preempt_enable();
 }
+#endif
 
+#ifdef CONFIG_TRACING
 static void osal_systrace_c(int val, const char *log)
 {
 	osal_systrace_prepare();
@@ -1584,9 +1591,11 @@ static void osal_systrace_c(int val, const char *log)
 	KERNEL_event_trace_printk(mark_addr, "C|%d|%s|%d\n", g_pid, log, val);
 	preempt_enable();
 }
+#endif
 
 void osal_systrace_major_b(const char *fmt, ...)
 {
+#ifdef CONFIG_TRACING
 	char log[DBG_LOG_STR_SIZE];
 	va_list args;
 
@@ -1596,15 +1605,19 @@ void osal_systrace_major_b(const char *fmt, ...)
 		pr_err("[%s:%d] vsnprintf error", __func__, __LINE__);
 	va_end(args);
 	osal_systrace_b(log);
+#endif
 }
 
 void osal_systrace_major_e(void)
 {
+#ifdef CONFIG_TRACING
 	osal_systrace_e();
+#endif
 }
 
 void osal_systrace_minor_b(const char *fmt, ...)
 {
+#ifdef CONFIG_TRACING
 	char log[DBG_LOG_STR_SIZE];
 	va_list args;
 
@@ -1617,18 +1630,21 @@ void osal_systrace_minor_b(const char *fmt, ...)
 		pr_err("[%s:%d] vsnprintf error", __func__, __LINE__);
 	va_end(args);
 	osal_systrace_b(log);
-
+#endif
 }
 
 void osal_systrace_minor_e(void)
 {
+#ifdef CONFIG_TRACING
 	if (!ftrace_flag)
 		return;
 	osal_systrace_e();
+#endif
 }
 
 void osal_systrace_minor_c(int val, const char *fmt, ...)
 {
+#ifdef CONFIG_TRACING
 	char log[DBG_LOG_STR_SIZE];
 	va_list args;
 
@@ -1641,6 +1657,7 @@ void osal_systrace_minor_c(int val, const char *fmt, ...)
 		pr_err("[%s:%d] vsnprintf error", __func__, __LINE__);
 	va_end(args);
 	osal_systrace_c(val, log);
+#endif
 }
 
 int osal_wake_lock_init(struct osal_wake_lock *pLock)
