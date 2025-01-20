@@ -114,7 +114,7 @@ int ff_log_printf(ff_log_level_t level, const char *tag, const char *fmt, ...)
     va_list ap;
     static char uevent_env_buf[128];
     char *ptr = uevent_env_buf;
-    int n, available = sizeof(uevent_env_buf);
+    int available = sizeof(uevent_env_buf);
 
     /* Fill logging level. */
     available -= sprintf(uevent_env_buf, "FF_LOG=%1d", level);
@@ -134,21 +134,21 @@ int ff_log_printf(ff_log_level_t level, const char *tag, const char *fmt, ...)
     /* Native output. */
     switch (level) {
     case FF_LOG_LEVEL_ERR:
-        n = pr_err(KERN_ERR FF_DRV_NAME": %s\n", ptr);
+        pr_err(KERN_ERR FF_DRV_NAME": %s\n", ptr);
         break;
     case FF_LOG_LEVEL_WRN:
-        n = pr_warn(KERN_WARNING FF_DRV_NAME": %s\n", ptr);
+        pr_warn(KERN_WARNING FF_DRV_NAME": %s\n", ptr);
         break;
     case FF_LOG_LEVEL_INF:
-        n = pr_debug(KERN_INFO FF_DRV_NAME": %s\n", ptr);
+        pr_debug(KERN_INFO FF_DRV_NAME": %s\n", ptr);
         break;
     case FF_LOG_LEVEL_DBG:
     case FF_LOG_LEVEL_VBS:
     default:
-        n = pr_debug(KERN_DEBUG FF_DRV_NAME": %s\n", ptr);
+        pr_debug(KERN_DEBUG FF_DRV_NAME": %s\n", ptr);
         break;
     }
-    return n;
+    return 0;
 }
 
 const char *ff_err_strerror(int err)
