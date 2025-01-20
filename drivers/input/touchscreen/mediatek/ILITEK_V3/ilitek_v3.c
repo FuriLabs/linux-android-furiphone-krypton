@@ -926,9 +926,6 @@ int ili_report_handler(void)
 	ILI_DBG("Packet ID = %x\n", pid);
 
 	if (checksum != pack_checksum && pid != P5_X_I2CUART_PACKET_ID) {
-		ILI_ERR("Checksum Error (0x%X)! Pack = 0x%X, len = %d\n", checksum, pack_checksum, rlen);
-		debug_en = DEBUG_ALL;
-		ili_dump_data(trdata, 8, rlen, 0, "finger report with wrong");
 		debug_en = tmp;
 		ret = -EINVAL;
 		goto out;
