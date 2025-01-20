@@ -250,24 +250,24 @@ void apply_4h7_otp_awb(void)
 	otp_data_info.frgcur = (unsigned int)(otp_data_info.nrcur*1024 / otp_data_info.ngcur);
 	otp_data_info.fbgcur = (unsigned int)(otp_data_info.nbcur*1024 / otp_data_info.ngcur);
 	
-	printk("otp_data_info.ngcur = %d\n",otp_data_info.ngcur);
-	printk("otp_data_info.frgcur = %d\n",otp_data_info.frgcur);
-	printk("otp_data_info.fbgcur = %d\n",otp_data_info.fbgcur);
+	pr_debug("otp_data_info.ngcur = %d\n",otp_data_info.ngcur);
+	pr_debug("otp_data_info.frgcur = %d\n",otp_data_info.frgcur);
+	pr_debug("otp_data_info.fbgcur = %d\n",otp_data_info.fbgcur);
 
 	otp_data_info.nggolden = (unsigned int)(1024);
 	otp_data_info.frggolden = (unsigned int)(1024*GOLDEN_RGAIN/GOLDEN_GGAIN);
 	otp_data_info.fbggolden = (unsigned int)(1024*GOLDEN_BGAIN/GOLDEN_GGAIN);
 
-	printk("otp_data_info.nggolden = %d\n",otp_data_info.nggolden);
-	printk("otp_data_info.frggolden = %d\n",otp_data_info.frggolden);
-	printk("otp_data_info.fbggolden = %d\n",otp_data_info.fbggolden);
+	pr_debug("otp_data_info.nggolden = %d\n",otp_data_info.nggolden);
+	pr_debug("otp_data_info.frggolden = %d\n",otp_data_info.frggolden);
+	pr_debug("otp_data_info.fbggolden = %d\n",otp_data_info.fbggolden);
 
 
 	r_ratio = (unsigned int)(512*otp_data_info.frggolden/otp_data_info.frgcur);
 	b_ratio = (unsigned int)(512*otp_data_info.fbggolden /otp_data_info.fbgcur);
 
-	printk("r_ratio = %d\n",r_ratio);
-	printk("b_ratio = %d\n",b_ratio);
+	pr_debug("r_ratio = %d\n",r_ratio);
+	pr_debug("b_ratio = %d\n",b_ratio);
 
 	//cal_rgb_gain(&otp_data_info.nr_gain, &otp_data_info.ng_gain, &otp_data_info.nb_gain, r_ratio, b_ratio);
 
@@ -309,7 +309,7 @@ void apply_4h7_otp_awb(void)
 			}
 		}
 	}
-	printk("[S5K4H7Y]  R_GAIN = %d, B_GAIN = %d, G_GAIN = %d\n", R_GAIN, B_GAIN, G_GAIN);
+	pr_debug("[S5K4H7Y]  R_GAIN = %d, B_GAIN = %d, G_GAIN = %d\n", R_GAIN, B_GAIN, G_GAIN);
 	
 	if ((R_GAIN != 0) && (B_GAIN != 0) && (G_GAIN != 0))
 		{
@@ -324,11 +324,11 @@ void apply_4h7_otp_awb(void)
 			otp_4h7_write_cmos_sensor_8(0x0214, G_GAIN>>8);
 			otp_4h7_write_cmos_sensor_8(0x0215, G_GAIN&0xff);
 	
-		printk("[S5K4H7Y] otp wb R_GAIN = %d, B_GAIN = %d, G_GAIN = %d\n", R_GAIN, B_GAIN, G_GAIN);																												
+		pr_debug("[S5K4H7Y] otp wb R_GAIN = %d, B_GAIN = %d, G_GAIN = %d\n", R_GAIN, B_GAIN, G_GAIN);																												
 		}
-		printk("[S5K4H7Y] otp wb R_GAIN = %d, B_GAIN = %d, G_GAIN = %d\n", R_GAIN, B_GAIN, G_GAIN); 
+		pr_debug("[S5K4H7Y] otp wb R_GAIN = %d, B_GAIN = %d, G_GAIN = %d\n", R_GAIN, B_GAIN, G_GAIN); 
 	
-	printk("OTP apply_4h7_otp_awb\n");
+	pr_debug("OTP apply_4h7_otp_awb\n");
 }
 
 /*********************************************************
@@ -337,7 +337,7 @@ void apply_4h7_otp_awb(void)
 #if 0
 void apply_4h7_otp_enb_lsc(void)
 {
-	printk("OTP enable lsc\n");
+	pr_debug("OTP enable lsc\n");
 	otp_4h7_write_cmos_sensor_8(0x0B00,0x01);
 }
 #endif
@@ -362,7 +362,7 @@ int otp_group_info_4h7(void)
 		otp_data_info.lsc_sum = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A34);
 	}
 	else{
-		printk("4H7 OTP read data fail lsc empty!!!\n");
+		pr_debug("4H7 OTP read data fail lsc empty!!!\n");
 		goto error;
 	}
 
@@ -378,7 +378,7 @@ int otp_group_info_4h7(void)
 		otp_data_info.flag_group = 2;
 	}
 	else{
-		printk("4h7 OTP read data fail flag empty!!!\n");
+		pr_debug("4h7 OTP read data fail flag empty!!!\n");
 		goto error;
 	}
 
@@ -386,36 +386,36 @@ int otp_group_info_4h7(void)
 		otp_4h7_read_cmos_sensor(S5K4H7SUB_OTP_FLAGFLAG_ADDR + otp_data_info.flag_offset + 1);
 
 	otp_data_info.infoflag = selective_read_region(S5K4H7SUB_AWB_PAGE,S5K4H7SUB_OTP_AWBFLAG_ADDR);
-	printk("otp_data_info.infoflag = %d\n",otp_data_info.infoflag);
+	pr_debug("otp_data_info.infoflag = %d\n",otp_data_info.infoflag);
 
 	if(otp_data_info.infoflag == 85)
 	{
 	    //group1
 	    
-		printk("read awb otp group1\n");
+		pr_debug("read awb otp group1\n");
 		otp_data_info.nrcur = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A13);
 		otp_data_info.nbcur = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A16);
 		otp_data_info.ngrcur = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A14);
 		otp_data_info.ngbcur = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A15);
 
 		
-		printk("otp_data_info.nrcur = %d\n",otp_data_info.nrcur);
-		printk("otp_data_info.nbcur = %d\n",otp_data_info.nbcur);
-		printk("otp_data_info.ngrcur = %d\n",otp_data_info.ngrcur);
-		printk("otp_data_info.ngbcur = %d\n",otp_data_info.ngbcur);
+		pr_debug("otp_data_info.nrcur = %d\n",otp_data_info.nrcur);
+		pr_debug("otp_data_info.nbcur = %d\n",otp_data_info.nbcur);
+		pr_debug("otp_data_info.ngrcur = %d\n",otp_data_info.ngrcur);
+		pr_debug("otp_data_info.ngbcur = %d\n",otp_data_info.ngbcur);
 
 		otp_data_info.nrgolden = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A17);
 		otp_data_info.nbgolden = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A1A);
 		otp_data_info.ngrgolden = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A18);
 		otp_data_info.ngbgolden = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A19);
 
-		printk("otp_data_info.nrgolden = %d\n",otp_data_info.nrgolden);
-		printk("otp_data_info.nbgolden = %d\n",otp_data_info.nbgolden);
-		printk("otp_data_info.ngrgolden = %d\n",otp_data_info.ngrgolden);
-		printk("otp_data_info.ngbgolden = %d\n",otp_data_info.ngbgolden);
+		pr_debug("otp_data_info.nrgolden = %d\n",otp_data_info.nrgolden);
+		pr_debug("otp_data_info.nbgolden = %d\n",otp_data_info.nbgolden);
+		pr_debug("otp_data_info.ngrgolden = %d\n",otp_data_info.ngrgolden);
+		pr_debug("otp_data_info.ngbgolden = %d\n",otp_data_info.ngbgolden);
 	}else{
 	    //group2
-	    printk("read awb otp group2\n");
+	    pr_debug("read awb otp group2\n");
 		otp_data_info.infoflag = selective_read_region(S5K4H7SUB_AWB_PAGE,0x0A1D);// flag of group2
 		
 		otp_data_info.nrcur = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A1E);
@@ -423,21 +423,21 @@ int otp_group_info_4h7(void)
 		otp_data_info.ngrcur = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A1F);
 		otp_data_info.ngbcur = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A20);
 
-		printk("otp_data_info.infoflag = %d\n",otp_data_info.infoflag);
-		printk("otp_data_info.nrcur = %d\n",otp_data_info.nrcur);
-		printk("otp_data_info.nbcur = %d\n",otp_data_info.nbcur);
-		printk("otp_data_info.ngrcur = %d\n",otp_data_info.ngrcur);
-		printk("otp_data_info.ngbcur = %d\n",otp_data_info.ngbcur);
+		pr_debug("otp_data_info.infoflag = %d\n",otp_data_info.infoflag);
+		pr_debug("otp_data_info.nrcur = %d\n",otp_data_info.nrcur);
+		pr_debug("otp_data_info.nbcur = %d\n",otp_data_info.nbcur);
+		pr_debug("otp_data_info.ngrcur = %d\n",otp_data_info.ngrcur);
+		pr_debug("otp_data_info.ngbcur = %d\n",otp_data_info.ngbcur);
 
 		otp_data_info.nrgolden = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A22);
 		otp_data_info.nbgolden = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A25);
 		otp_data_info.ngrgolden = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A23);
 		otp_data_info.ngbgolden = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A24);
 
-		printk("otp_data_info.nrgolden = %d\n",otp_data_info.nrgolden);
-		printk("otp_data_info.nbgolden = %d\n",otp_data_info.nbgolden);
-		printk("otp_data_info.ngrgolden = %d\n",otp_data_info.ngrgolden);
-		printk("otp_data_info.ngbgolden = %d\n",otp_data_info.ngbgolden);
+		pr_debug("otp_data_info.nrgolden = %d\n",otp_data_info.nrgolden);
+		pr_debug("otp_data_info.nbgolden = %d\n",otp_data_info.nbgolden);
+		pr_debug("otp_data_info.ngrgolden = %d\n",otp_data_info.ngrgolden);
+		pr_debug("otp_data_info.ngbgolden = %d\n",otp_data_info.ngbgolden);
 
 
 	}
@@ -447,7 +447,7 @@ int otp_group_info_4h7(void)
 		otp_data_info.awb_flag_sum = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A1C);
 	}
 	else{
-		printk("4h7 OTP read data fail otp_data_info.empty!!!\n");
+		pr_debug("4h7 OTP read data fail otp_data_info.empty!!!\n");
 		goto error;
 	}
 
@@ -466,7 +466,7 @@ bool read_4h7_page(int page_start,int page_end,unsigned char *pdata)
 	int st_page_start = page_start;
 	if (page_start <= 0 || page_end > 21){
 		bresult = false;
-		printk(" OTP page_end is large!");
+		pr_debug(" OTP page_end is large!");
 		return bresult;
 	}
 	for(; st_page_start <= page_end; st_page_start++){
@@ -512,7 +512,7 @@ bool check_sum_flag_awb(void)
 		apply_4h7_otp_awb();
 	}
 	else{
-		printk("OTP 4h7 check awb flag sum fail!!!");
+		pr_debug("OTP 4h7 check awb flag sum fail!!!");
 		bresult &= 0;
 	}
 	return  bresult;
@@ -561,7 +561,7 @@ bool  check_sum_flag_lsc(void)
 		otp_data_info.lsc_check_flag = 1;
 	}
 	else{
-		printk("OTP 4h7 check lsc sum fail!!!");
+		pr_debug("OTP 4h7 check lsc sum fail!!!");
 		bresult &= 0;
 		otp_data_info.lsc_check_flag = 0;
 	}
@@ -572,16 +572,16 @@ bool update_otp(void)
 {
 	int result = 1;
 	if(otp_group_info_4h7() == -1){
-		printk("OTP read data fail  empty!!!\n");
+		pr_debug("OTP read data fail  empty!!!\n");
 		result &= 0;
 	}
 	else{
 		if(check_sum_flag_awb() == 0){
-			printk("OTP 4h7 check sum fail!!!\n");
+			pr_debug("OTP 4h7 check sum fail!!!\n");
 			result &= 0;
 		}
 		else{
-			printk("OTP 4h7 check ok\n");
+			pr_debug("OTP 4h7 check ok\n");
 		}
 	}
 	return  result;

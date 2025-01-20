@@ -223,7 +223,7 @@ void apply_4h7_otp_awb(void)
 
 	otp_4h7_write_cmos_sensor_8(0x0212,b_gain_h);
 	otp_4h7_write_cmos_sensor_8(0x0213,b_gain_l);
-	printk("OTP apply_4h7_otp_awb\n");
+	pr_debug("OTP apply_4h7_otp_awb\n");
 }
 
 /*********************************************************
@@ -232,7 +232,7 @@ void apply_4h7_otp_awb(void)
 
 void apply_4h7_otp_enb_lsc(void)
 {
-	printk("OTP enable lsc\n");
+	pr_debug("OTP enable lsc\n");
 	otp_4h7_write_cmos_sensor_8(0x0B00,0x01);
 }
 
@@ -257,7 +257,7 @@ int otp_group_info_4h7(void)
 		otp_data_info.lsc_sum = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A34);
 	}
 	else{
-		printk("4H7 OTP read data fail lsc empty!!!\n");
+		pr_debug("4H7 OTP read data fail lsc empty!!!\n");
 		goto error;
 	}
 
@@ -273,7 +273,7 @@ int otp_group_info_4h7(void)
 		otp_data_info.flag_group = 2;
 	}
 	else{
-		printk("4h7 OTP read data fail flag empty!!!\n");
+		pr_debug("4h7 OTP read data fail flag empty!!!\n");
 		goto error;
 	}
 
@@ -303,7 +303,7 @@ int otp_group_info_4h7(void)
 		otp_data_info.awb_flag_sum = selective_read_region_16(S5K4H7SUB_AWB_PAGE,0x0A30);
 	}
 	else{
-		printk("4h7 OTP read data fail otp_data_info.empty!!!\n");
+		pr_debug("4h7 OTP read data fail otp_data_info.empty!!!\n");
 		goto error;
 	}
 
@@ -322,7 +322,7 @@ bool read_4h7_page(int page_start,int page_end,unsigned char *pdata)
 	int st_page_start = page_start;
 	if (page_start <= 0 || page_end > 21){
 		bresult = false;
-		printk(" OTP page_end is large!");
+		pr_debug(" OTP page_end is large!");
 		return bresult;
 	}
 	for(; st_page_start <= page_end; st_page_start++){
@@ -366,7 +366,7 @@ bool check_sum_flag_awb(void)
 		apply_4h7_otp_awb();
 	}
 	else{
-		printk("OTP 4h7 check awb flag sum fail!!!");
+		pr_debug("OTP 4h7 check awb flag sum fail!!!");
 		bresult &= 0;
 	}
 	return  bresult;
@@ -411,7 +411,7 @@ bool  check_sum_flag_lsc(void)
 		otp_data_info.lsc_check_flag = 1;
 	}
 	else{
-		printk("OTP 4h7 check lsc sum fail!!!");
+		pr_debug("OTP 4h7 check lsc sum fail!!!");
 		bresult &= 0;
 		otp_data_info.lsc_check_flag = 0;
 	}
@@ -422,16 +422,16 @@ bool update_otp(void)
 {
 	int result = 1;
 	if(otp_group_info_4h7() == -1){
-		printk("OTP read data fail  empty!!!\n");
+		pr_debug("OTP read data fail  empty!!!\n");
 		result &= 0;
 	}
 	else{
 		if(check_sum_flag_awb() == 0 && otp_data_info.lsc_check_flag){
-			printk("OTP 4h7 check sum fail!!!\n");
+			pr_debug("OTP 4h7 check sum fail!!!\n");
 			result &= 0;
 		}
 		else{
-			printk("OTP 4h7 check ok\n");
+			pr_debug("OTP 4h7 check ok\n");
 		}
 	}
 	return  result;

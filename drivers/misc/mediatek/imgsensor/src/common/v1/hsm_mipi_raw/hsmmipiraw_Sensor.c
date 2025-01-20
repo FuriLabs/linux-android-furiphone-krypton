@@ -242,32 +242,32 @@ static struct hsm_platform_data	hsm_platform = {
 #define HSM_DEBUG(fmt, ...)						\
     do {								\
         if (dbg_flags & HSM_LOG_DEBUG)				\
-        printk(KERN_DEBUG "[hsm_imager] %s " fmt "\n", __func__, ##__VA_ARGS__); \
+        pr_debug(KERN_DEBUG "[hsm_imager] %s " fmt "\n", __func__, ##__VA_ARGS__); \
     } while (0)
 
 #define HSM_INFO_L2(fmt, ...)						\
     do {								\
         if (dbg_flags & HSM_LOG_INFO_L2)			\
-        printk(KERN_INFO "[hsm_imager] %s " fmt "\n", __func__, ##__VA_ARGS__); \
+        pr_debug(KERN_INFO "[hsm_imager] %s " fmt "\n", __func__, ##__VA_ARGS__); \
     } while (0)
 
 #define HSM_INFO_L1(fmt, ...)						\
     do {								\
         if (dbg_flags & HSM_LOG_INFO_L1)			\
-        printk(KERN_INFO "[hsm_imager] %s " fmt "\n", __func__, ##__VA_ARGS__); \
+        pr_debug(KERN_INFO "[hsm_imager] %s " fmt "\n", __func__, ##__VA_ARGS__); \
     } while (0)
 
 #define HSM_WARN(fmt, ...)						\
     do {								\
         if (dbg_flags & HSM_LOG_WARN)				\
-        printk(KERN_WARNING "[hsm_imager] %s " fmt "\n", __func__, ##__VA_ARGS__); \
+        pr_debug(KERN_WARNING "[hsm_imager] %s " fmt "\n", __func__, ##__VA_ARGS__); \
     } while (0)
 
 
 #define HSM_ERROR(fmt, ...)						\
     do {								\
         if (dbg_flags & HSM_LOG_ERR)				\
-        printk(KERN_ERR "[hsm_imager] %s " fmt "\n", __func__, ##__VA_ARGS__); \
+        pr_debug(KERN_ERR "[hsm_imager] %s " fmt "\n", __func__, ##__VA_ARGS__); \
     } while (0)
 
 
@@ -1773,7 +1773,7 @@ static kal_uint32 HsmFeatureControl(MSDK_SENSOR_FEATURE_ENUM id, kal_uint8 *para
             break;
         case SENSOR_FEATURE_GET_CROP_INFO:
                 /*
-                printk("SENSOR_FEATURE_GET_CROP_INFO scenarioId:%d\n", (UINT32)*feature_data);
+                pr_debug("SENSOR_FEATURE_GET_CROP_INFO scenarioId:%d\n", (UINT32)*feature_data);
                 wininfo = (struct SENSOR_WINSIZE_INFO_STRUCT *)(uintptr_t)(*(feature_data+1));
 
                 switch (*feature_data_32) 

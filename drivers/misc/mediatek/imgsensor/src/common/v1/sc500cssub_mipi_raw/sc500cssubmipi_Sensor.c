@@ -1509,7 +1509,7 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 	kal_uint8 i = 0;
 	kal_uint8 retry = 2;
 	if(curr_sensor_id  != 1) {
-		printk("curr sensor idx mismatch physics camera ,so return error");
+		pr_debug("curr sensor idx mismatch physics camera ,so return error");
 		*sensor_id = 0xFFFFFFFF;
 		return ERROR_SENSOR_CONNECT_FAIL;
 	}
@@ -1545,7 +1545,7 @@ static kal_uint32 open(void)
 
 	LOG_1;
 	if(curr_sensor_id  != 1) {
-		printk("curr sensor idx mismatch physics camera ,so return error");
+		pr_debug("curr sensor idx mismatch physics camera ,so return error");
 		return ERROR_SENSOR_CONNECT_FAIL;
 	}
 	while (imgsensor_info.i2c_addr_table[i] != 0xff) {

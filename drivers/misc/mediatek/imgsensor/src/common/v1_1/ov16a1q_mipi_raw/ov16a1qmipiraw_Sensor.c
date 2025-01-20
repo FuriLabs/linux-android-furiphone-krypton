@@ -333,7 +333,7 @@ static void read_4cell_from_eeprom(char *data,int type,int addr,int size)
 	int i = 0;
 	//int addr = 0x1400;/*Start of 4 cell data*/
 	char pu_send_cmd[2] = { (char)(addr >> 8), (char)(addr & 0xFF) };
-	printk("type=%d addr=0x%x size=%d",type,addr,size);
+	pr_debug("type=%d addr=0x%x size=%d",type,addr,size);
 	data[0] = (size & 0xff);/*Low*/
 	data[1] = ((size >> 8) & 0xff);/*High*/
 
@@ -1755,14 +1755,14 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 				LOG_INF("i2c write id: 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id,*sensor_id);
 			#if REMOSAIC_ENABLE
 				read_4cell_from_eeprom(&Xtalk_Array[0],FOUR_CELL_CAL_TYPE_XTALK_CAL,XTALK_ADDR,XTALK_SIZE+2);
-				printk("dump Xtalk data");
+				pr_debug("dump Xtalk data");
 				//for(j = 0; j < XTALK_SIZE+2; j = j+10)
-					//printk("0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x",Xtalk_Array[j+0],Xtalk_Array[j+1],Xtalk_Array[j+2],Xtalk_Array[j+3]
+					//pr_debug("0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x",Xtalk_Array[j+0],Xtalk_Array[j+1],Xtalk_Array[j+2],Xtalk_Array[j+3]
 					//,Xtalk_Array[j+4],Xtalk_Array[j+5],Xtalk_Array[j+6],Xtalk_Array[j+7],Xtalk_Array[j+8],Xtalk_Array[j+9],Xtalk_Array[j+10]);
 				read_4cell_from_eeprom(&XPDC_Array[0],FOUR_CELL_CAL_TYPE_DPC,DPC_ADDR,DPC_SIZE+2);
-				printk("dump XPDC data");
+				pr_debug("dump XPDC data");
 				//for(j = 0; j < DPC_SIZE+2; j = j+10)
-					//printk("0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x",XPDC_Array[j+0],XPDC_Array[j+1],XPDC_Array[j+2],XPDC_Array[j+3]
+					//pr_debug("0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x",XPDC_Array[j+0],XPDC_Array[j+1],XPDC_Array[j+2],XPDC_Array[j+3]
 					//,XPDC_Array[j+4],XPDC_Array[j+5],XPDC_Array[j+6],XPDC_Array[j+7],XPDC_Array[j+8],XPDC_Array[j+9],XPDC_Array[j+10]);
 			#endif
 				return ERROR_NONE;

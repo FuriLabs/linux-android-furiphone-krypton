@@ -737,7 +737,7 @@ static void sensor_init(void)
 	write_cmos_sensor(0x59ed,0x04);
 #endif
 #if MIRROR_FLIP
-	//printk("0x3221 value:0x%x\n",read_cmos_sensor(0x3221));
+	//pr_debug("0x3221 value:0x%x\n",read_cmos_sensor(0x3221));
 	write_cmos_sensor(0x3221,read_cmos_sensor(0x3221)|0x66);
 #endif
 }

@@ -1658,7 +1658,7 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
     kal_uint16 s5k2p7gmsgmsmodule_id = 0;
    
 	s5k2p7gmsgmsmodule_id = read_s5k2p7gmsgmsmodule_id();
-	printk("tangcong,s5k2p7gmsgmsmodule_id=%x",s5k2p7gmsgmsmodule_id);
+	pr_debug("tangcong,s5k2p7gmsgmsmodule_id=%x",s5k2p7gmsgmsmodule_id);
 	if(s5k2p7gmsgmsmodule_id != 0x00){
 		
 		 return ERROR_SENSOR_CONNECT_FAIL;

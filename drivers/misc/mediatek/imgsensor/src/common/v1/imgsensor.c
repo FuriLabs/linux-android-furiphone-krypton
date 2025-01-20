@@ -2929,7 +2929,7 @@ int CALI_DATA_NUM = ARCSOFT_CALIBRATION_NUM; //arcsoft 2k for default
 
 static ssize_t calibration_dump_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
-    printk(" func: %s", __func__);
+    pr_debug(" func: %s", __func__);
     return sprintf(buf, "%d\n", cali_value);
 }
 
@@ -2941,11 +2941,11 @@ static ssize_t calibration_dump_store(struct device *dev,  struct device_attribu
     struct IMGSENSOR_SENSOR *psensor = NULL;
     int write_enable = 0;
 
-    printk("%s dump cali data\n", __func__);
+    pr_debug("%s dump cali data\n", __func__);
 
 
     sscanf(buf, "%d", &write_enable);
-	printk("calibration_cmd :dump %d", write_enable);
+	pr_debug("calibration_cmd :dump %d", write_enable);
     if(0x1 == write_enable) { //arcsoft for 0x1
         curCamId = IMGSENSOR_SENSOR_IDX_MAIN;		
     } else if(0x2 == write_enable) { //arcsoft for 2  
@@ -3011,7 +3011,7 @@ static ssize_t calibration_save_store(struct device *dev,  struct device_attribu
 
     sscanf(buf, "%d", &write_enable);
 
-	printk("calibration_cmd :save %d", write_enable);
+	pr_debug("calibration_cmd :save %d", write_enable);
 
     pr_err("%s store cali data\n", __func__);
 

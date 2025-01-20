@@ -257,9 +257,9 @@ static void set_dummy(void)
 static kal_uint32 return_sensor_id(void)
 {
 	kal_uint32 get_byte = 0;
-    printk("fsd---4h7 return id\n");
+    pr_debug("fsd---4h7 return id\n");
 	get_byte = (read_cmos_sensor(0x0000) << 8) | read_cmos_sensor(0x0001);
-	 printk("fsd---4h7 return id %d\n",get_byte);
+	 pr_debug("fsd---4h7 return id %d\n",get_byte);
 	return get_byte;
 
 }
@@ -955,7 +955,7 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 		spin_unlock(&imgsensor_drv_lock);
 		do {
 			*sensor_id = return_sensor_id();
-			printk("fsd---4h7 sensor id is %d\n",*sensor_id);
+			pr_debug("fsd---4h7 sensor id is %d\n",*sensor_id);
 			if (*sensor_id == imgsensor_info.sensor_id) {
 				/* return ERROR_NONE; */
 				break;
@@ -1005,12 +1005,12 @@ static kal_uint32 open(void)
 		spin_unlock(&imgsensor_drv_lock);
 		do {
 			sensor_id = return_sensor_id();
-			printk("s5k4h7yxmipiraw open sensor_id = %x\r\n", sensor_id);
+			pr_debug("s5k4h7yxmipiraw open sensor_id = %x\r\n", sensor_id);
 			if (sensor_id == imgsensor_info.sensor_id) {
-				printk("i2c write id: 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id, sensor_id);
+				pr_debug("i2c write id: 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id, sensor_id);
 				break;
 			}
-			printk("Read sensor id fail, id: 0x%x\n", sensor_id);
+			pr_debug("Read sensor id fail, id: 0x%x\n", sensor_id);
 			retry--;
 		} while (retry > 0);
 		i++;
@@ -1023,7 +1023,7 @@ static kal_uint32 open(void)
 #if 0
 	if (!(update_otp()))
 	{
-		printk("Demon_otp update_otp error!");
+		pr_debug("Demon_otp update_otp error!");
 	}
 #endif
 	/* initail sequence write in  */

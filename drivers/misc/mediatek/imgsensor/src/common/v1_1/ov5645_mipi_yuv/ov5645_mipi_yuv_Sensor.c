@@ -48,10 +48,10 @@
 	"preview 1280*960@30fps,448Mbps/lane; capture 5M@15fps,672Mbps/lane\n")
 /*******************************   Modify end    *****************************/
 /* #define LOG_INF(format, args...)\
- *    xlog_printk(ANDROID_LOG_INFO   , PFX, "[%s] " format, __FUNCTION__, ##args
+ *    xlog_pr_debug(ANDROID_LOG_INFO   , PFX, "[%s] " format, __FUNCTION__, ##args
  */
 /* #define LOGE(format, args...)\
- *    xlog_printk(ANDROID_LOG_ERROR, PFX, "[%s] " format, __FUNCTION__, ##args)
+ *    xlog_pr_debug(ANDROID_LOG_ERROR, PFX, "[%s] " format, __FUNCTION__, ##args)
  */
 /* #define LOG_INF(format, args...)\
  *    pr_debug(PFX "[%s] " format, __func__, ##args)

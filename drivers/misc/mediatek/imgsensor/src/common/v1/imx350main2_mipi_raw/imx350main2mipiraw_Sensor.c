@@ -1817,9 +1817,9 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 	kal_uint16 zxy2_module_id=0;
 	//prize add by lipengpeng 20200722 start
 	zxy2_module_id = read_module_id_zxy2();
-	printk("111LPP,zxy_module_id_main2=0x%x\n",zxy2_module_id);
+	pr_debug("111LPP,zxy_module_id_main2=0x%x\n",zxy2_module_id);
 	if(zxy2_module_id !=0x49){
-		printk("yzp zxy2_module_id err\n");
+		pr_debug("yzp zxy2_module_id err\n");
 		return ERROR_SENSOR_CONNECT_FAIL;
 	}
 //prize add by lipengpeng 20200722 end
@@ -1829,9 +1829,9 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 		spin_unlock(&imgsensor_drv_lock);
 		do {
 			*sensor_id = return_lot_id_from_otp();
-			printk("dantangweiget_imgsensor_id1111\n");
-			printk("imx350main2 sensor id is %d\n",*sensor_id);
-			printk("i2c write id: 0x%x, sensor id: 0x%x\n",
+			pr_debug("dantangweiget_imgsensor_id1111\n");
+			pr_debug("imx350main2 sensor id is %d\n",*sensor_id);
+			pr_debug("i2c write id: 0x%x, sensor id: 0x%x\n",
 					imgsensor.i2c_write_id, *sensor_id);
 			if (*sensor_id == imgsensor_info.sensor_id) {
 				//imx350main2_read_SPC(imx350main2_SPC_data);

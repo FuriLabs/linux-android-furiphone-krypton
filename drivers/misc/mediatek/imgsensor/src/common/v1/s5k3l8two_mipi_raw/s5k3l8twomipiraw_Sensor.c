@@ -1437,7 +1437,7 @@ static kal_uint32 return_sensor_id(void)
 	kal_uint32 sensor_id = 0;
 	kal_uint16 module_id = 0;
 	module_id = read_eeprom_module_id(0x0001);
-	printk("ziktwo 0x0000 = 0x%x,,%d\n",((read_cmos_sensor_byte(0x0000) << 8) |read_cmos_sensor_byte(0x0001)),module_id);
+	pr_debug("ziktwo 0x0000 = 0x%x,,%d\n",((read_cmos_sensor_byte(0x0000) << 8) |read_cmos_sensor_byte(0x0001)),module_id);
 	sensor_id = ((read_cmos_sensor_byte(0x0000) << 8) |read_cmos_sensor_byte(0x0001));
 	if ((0x49 == module_id)) {
 		sensor_id = sensor_id+1;

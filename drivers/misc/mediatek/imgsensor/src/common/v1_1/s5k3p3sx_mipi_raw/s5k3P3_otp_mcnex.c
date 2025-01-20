@@ -38,7 +38,7 @@
 #define CAM_CALGETDLT_DEBUG
 #define CAM_CAL_DEBUG
 #ifdef CAM_CAL_DEBUG
-#define CAM_CALDB printk
+#define CAM_CALDB pr_debug
 #else
 #define CAM_CALDB(x,...)
 #endif
@@ -121,7 +121,7 @@ ssize_t zc533_read_register(kal_uint8 page,kal_uint8 page_add, kal_uint8 *return
 	char	readData = 0;
 	if(!g_pstI2Cclient)
 	{	
-		printk("I2C client not initialized!!");
+		pr_debug("I2C client not initialized!!");
 		return -1;
 	}	
 	
@@ -129,19 +129,19 @@ ssize_t zc533_read_register(kal_uint8 page,kal_uint8 page_add, kal_uint8 *return
 	cmd_buf[1] = ((page_add&0x3f)+((page&0x03)<<6));
 	
 	ret = i2c_master_send(g_pstI2Cclient, &cmd_buf[0], 2);
-	//printk("fch page=%x page_add=%x cmd_buf=[%x %x]\n" ,page,page_add,cmd_buf[0],cmd_buf[1]);
+	//pr_debug("fch page=%x page_add=%x cmd_buf=[%x %x]\n" ,page,page_add,cmd_buf[0],cmd_buf[1]);
 	if (ret < 0) {
-		printk("read sends command error!! ret=%d addr=0x%x%x \n",ret,cmd_buf[0],cmd_buf[1]);
+		pr_debug("read sends command error!! ret=%d addr=0x%x%x \n",ret,cmd_buf[0],cmd_buf[1]);
 		return -1;
 	}
 	ret = i2c_master_recv(g_pstI2Cclient, &readData, 1);
 	
 	if (ret < 0) {
-		printk("reads recv data error!!");
+		pr_debug("reads recv data error!!");
 		return -1;
 	} else{
 
-		//printk("=cs43l36========reg:0x%x  readData:0x%x\n",addr,readData);
+		//pr_debug("=cs43l36========reg:0x%x  readData:0x%x\n",addr,readData);
 	}
 	*returnData = readData;
 	
@@ -448,11 +448,11 @@ kal_bool check_S5K3L8_otp_valid_LSC_Page(kal_uint8 page)
 				pOutputdata[number]=returnData;
 				
 				checksum=checksum+pOutputdata[number];	  
-			  	//printk("pOutputdata[%d]=%x\n",number,pOutputdata[number]);
+			  	//pr_debug("pOutputdata[%d]=%x\n",number,pOutputdata[number]);
 			  
 			  	number+=1;
 			     }
-				// printk("for number=%d\n",number);
+				// pr_debug("for number=%d\n",number);
 			 }else if(page==2)
 			 {
 			    for(page_add=0x01;page_add<=0x3f;page_add++)//0x763 ((0x17~0x762) %256)
@@ -463,7 +463,7 @@ kal_bool check_S5K3L8_otp_valid_LSC_Page(kal_uint8 page)
 					
 				
 				checksum=checksum+pOutputdata[number];	  
-			  	//printk("pOutputdata[%d]=%x\n",number,pOutputdata[number]);
+			  	//pr_debug("pOutputdata[%d]=%x\n",number,pOutputdata[number]);
 			  
 			  	number+=1;
 			     }
@@ -478,7 +478,7 @@ kal_bool check_S5K3L8_otp_valid_LSC_Page(kal_uint8 page)
 					
 				
 				checksum=checksum+pOutputdata[number];	  
-			  	//printk("pOutputdata[%d]=%x\n",number,pOutputdata[number]);
+			  	//pr_debug("pOutputdata[%d]=%x\n",number,pOutputdata[number]);
 			  
 			  	number+=1;
 			     }
@@ -487,11 +487,11 @@ kal_bool check_S5K3L8_otp_valid_LSC_Page(kal_uint8 page)
 	         }
 		zc533_read_register(31,0x0d,&returnData);
 		a6_checksum =returnData;
-		  //   printk("for number=%d\n",number);
-		 //printk("a6_checksum=%x checksum=%x value=%d\n",a6_checksum,(checksum%255+1),checksum);
+		  //   pr_debug("for number=%d\n",number);
+		 //pr_debug("a6_checksum=%x checksum=%x value=%d\n",a6_checksum,(checksum%255+1),checksum);
 		 if(a6_checksum==(checksum%255+1))
 		   {
-			   printk("camera 3l8 otp lsc ok =%d i=%d!!! \n",number,i);
+			   pr_debug("camera 3l8 otp lsc ok =%d i=%d!!! \n",number,i);
 			   break;
 		   }
 		      
@@ -503,7 +503,7 @@ kal_bool check_S5K3L8_otp_valid_LSC_Page(kal_uint8 page)
 	}
 	else
 	{
-		printk("camera 3l8 otp lsc Length donot include");
+		pr_debug("camera 3l8 otp lsc Length donot include");
 		 return KAL_FALSE;
 	}
 
@@ -555,7 +555,7 @@ static bool selective_read_eeprom(kal_uint16 addr, BYTE* data)
 		if(!selective_read_eeprom(offset, &data[i])){
 			return false;
 		}
-		printk("###########   _read_s5k3l8_eeprom 0x%0x %d\n",offset, data[i]);
+		pr_debug("###########   _read_s5k3l8_eeprom 0x%0x %d\n",offset, data[i]);
 		offset++;
 	}
 	get_done = true;
@@ -578,7 +578,7 @@ static bool selective_read_eeprom(kal_uint16 addr, BYTE* data)
 	unsigned int check_sum=0;
 	int i;
 	//int j;
-	printk("[CAM_CAL] iReadData offset=%d length=%d \n", ui4_offset,ui4_length);
+	pr_debug("[CAM_CAL] iReadData offset=%d length=%d \n", ui4_offset,ui4_length);
     if(ui4_offset==0)//id
     	{
 		 //zc533_read_register(0x00,0x01,&check_mid);
@@ -588,13 +588,13 @@ static bool selective_read_eeprom(kal_uint16 addr, BYTE* data)
 		   //_read_s5k3l8_eeprom(0x003A,check_mid,1);
 		//pinputdata[0]=check_mid[0];
 		pinputdata[0]=1;
-		printk("[CAM_CAL] iReadData ui4_offset==0  pinputdata[0]=0x%x\n \n", pinputdata[0]);
+		pr_debug("[CAM_CAL] iReadData ui4_offset==0  pinputdata[0]=0x%x\n \n", pinputdata[0]);
 		
 	
     	}
 	 else if(ui4_offset==44)
 		{
-					printk("[CAM_CAL]LSC OTP Data Read!\n");
+					pr_debug("[CAM_CAL]LSC OTP Data Read!\n");
 			_read_s5k3l8_eeprom(0x002C,S5K3L8MIPI_LSC_Data,1868);
 		
 			for(i=0;i<1868;i++)
@@ -609,7 +609,7 @@ static bool selective_read_eeprom(kal_uint16 addr, BYTE* data)
 			
 				//pinputdata=S5K3L8MIPI_LSC_Data;
 			
-		printk("[CAM_CAL] iReadData ui4_offset==59  check_sum=0x%x,S5K3L8MIPI_LSC_Data_checksum =0x%x \n",check_sum,S5K3L8MIPI_LSC_Data_checksum);
+		pr_debug("[CAM_CAL] iReadData ui4_offset==59  check_sum=0x%x,S5K3L8MIPI_LSC_Data_checksum =0x%x \n",check_sum,S5K3L8MIPI_LSC_Data_checksum);
 		}
     else if(ui4_offset==33)
     	{
@@ -620,7 +620,7 @@ static bool selective_read_eeprom(kal_uint16 addr, BYTE* data)
 		   //INF=(INF_L+(INL_H<<8));
 		   //pinputdata[0]=INF_L;
 		   //pinputdata[1]=INL_H;
-		   	//printk("af INF_L=%x INF_L=%x pinputdata=(%x %x)\n",INF_L,INL_H,pinputdata[0], pinputdata[1]);
+		   	//pr_debug("af INF_L=%x INF_L=%x pinputdata=(%x %x)\n",INF_L,INL_H,pinputdata[0], pinputdata[1]);
     	}
     else if(ui4_offset==35)
 		{
@@ -629,19 +629,19 @@ static bool selective_read_eeprom(kal_uint16 addr, BYTE* data)
 		   //MAC=(MAC_L+(MAC_H<<8));
 		  //pinputdata[0]=MAC_L;
 		   //pinputdata[1]=MAC_H;
-		 // printk("af MAC_L=%x MAC_H=%x pinputdata=(%x %x)\n",MAC_L,MAC_H,pinputdata[0], pinputdata[1]);
+		 // pr_debug("af MAC_L=%x MAC_H=%x pinputdata=(%x %x)\n",MAC_L,MAC_H,pinputdata[0], pinputdata[1]);
 		//  zc533_read_register(32,0x05,&af_sum);
-		  	//printk("af MAC=%d pinputdata=%d\n",MAC,pinputdata[0]);
+		  	//pr_debug("af MAC=%d pinputdata=%d\n",MAC,pinputdata[0]);
            //  CHECKSUM=INF_L+INL_H+MAC_L+MAC_H;
-			// printk("[%x:%x:%x:%x]\n [%d:%d:%d:%d] %d",INF_L,INL_H,MAC_L,MAC_H,INF_L,INL_H,MAC_L,MAC_H,CHECKSUM);
+			// pr_debug("[%x:%x:%x:%x]\n [%d:%d:%d:%d] %d",INF_L,INL_H,MAC_L,MAC_H,INF_L,INL_H,MAC_L,MAC_H,CHECKSUM);
     		//CHECKSUM=(CHECKSUM%255+1);
-			//printk("CHECKSUM=%d af_sum=%d\n",CHECKSUM,af_sum);
+			//pr_debug("CHECKSUM=%d af_sum=%d\n",CHECKSUM,af_sum);
 			
     }
 	
 	else if(ui4_offset==59)//Lsc
 		{
-			printk("[CAM_CAL]LSC OTP Data Read!\n");
+			pr_debug("[CAM_CAL]LSC OTP Data Read!\n");
 			_read_s5k3l8_eeprom(0x0016,S5K3L8MIPI_LSC_Data,1868);
 		
 			for(i=0;i<1868;i++)
@@ -656,12 +656,12 @@ static bool selective_read_eeprom(kal_uint16 addr, BYTE* data)
 			
 				//pinputdata=S5K3L8MIPI_LSC_Data;
 			
-		printk("[CAM_CAL] iReadData ui4_offset==59  check_sum=0x%x,S5K3L8MIPI_LSC_Data_checksum =0x%x \n",check_sum,S5K3L8MIPI_LSC_Data_checksum);
+		pr_debug("[CAM_CAL] iReadData ui4_offset==59  check_sum=0x%x,S5K3L8MIPI_LSC_Data_checksum =0x%x \n",check_sum,S5K3L8MIPI_LSC_Data_checksum);
 	  }
 	  
 	else
 		{
-		printk("[CAM_CAL] ui4_offset not include\n");
+		pr_debug("[CAM_CAL] ui4_offset not include\n");
 		}
   
 
@@ -724,10 +724,10 @@ static long s5k3l8_Ioctl_Compat(struct file *filp, unsigned int cmd, unsigned lo
 	if (!filp->f_op || !filp->f_op->unlocked_ioctl)
 		return -ENOTTY;
 
-	printk("lixf otp COMPAT_CAM_CALIOC_G_READ:%lu,CAM_CALIOC_G_READ:%lu,cmd:%x\n",COMPAT_CAM_CALIOC_G_READ,CAM_CALIOC_G_READ,cmd);
-	printk("lixf otp 000\n");
+	pr_debug("lixf otp COMPAT_CAM_CALIOC_G_READ:%lu,CAM_CALIOC_G_READ:%lu,cmd:%x\n",COMPAT_CAM_CALIOC_G_READ,CAM_CALIOC_G_READ,cmd);
+	pr_debug("lixf otp 000\n");
 	switch (cmd) {
-	printk("lee\n");
+	pr_debug("lee\n");
 	case COMPAT_CAM_CALIOC_G_READ: {
 	//case CAM_CALIOC_G_READ: {
 		data32 = compat_ptr(arg);
@@ -744,12 +744,12 @@ static long s5k3l8_Ioctl_Compat(struct file *filp, unsigned int cmd, unsigned lo
 
 
 		if (err != 0)
-			printk("[CAMERA SENSOR] compat_put_acdk_sensor_getinfo_struct failed\n");
+			pr_debug("[CAMERA SENSOR] compat_put_acdk_sensor_getinfo_struct failed\n");
 		return ret;
 	}
 	default:
 	{
-		printk("lixf otp 222\n");
+		pr_debug("lixf otp 222\n");
 		return -ENOIOCTLCMD;
 	}
 	}
@@ -786,7 +786,7 @@ static long CAM_CAL_Ioctl(
     unsigned long TimeIntervalUS;
 #endif
 CAM_CALDB("fucehou----ioctl\n");
-printk("lixf otp CAM_CAL_Ioctl\n");
+pr_debug("lixf otp CAM_CAL_Ioctl\n");
     if(_IOC_NONE == _IOC_DIR(a_u4Command))
     {
     }
@@ -849,7 +849,7 @@ printk("lixf otp CAM_CAL_Ioctl\n");
             {
                 TimeIntervalUS = ktv2.tv_usec - ktv1.tv_usec;
             }
-            printk("Write data %d bytes take %lu us\n",ptempbuf->u4Length, TimeIntervalUS);
+            pr_debug("Write data %d bytes take %lu us\n",ptempbuf->u4Length, TimeIntervalUS);
 #endif            
             break;
         case CAM_CALIOC_G_READ:
@@ -876,7 +876,7 @@ printk("lixf otp CAM_CAL_Ioctl\n");
             {
                 TimeIntervalUS = ktv2.tv_usec - ktv1.tv_usec;
             }
-            printk("Read data %d bytes take %lu us\n",ptempbuf->u4Length, TimeIntervalUS);
+            pr_debug("Read data %d bytes take %lu us\n",ptempbuf->u4Length, TimeIntervalUS);
 #endif            
 
             break;
@@ -1080,7 +1080,7 @@ int i4RetValue = 0;
 //    spin_lock_init(&g_CAM_CALLock);
 
     //get sensor i2c client
-    printk("lixf CAM_CAL_i2c_probe\n");
+    pr_debug("lixf CAM_CAL_i2c_probe\n");
     spin_lock(&g_CAM_CALLock); //for SMP
     g_pstI2Cclient = client;
     g_pstI2Cclient->addr = S5K3L8OTP_DEVICE_ID>>1;
@@ -1120,7 +1120,7 @@ CAM_CALDB("[CAM_CAL] CAM_CAL_probe platform \n");
     s5k3l8_otp_proc = proc_create("otp", 0660, NULL, &s5k3l8_otp_proc_fops);
     if (s5k3l8_otp_proc == NULL)
     {
-        printk("create_proc_entry otp failed\n");
+        pr_debug("create_proc_entry otp failed\n");
     }
 #endif
 /* prize-lifenfen-1205 */
@@ -1159,7 +1159,7 @@ static int __init CAM_CAL_i2C_init(void)
 		CAM_CALDB("CAM_CAL_i2C_init\n");
 	
 	CAM_CALDB(" Attached!!\n");
-	  printk("CAM_CAL __init\n");
+	  pr_debug("CAM_CAL __init\n");
     //i2c_register_board_info(CAM_CAL_I2C_BUSNUM, &kd_cam_cal_dev, 1);
     if(platform_driver_register(&g_stCAM_CAL_Driver)){
         CAM_CALDB("failed to register CAM_CAL driver\n");

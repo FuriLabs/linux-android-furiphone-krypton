@@ -203,7 +203,7 @@ static void gc5035sub_otp_read_group(kal_uint16 addr,
 	kal_uint16 i = 0;
 
 	if ((((addr & 0x1fff) >> 3) + length) > GC5035SUB_OTP_DATA_LENGTH) {
-		printk("out of range, start addr: 0x%.4x, length = %d\n",
+		pr_debug("out of range, start addr: 0x%.4x, length = %d\n",
 			addr & 0x1fff, length);
 		return;
 	}
@@ -227,22 +227,22 @@ static void gc5035sub_gcore_read_dpc(void)
 	struct gc5035sub_dpc_t *pDPC = &gc5035sub_otp_data.dpc;
 
 	dpcFlag = gc5035sub_otp_read_byte(GC5035SUB_OTP_DPC_FLAG_OFFSET);
-	printk("dpc flag = 0x%x\n", dpcFlag);
+	pr_debug("dpc flag = 0x%x\n", dpcFlag);
 	switch (GC5035SUB_OTP_GET_2BIT_FLAG(dpcFlag, 0)) {
 	case GC5035SUB_OTP_FLAG_EMPTY: {
-		printk("dpc info is empty!!\n");
+		pr_debug("dpc info is empty!!\n");
 		pDPC->flag = GC5035SUB_OTP_FLAG_EMPTY;
 		break;
 	}
 	case GC5035SUB_OTP_FLAG_VALID: {
-		printk("dpc info is valid!\n");
+		pr_debug("dpc info is valid!\n");
 		pDPC->total_num =
 			gc5035sub_otp_read_byte(GC5035SUB_OTP_DPC_TOTAL_NUMBER_OFFSET)
 			+
 			gc5035sub_otp_read_byte(
 			GC5035SUB_OTP_DPC_ERROR_NUMBER_OFFSET);
 		pDPC->flag = GC5035SUB_OTP_FLAG_VALID;
-		printk("total_num = %d\n", pDPC->total_num);
+		pr_debug("total_num = %d\n", pDPC->total_num);
 		break;
 	}
 	default:
@@ -261,7 +261,7 @@ static void gc5035sub_gcore_read_reg(void)
 
 	memset(&reg, 0, GC5035SUB_OTP_REG_DATA_SIZE);
 	pRegs->flag = gc5035sub_otp_read_byte(GC5035SUB_OTP_REG_FLAG_OFFSET);
-	printk("register update flag = 0x%x\n", pRegs->flag);
+	pr_debug("register update flag = 0x%x\n", pRegs->flag);
 	if (pRegs->flag == GC5035SUB_OTP_FLAG_VALID) {
 		gc5035sub_otp_read_group(GC5035SUB_OTP_REG_DATA_OFFSET,
 				&reg[0], GC5035SUB_OTP_REG_DATA_SIZE);
@@ -309,16 +309,16 @@ static kal_uint8 gc5035sub_otp_read_module_info(void)
 	memset(&module_info, 0, sizeof(struct gc5035sub_module_info_t));
 
 	flag = gc5035sub_otp_read_byte(GC5035SUB_OTP_MODULE_FLAG_OFFSET);
-	printk("flag = 0x%x\n", flag);
+	pr_debug("flag = 0x%x\n", flag);
 
 	for (idx = 0; idx < GC5035SUB_OTP_GROUP_CNT; idx++) {
 		switch (GC5035SUB_OTP_GET_2BIT_FLAG(flag, 2 * (1 - idx))) {
 		case GC5035SUB_OTP_FLAG_EMPTY: {
-			printk("group %d is empty!\n", idx + 1);
+			pr_debug("group %d is empty!\n", idx + 1);
 			break;
 		}
 		case GC5035SUB_OTP_FLAG_VALID: {
-			printk("group %d is valid!\n", idx + 1);
+			pr_debug("group %d is valid!\n", idx + 1);
 			module_start_offset = GC5035SUB_OTP_MODULE_DATA_OFFSET
 				+ GC5035SUB_OTP_GET_OFFSET(idx *
 				GC5035SUB_OTP_MODULE_DATA_SIZE);
@@ -335,16 +335,16 @@ static kal_uint8 gc5035sub_otp_read_module_info(void)
 				module_info.month = info[3];
 				module_info.day = info[4];
 
-				printk("module_id = 0x%x\n",
+				pr_debug("module_id = 0x%x\n",
 					module_info.module_id);
-				printk("lens_id = 0x%x\n",
+				pr_debug("lens_id = 0x%x\n",
 					module_info.lens_id);
-				printk("data = %d-%d-%d\n",
+				pr_debug("data = %d-%d-%d\n",
 					module_info.year,
 					module_info.month,
 					module_info.day);
 			} else
-				printk("check sum %d error! check sum = 0x%x, calculate result = 0x%x\n",
+				pr_debug("check sum %d error! check sum = 0x%x, calculate result = 0x%x\n",
 					idx + 1,
 					info[GC5035SUB_OTP_MODULE_DATA_SIZE - 1],
 					(check % 255 + 1));
@@ -352,7 +352,7 @@ static kal_uint8 gc5035sub_otp_read_module_info(void)
 		}
 		case GC5035SUB_OTP_FLAG_INVALID:
 		case GC5035SUB_OTP_FLAG_INVALID2: {
-			printk("group %d is invalid!\n", idx + 1);
+			pr_debug("group %d is invalid!\n", idx + 1);
 			break;
 		}
 		default:
@@ -380,17 +380,17 @@ static void gc5035sub_otp_read_wb_info(void)
 	memset(&wb, 0, GC5035SUB_OTP_WB_DATA_SIZE);
 	memset(&golden, 0, GC5035SUB_OTP_GOLDEN_DATA_SIZE);
 	flag = gc5035sub_otp_read_byte(GC5035SUB_OTP_WB_FLAG_OFFSET);
-	printk("flag = 0x%x\n", flag);
+	pr_debug("flag = 0x%x\n", flag);
 
 	for (idx = 0; idx < GC5035SUB_OTP_GROUP_CNT; idx++) {
 		switch (GC5035SUB_OTP_GET_2BIT_FLAG(flag, 2 * (1 - idx))) {
 		case GC5035SUB_OTP_FLAG_EMPTY: {
-			printk("wb group %d is empty!\n", idx + 1);
+			pr_debug("wb group %d is empty!\n", idx + 1);
 			pWB->flag = pWB->flag | GC5035SUB_OTP_FLAG_EMPTY;
 			break;
 		}
 		case GC5035SUB_OTP_FLAG_VALID: {
-			printk("wb group %d is valid!\n", idx + 1);
+			pr_debug("wb group %d is valid!\n", idx + 1);
 			wb_start_offset = GC5035SUB_OTP_WB_DATA_OFFSET
 				+ GC5035SUB_OTP_GET_OFFSET(idx *
 				GC5035SUB_OTP_WB_DATA_SIZE);
@@ -409,11 +409,11 @@ static void gc5035sub_otp_read_wb_info(void)
 				pWB->bg = pWB->bg == 0 ?
 					GC5035SUB_OTP_WB_BG_TYPICAL : pWB->bg;
 				pWB->flag = pWB->flag | GC5035SUB_OTP_FLAG_VALID;
-				printk("wb r/g = 0x%x\n", pWB->rg);
-				printk("wb b/g = 0x%x\n", pWB->bg);
+				pr_debug("wb r/g = 0x%x\n", pWB->rg);
+				pr_debug("wb b/g = 0x%x\n", pWB->bg);
 			} else {
 				pWB->flag = pWB->flag | GC5035SUB_OTP_FLAG_INVALID;
-				printk("wb check sum %d error! check sum = 0x%x, calculate result = 0x%x\n",
+				pr_debug("wb check sum %d error! check sum = 0x%x, calculate result = 0x%x\n",
 					idx + 1,
 					wb[GC5035SUB_OTP_WB_DATA_SIZE - 1],
 					(wb_check % 255 + 1));
@@ -422,7 +422,7 @@ static void gc5035sub_otp_read_wb_info(void)
 		}
 		case GC5035SUB_OTP_FLAG_INVALID:
 		case GC5035SUB_OTP_FLAG_INVALID2: {
-			printk("wb group %d is invalid!\n", idx + 1);
+			pr_debug("wb group %d is invalid!\n", idx + 1);
 			pWB->flag = pWB->flag | GC5035SUB_OTP_FLAG_INVALID;
 			break;
 		}
@@ -432,12 +432,12 @@ static void gc5035sub_otp_read_wb_info(void)
 
 		switch (GC5035SUB_OTP_GET_2BIT_FLAG(flag, 2 * (3 - idx))) {
 		case GC5035SUB_OTP_FLAG_EMPTY: {
-			printk("golden group %d is empty!\n", idx + 1);
+			pr_debug("golden group %d is empty!\n", idx + 1);
 			pGolden->flag = pGolden->flag | GC5035SUB_OTP_FLAG_EMPTY;
 			break;
 		}
 		case GC5035SUB_OTP_FLAG_VALID: {
-			printk("golden group %d is valid!\n", idx + 1);
+			pr_debug("golden group %d is valid!\n", idx + 1);
 			golden_start_offset = GC5035SUB_OTP_GOLDEN_DATA_OFFSET
 				+ GC5035SUB_OTP_GET_OFFSET(idx *
 				GC5035SUB_OTP_GOLDEN_DATA_SIZE);
@@ -458,14 +458,14 @@ static void gc5035sub_otp_read_wb_info(void)
 					GC5035SUB_OTP_WB_BG_TYPICAL : pGolden->bg;
 				pGolden->flag = pGolden->flag |
 					GC5035SUB_OTP_FLAG_VALID;
-				printk("golden r/g = 0x%x\n",
+				pr_debug("golden r/g = 0x%x\n",
 						pGolden->rg);
-				printk("golden b/g = 0x%x\n",
+				pr_debug("golden b/g = 0x%x\n",
 						pGolden->bg);
 			} else {
 				pGolden->flag = pGolden->flag |
 					GC5035SUB_OTP_FLAG_INVALID;
-				printk("golden check sum %d error! check sum = 0x%x, calculate result = 0x%x\n",
+				pr_debug("golden check sum %d error! check sum = 0x%x, calculate result = 0x%x\n",
 					idx + 1,
 					golden[GC5035SUB_OTP_WB_DATA_SIZE - 1],
 					(golden_check % 255 + 1));
@@ -474,7 +474,7 @@ static void gc5035sub_otp_read_wb_info(void)
 		}
 		case GC5035SUB_OTP_FLAG_INVALID:
 		case GC5035SUB_OTP_FLAG_INVALID2: {
-			printk("golden group %d is invalid!\n", idx + 1);
+			pr_debug("golden group %d is invalid!\n", idx + 1);
 			pGolden->flag = pGolden->flag | GC5035SUB_OTP_FLAG_INVALID;
 			break;
 		}
@@ -1730,11 +1730,11 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 			*sensor_id = return_sensor_id() + 0x11;
 			if (*sensor_id == imgsensor_info.sensor_id) {
 				gc5035sub_otp_identify();
-				printk("i2c write id: 0x%x, sensor id: 0x%x\n",
+				pr_debug("i2c write id: 0x%x, sensor id: 0x%x\n",
 					imgsensor.i2c_write_id, *sensor_id);
 				return ERROR_NONE;
 			}
-			printk("Read sensor id fail, write id: 0x%x, id: 0x%x\n",
+			pr_debug("Read sensor id fail, write id: 0x%x, id: 0x%x\n",
 				imgsensor.i2c_write_id, *sensor_id);
 			retry--;
 		} while (retry > 0);
@@ -1769,11 +1769,11 @@ static kal_uint32 open(void)
 		do {
 			sensor_id = return_sensor_id() + 0x11;
 			if (sensor_id == imgsensor_info.sensor_id) {
-				printk("i2c write id: 0x%x, sensor id: 0x%x\n",
+				pr_debug("i2c write id: 0x%x, sensor id: 0x%x\n",
 					imgsensor.i2c_write_id, sensor_id);
 				break;
 			}
-			printk("Read sensor id fail, write id: 0x%x, id: 0x%x\n",
+			pr_debug("Read sensor id fail, write id: 0x%x, id: 0x%x\n",
 				imgsensor.i2c_write_id, sensor_id);
 			retry--;
 		} while (retry > 0);

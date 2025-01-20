@@ -41,7 +41,7 @@ extern int curr_sensor_id;
 
 /************************** Modify Following Strings for Debug **************************/
 // #define PFX "gc2385_camera_sensor"
-// #define LOG_1 printk("liaojie gc2385GC2385, MIPI 1LANE\n")
+// #define LOG_1 pr_debug("liaojie gc2385GC2385, MIPI 1LANE\n")
 /****************************   Modify end    *******************************************/
 
 // #define LOG_INF(format, args...)    pr_debug(PFX "[%s] " format, __func__, ##args)
@@ -254,7 +254,7 @@ static void set_shutter(kal_uint16 shutter)
 	write_cmos_sensor(0x03, (shutter >> 8) & 0x3f);
 	write_cmos_sensor(0x04, shutter & 0xff);
 
-	printk("liaojie gc2385Exit! shutter = %d, framelength = %d\n", shutter, imgsensor.frame_length);
+	pr_debug("liaojie gc2385Exit! shutter = %d, framelength = %d\n", shutter, imgsensor.frame_length);
 }
 
 /*
@@ -296,7 +296,7 @@ static kal_uint16 set_gain(kal_uint16 gain)
 		temp = 256 * iReg / ANALOG_GAIN_1;
 		write_cmos_sensor(0xb1, temp >> 8);
 		write_cmos_sensor(0xb2, temp & 0xff);
-		printk("liaojie gc2385analogic gain 1x, add pregain = %d\n", temp);
+		pr_debug("liaojie gc2385analogic gain 1x, add pregain = %d\n", temp);
 	} else if ((iReg >= ANALOG_GAIN_2) && (iReg < ANALOG_GAIN_3)) {
 		write_cmos_sensor(0xfe, 0x00);
 		write_cmos_sensor(0x20, 0x73);
@@ -306,7 +306,7 @@ static kal_uint16 set_gain(kal_uint16 gain)
 		temp = 256 * iReg / ANALOG_GAIN_2;
 		write_cmos_sensor(0xb1, temp >> 8);
 		write_cmos_sensor(0xb2, temp & 0xff);
-		printk("liaojie gc2385analogic gain 1.43x, add pregain = %d\n", temp);
+		pr_debug("liaojie gc2385analogic gain 1.43x, add pregain = %d\n", temp);
 	} else if ((iReg >= ANALOG_GAIN_3) && (iReg < ANALOG_GAIN_4)) {
 		write_cmos_sensor(0xfe, 0x00);
 		write_cmos_sensor(0x20, 0x73);
@@ -316,7 +316,7 @@ static kal_uint16 set_gain(kal_uint16 gain)
 		temp = 256 * iReg / ANALOG_GAIN_3;
 		write_cmos_sensor(0xb1, temp >> 8);
 		write_cmos_sensor(0xb2, temp & 0xff);
-		printk("liaojie gc2385analogic gain 1.99x, add pregain = %d\n", temp);
+		pr_debug("liaojie gc2385analogic gain 1.99x, add pregain = %d\n", temp);
 	} else if ((iReg >= ANALOG_GAIN_4) && (iReg < ANALOG_GAIN_5)) {
 		write_cmos_sensor(0xfe, 0x00);
 		write_cmos_sensor(0x20, 0x73);
@@ -326,7 +326,7 @@ static kal_uint16 set_gain(kal_uint16 gain)
 		temp = 256 * iReg / ANALOG_GAIN_4;
 		write_cmos_sensor(0xb1, temp >> 8);
 		write_cmos_sensor(0xb2, temp & 0xff);
-		printk("liaojie gc2385analogic gain 2.86x, add pregain = %d\n", temp);
+		pr_debug("liaojie gc2385analogic gain 2.86x, add pregain = %d\n", temp);
 	} else if ((iReg >= ANALOG_GAIN_5) && (iReg < ANALOG_GAIN_6)) {
 		write_cmos_sensor(0xfe, 0x00);
 		write_cmos_sensor(0x20, 0x73);
@@ -336,7 +336,7 @@ static kal_uint16 set_gain(kal_uint16 gain)
 		temp = 256 * iReg / ANALOG_GAIN_5;
 		write_cmos_sensor(0xb1, temp >> 8);
 		write_cmos_sensor(0xb2, temp & 0xff);
-		printk("liaojie gc2385analogic gain 4.01x, add pregain = %d\n", temp);
+		pr_debug("liaojie gc2385analogic gain 4.01x, add pregain = %d\n", temp);
 	} else if ((iReg >= ANALOG_GAIN_6) && (iReg < ANALOG_GAIN_7)) {
 		write_cmos_sensor(0xfe, 0x00);
 		write_cmos_sensor(0x20, 0x74);
@@ -346,7 +346,7 @@ static kal_uint16 set_gain(kal_uint16 gain)
 		temp = 256 * iReg / ANALOG_GAIN_6;
 		write_cmos_sensor(0xb1, temp >> 8);
 		write_cmos_sensor(0xb2, temp & 0xff);
-		printk("liaojie gc2385analogic gain 5.76x, add pregain = %d\n", temp);
+		pr_debug("liaojie gc2385analogic gain 5.76x, add pregain = %d\n", temp);
 	} else if ((iReg >= ANALOG_GAIN_7) && (iReg < ANALOG_GAIN_8)) {
 		write_cmos_sensor(0xfe, 0x00);
 		write_cmos_sensor(0x20, 0x74);
@@ -356,7 +356,7 @@ static kal_uint16 set_gain(kal_uint16 gain)
 		temp = 256 * iReg / ANALOG_GAIN_7;
 		write_cmos_sensor(0xb1, temp >> 8);
 		write_cmos_sensor(0xb2, temp & 0xff);
-		printk("liaojie gc2385analogic gain 8.30x, add pregain = %d\n", temp);
+		pr_debug("liaojie gc2385analogic gain 8.30x, add pregain = %d\n", temp);
 	} else if ((iReg >= ANALOG_GAIN_8) && (iReg < ANALOG_GAIN_9)) {
 		write_cmos_sensor(0xfe, 0x00);
 		write_cmos_sensor(0x20, 0x74);
@@ -366,7 +366,7 @@ static kal_uint16 set_gain(kal_uint16 gain)
 		temp = 256 * iReg / ANALOG_GAIN_8;
 		write_cmos_sensor(0xb1, temp >> 8);
 		write_cmos_sensor(0xb2, temp & 0xff);
-		printk("liaojie gc2385analogic gain 11.72x, add pregain = %d\n", temp);
+		pr_debug("liaojie gc2385analogic gain 11.72x, add pregain = %d\n", temp);
 	} else {
 		write_cmos_sensor(0xfe, 0x00);
 		write_cmos_sensor(0x20, 0x75);
@@ -376,7 +376,7 @@ static kal_uint16 set_gain(kal_uint16 gain)
 		temp = 256 * iReg / ANALOG_GAIN_9;
 		write_cmos_sensor(0xb1, temp >> 8);
 		write_cmos_sensor(0xb2, temp & 0xff);
-		printk("liaojie gc2385analogic gain 17.06x, add pregain = %d\n", temp);
+		pr_debug("liaojie gc2385analogic gain 17.06x, add pregain = %d\n", temp);
 	}
 
 	return gain;
@@ -384,13 +384,13 @@ static kal_uint16 set_gain(kal_uint16 gain)
 
 static void ihdr_write_shutter_gain(kal_uint16 le, kal_uint16 se, kal_uint16 gain)
 {
-	printk("liaojie gc2385le: 0x%x, se: 0x%x, gain: 0x%x\n", le, se, gain);
+	pr_debug("liaojie gc2385le: 0x%x, se: 0x%x, gain: 0x%x\n", le, se, gain);
 }
 
 
 /*static void set_mirror_flip(kal_uint8 image_mirror)
 *{
-*	printk("liaojie gc2385image_mirror = %d\n", image_mirror);
+*	pr_debug("liaojie gc2385image_mirror = %d\n", image_mirror);
 *}
 */
 
@@ -401,7 +401,7 @@ static void night_mode(kal_bool enable)
 
 static void sensor_init(void)
 {
-	printk("liaojie gc2385E\n");
+	pr_debug("liaojie gc2385E\n");
 
 	/* system */
 	write_cmos_sensor(0xfe, 0x00);
@@ -501,42 +501,42 @@ static void sensor_init(void)
 
 static void preview_setting(void)
 {
-	printk("liaojie gc2385E\n");
+	pr_debug("liaojie gc2385E\n");
 	write_cmos_sensor(0xfe, 0x00);
 	write_cmos_sensor(0xed, 0x90);
 }
 
 static void capture_setting(void)
 {
-	printk("liaojie gc2385E\n");
+	pr_debug("liaojie gc2385E\n");
 	write_cmos_sensor(0xfe, 0x00);
 	write_cmos_sensor(0xed, 0x90);
 }
 
 static void normal_video_setting(void)
 {
-	printk("liaojie gc2385E\n");
+	pr_debug("liaojie gc2385E\n");
 	write_cmos_sensor(0xfe, 0x00);
 	write_cmos_sensor(0xed, 0x90);
 }
 
 static void hs_video_setting(void)
 {
-	printk("liaojie gc2385E\n");
+	pr_debug("liaojie gc2385E\n");
 	write_cmos_sensor(0xfe, 0x00);
 	write_cmos_sensor(0xed, 0x90);
 }
 
 static void slim_video_setting(void)
 {
-	printk("liaojie gc2385E\n");
+	pr_debug("liaojie gc2385E\n");
 	write_cmos_sensor(0xfe, 0x00);
 	write_cmos_sensor(0xed, 0x90);
 }
 
 static kal_uint32 set_test_pattern_mode(kal_bool enable)
 {
-	printk("liaojie gc2385enable: %d\n", enable);
+	pr_debug("liaojie gc2385enable: %d\n", enable);
 
 	if (enable) {
 		write_cmos_sensor(0xfe, 0x00);
@@ -556,7 +556,7 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 	kal_uint8 i = 0;
 	kal_uint8 retry = 2;
 	
-	printk(" lipengpeng gc2385macro curr_sensor_id=%d\n",curr_sensor_id);
+	pr_debug(" lipengpeng gc2385macro curr_sensor_id=%d\n",curr_sensor_id);
 //prize add by lipengpeng 20200309 start
 	//if(curr_sensor_id != 2)
 	//{
@@ -573,10 +573,10 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 			*sensor_id = return_sensor_id() & 0xffef;
 			*sensor_id=*sensor_id+1;
 			if (*sensor_id == imgsensor_info.sensor_id) {
-				printk("liaojie gc2385macro write id: 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id, *sensor_id);
+				pr_debug("liaojie gc2385macro write id: 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id, *sensor_id);
 				return ERROR_NONE;
 			}
-			printk("liaojie gc2385macro sensor id fail, write id: 0x%x, id: 0x%x\n", imgsensor.i2c_write_id, *sensor_id);
+			pr_debug("liaojie gc2385macro sensor id fail, write id: 0x%x, id: 0x%x\n", imgsensor.i2c_write_id, *sensor_id);
 			retry--;
 		} while (retry > 0);
 		i++;
@@ -609,10 +609,10 @@ static kal_uint32 open(void)
 			sensor_id = return_sensor_id() & 0xffef;
 			sensor_id=sensor_id+1;
 			if (sensor_id == imgsensor_info.sensor_id) {
-				printk("liaojie gc2385macro write id: 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id, sensor_id);
+				pr_debug("liaojie gc2385macro write id: 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id, sensor_id);
 				break;
 			}
-			printk("liaojie gc2385macro sensor id fail, write id: 0x%x, id: 0x%x\n", imgsensor.i2c_write_id, sensor_id);
+			pr_debug("liaojie gc2385macro sensor id fail, write id: 0x%x, id: 0x%x\n", imgsensor.i2c_write_id, sensor_id);
 			retry--;
 		} while (retry > 0);
 		i++;
@@ -647,7 +647,7 @@ static kal_uint32 open(void)
 
 static kal_uint32 close(void)
 {
-	printk("liaojie gc2385E\n");
+	pr_debug("liaojie gc2385E\n");
 	/* No Need to implement this function */
 	return ERROR_NONE;
 }
@@ -655,7 +655,7 @@ static kal_uint32 close(void)
 static kal_uint32 preview(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 	MSDK_SENSOR_CONFIG_STRUCT *sensor_config_data)
 {
-	printk("liaojie gc2385E\n");
+	pr_debug("liaojie gc2385E\n");
 
 	spin_lock(&imgsensor_drv_lock);
 	imgsensor.sensor_mode = IMGSENSOR_MODE_PREVIEW;
@@ -673,7 +673,7 @@ static kal_uint32 preview(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 static kal_uint32 capture(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 	MSDK_SENSOR_CONFIG_STRUCT *sensor_config_data)
 {
-	printk("liaojie gc2385E\n");
+	pr_debug("liaojie gc2385E\n");
 
 	spin_lock(&imgsensor_drv_lock);
 	imgsensor.sensor_mode = IMGSENSOR_MODE_CAPTURE;
@@ -685,7 +685,7 @@ static kal_uint32 capture(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 		imgsensor.autoflicker_en = KAL_FALSE;
 	} else {
 		if (imgsensor.current_fps != imgsensor_info.cap.max_framerate)
-			printk("liaojie gc2385Warning: current_fps %d fps is not support, so use cap's setting: %d fps!\n",
+			pr_debug("liaojie gc2385Warning: current_fps %d fps is not support, so use cap's setting: %d fps!\n",
 				imgsensor.current_fps, imgsensor_info.cap.max_framerate / 10);
 		imgsensor.pclk = imgsensor_info.cap.pclk;
 		imgsensor.line_length = imgsensor_info.cap.linelength;
@@ -701,7 +701,7 @@ static kal_uint32 capture(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 static kal_uint32 normal_video(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 	MSDK_SENSOR_CONFIG_STRUCT *sensor_config_data)
 {
-	printk("liaojie gc2385E\n");
+	pr_debug("liaojie gc2385E\n");
 
 	spin_lock(&imgsensor_drv_lock);
 	imgsensor.sensor_mode = IMGSENSOR_MODE_VIDEO;
@@ -719,7 +719,7 @@ static kal_uint32 normal_video(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 static kal_uint32 hs_video(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 	MSDK_SENSOR_CONFIG_STRUCT *sensor_config_data)
 {
-	printk("liaojie gc2385E\n");
+	pr_debug("liaojie gc2385E\n");
 
 	spin_lock(&imgsensor_drv_lock);
 	imgsensor.sensor_mode = IMGSENSOR_MODE_HIGH_SPEED_VIDEO;
@@ -739,7 +739,7 @@ static kal_uint32 hs_video(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 static kal_uint32 slim_video(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 	MSDK_SENSOR_CONFIG_STRUCT *sensor_config_data)
 {
-	printk("liaojie gc2385E\n");
+	pr_debug("liaojie gc2385E\n");
 
 	spin_lock(&imgsensor_drv_lock);
 	imgsensor.sensor_mode = IMGSENSOR_MODE_SLIM_VIDEO;
@@ -757,7 +757,7 @@ static kal_uint32 slim_video(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 
 static kal_uint32 get_resolution(MSDK_SENSOR_RESOLUTION_INFO_STRUCT *sensor_resolution)
 {
-	printk("liaojie gc2385E\n");
+	pr_debug("liaojie gc2385E\n");
 	sensor_resolution->SensorFullWidth = imgsensor_info.cap.grabwindow_width;
 	sensor_resolution->SensorFullHeight = imgsensor_info.cap.grabwindow_height;
 	sensor_resolution->SensorPreviewWidth = imgsensor_info.pre.grabwindow_width;
@@ -775,7 +775,7 @@ static kal_uint32 get_info(enum MSDK_SCENARIO_ID_ENUM scenario_id,
 	MSDK_SENSOR_INFO_STRUCT *sensor_info,
 	MSDK_SENSOR_CONFIG_STRUCT *sensor_config_data)
 {
-	printk("liaojie gc2385scenario_id = %d\n", scenario_id);
+	pr_debug("liaojie gc2385scenario_id = %d\n", scenario_id);
 
 	sensor_info->SensorClockPolarity = SENSOR_CLOCK_POLARITY_LOW;
 	sensor_info->SensorClockFallingPolarity = SENSOR_CLOCK_POLARITY_LOW; /* not use */
@@ -865,7 +865,7 @@ static kal_uint32 control(enum MSDK_SCENARIO_ID_ENUM scenario_id,
 	MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 	MSDK_SENSOR_CONFIG_STRUCT *sensor_config_data)
 {
-	printk("liaojie gc2385scenario_id = %d\n", scenario_id);
+	pr_debug("liaojie gc2385scenario_id = %d\n", scenario_id);
 	spin_lock(&imgsensor_drv_lock);
 	imgsensor.current_scenario_id = scenario_id;
 	spin_unlock(&imgsensor_drv_lock);
@@ -886,7 +886,7 @@ static kal_uint32 control(enum MSDK_SCENARIO_ID_ENUM scenario_id,
 		slim_video(image_window, sensor_config_data);
 		break;
 	default:
-		printk("liaojie gc2385Error ScenarioId setting");
+		pr_debug("liaojie gc2385Error ScenarioId setting");
 		preview(image_window, sensor_config_data);
 		return ERROR_INVALID_SCENARIO_ID;
 	}
@@ -895,7 +895,7 @@ static kal_uint32 control(enum MSDK_SCENARIO_ID_ENUM scenario_id,
 
 static kal_uint32 set_video_mode(UINT16 framerate)
 {
-	printk("liaojie gc2385framerate = %d\n", framerate);
+	pr_debug("liaojie gc2385framerate = %d\n", framerate);
 	/* SetVideoMode Function should fix framerate */
 	if (framerate == 0)
 	/* Dynamic frame rate */
@@ -915,7 +915,7 @@ static kal_uint32 set_video_mode(UINT16 framerate)
 
 static kal_uint32 set_auto_flicker_mode(kal_bool enable, UINT16 framerate)
 {
-	printk("liaojie gc2385enable = %d, framerate = %d\n", enable, framerate);
+	pr_debug("liaojie gc2385enable = %d, framerate = %d\n", enable, framerate);
 	spin_lock(&imgsensor_drv_lock);
 	if (enable) /* enable auto flicker */
 		imgsensor.autoflicker_en = KAL_TRUE;
@@ -929,7 +929,7 @@ static kal_uint32 set_max_framerate_by_scenario(enum MSDK_SCENARIO_ID_ENUM scena
 {
 	kal_uint32 frame_length;
 
-	printk("liaojie gc2385scenario_id = %d, framerate = %d\n", scenario_id, framerate);
+	pr_debug("liaojie gc2385scenario_id = %d, framerate = %d\n", scenario_id, framerate);
 
 	switch (scenario_id) {
 	case MSDK_SCENARIO_ID_CAMERA_PREVIEW:
@@ -966,7 +966,7 @@ static kal_uint32 set_max_framerate_by_scenario(enum MSDK_SCENARIO_ID_ENUM scena
 			spin_unlock(&imgsensor_drv_lock);
 		} else {
 			if (imgsensor.current_fps != imgsensor_info.cap.max_framerate)
-				printk("liaojie gc2385Warning: current_fps %d fps is not support, so use cap's setting: %d fps!\n",
+				pr_debug("liaojie gc2385Warning: current_fps %d fps is not support, so use cap's setting: %d fps!\n",
 					framerate, imgsensor_info.cap.max_framerate / 10);
 			frame_length = imgsensor_info.cap.pclk / framerate * 10 / imgsensor_info.cap.linelength;
 			spin_lock(&imgsensor_drv_lock);
@@ -1007,7 +1007,7 @@ static kal_uint32 set_max_framerate_by_scenario(enum MSDK_SCENARIO_ID_ENUM scena
 		imgsensor.min_frame_length = imgsensor.frame_length;
 		spin_unlock(&imgsensor_drv_lock);
 		set_dummy();
-		printk("liaojie gc2385error scenario_id = %d, we use preview scenario\n", scenario_id);
+		pr_debug("liaojie gc2385error scenario_id = %d, we use preview scenario\n", scenario_id);
 		break;
 	}
 	return ERROR_NONE;
@@ -1015,7 +1015,7 @@ static kal_uint32 set_max_framerate_by_scenario(enum MSDK_SCENARIO_ID_ENUM scena
 
 static kal_uint32 get_default_framerate_by_scenario(enum MSDK_SCENARIO_ID_ENUM scenario_id, MUINT32 *framerate)
 {
-	printk("liaojie gc2385scenario_id = %d\n", scenario_id);
+	pr_debug("liaojie gc2385scenario_id = %d\n", scenario_id);
 
 	switch (scenario_id) {
 	case MSDK_SCENARIO_ID_CAMERA_PREVIEW:
@@ -1051,7 +1051,7 @@ static kal_uint32 feature_control(MSDK_SENSOR_FEATURE_ENUM feature_id,
 	struct SENSOR_WINSIZE_INFO_STRUCT *wininfo;
 	MSDK_SENSOR_REG_INFO_STRUCT *sensor_reg_data = (MSDK_SENSOR_REG_INFO_STRUCT *)feature_para;
 
-	printk("liaojie gc2385feature_id = %d\n", feature_id);
+	pr_debug("liaojie gc2385feature_id = %d\n", feature_id);
 	switch (feature_id) {
 	case SENSOR_FEATURE_GET_PERIOD:
 		*feature_return_para_16++ = imgsensor.line_length;
@@ -1105,7 +1105,7 @@ static kal_uint32 feature_control(MSDK_SENSOR_FEATURE_ENUM feature_id,
 		break;
 	case SENSOR_FEATURE_GET_REGISTER:
 		sensor_reg_data->RegData = read_cmos_sensor(sensor_reg_data->RegAddr);
-		printk("liaojie gc2385adb_i2c_read 0x%x = 0x%x\n", sensor_reg_data->RegAddr, sensor_reg_data->RegData);
+		pr_debug("liaojie gc2385adb_i2c_read 0x%x = 0x%x\n", sensor_reg_data->RegAddr, sensor_reg_data->RegData);
 		break;
 	case SENSOR_FEATURE_GET_LENS_DRIVER_ID:
 		/* get the lens driver ID from EEPROM or just return LENS_DRIVER_ID_DO_NOT_CARE */
@@ -1137,19 +1137,19 @@ static kal_uint32 feature_control(MSDK_SENSOR_FEATURE_ENUM feature_id,
 		*feature_para_len = 4;
 		break;
 	case SENSOR_FEATURE_SET_FRAMERATE:
-		printk("liaojie gc2385current fps: %d\n", (UINT32)*feature_data);
+		pr_debug("liaojie gc2385current fps: %d\n", (UINT32)*feature_data);
 		spin_lock(&imgsensor_drv_lock);
 		imgsensor.current_fps = *feature_data;
 		spin_unlock(&imgsensor_drv_lock);
 		break;
 	case SENSOR_FEATURE_SET_HDR:
-		printk("liaojie gc2385ihdr enable: %d\n", (BOOL)*feature_data);
+		pr_debug("liaojie gc2385ihdr enable: %d\n", (BOOL)*feature_data);
 		spin_lock(&imgsensor_drv_lock);
 		imgsensor.ihdr_en = (BOOL)*feature_data;
 		spin_unlock(&imgsensor_drv_lock);
 		break;
 	case SENSOR_FEATURE_GET_CROP_INFO:
-		printk("liaojie gc2385SENSOR_FEATURE_GET_CROP_INFO scenarioId: %d\n", (UINT32)*feature_data);
+		pr_debug("liaojie gc2385SENSOR_FEATURE_GET_CROP_INFO scenarioId: %d\n", (UINT32)*feature_data);
 		wininfo = (struct SENSOR_WINSIZE_INFO_STRUCT *)(uintptr_t)(*(feature_data + 1));
 		switch (*feature_data_32) {
 		case MSDK_SCENARIO_ID_CAMERA_CAPTURE_JPEG:
@@ -1171,7 +1171,7 @@ static kal_uint32 feature_control(MSDK_SENSOR_FEATURE_ENUM feature_id,
 		}
 		break;
 	case SENSOR_FEATURE_SET_IHDR_SHUTTER_GAIN:
-		printk("liaojie gc2385SENSOR_SET_SENSOR_IHDR LE = %d, SE = %d, Gain = %d\n",
+		pr_debug("liaojie gc2385SENSOR_SET_SENSOR_IHDR LE = %d, SE = %d, Gain = %d\n",
 			(UINT16)*feature_data, (UINT16)*(feature_data + 1), (UINT16)*(feature_data + 2));
 		ihdr_write_shutter_gain((UINT16)*feature_data, (UINT16)*(feature_data + 1),
 			(UINT16)*(feature_data + 2));

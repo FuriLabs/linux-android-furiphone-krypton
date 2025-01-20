@@ -6457,7 +6457,7 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 	/*prize add by zhuzhengjiang for search camera 2019622 end*/
 	//prize add by lipengpeng 20200215 start
 		zxygms_id = read_module_id_gms();
-	printk("111LPP,zxygms_id=%x",zxygms_id);
+	pr_debug("111LPP,zxygms_id=%x",zxygms_id);
 	if(zxygms_id ==0x28){
 		
 		 //return ERROR_SENSOR_CONNECT_FAIL;

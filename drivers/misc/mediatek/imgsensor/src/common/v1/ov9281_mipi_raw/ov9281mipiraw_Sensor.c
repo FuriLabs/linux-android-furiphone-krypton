@@ -60,7 +60,7 @@
 /****************************Modify Following Strings for Debug****************************/
 #define PFX "ov92812LANE"
 //#define LOG_INF(format, args...)    pr_debug(PFX "[%s] " format, __func__, ##args)
-#define LOG_INF(format, args...)    //printk(PFX "[%s] " format, __func__, ##args)
+#define LOG_INF(format, args...)    //pr_debug(PFX "[%s] " format, __func__, ##args)
 /****************************   Modify end    *******************************************/
 static first_boot = 0;
 extern void scan_led_laser_ctrl(int enable);
@@ -1043,13 +1043,13 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 			spin_unlock(&imgsensor_drv_lock);
 			do {
 				*sensor_id = ((read_cmos_sensor(0x300A) << 8) | read_cmos_sensor(0x300B));
-				printk("===wys===ov9281: *sensor_id = 0x%x ==\n", *sensor_id);
+				pr_debug("===wys===ov9281: *sensor_id = 0x%x ==\n", *sensor_id);
 				if (*sensor_id == imgsensor_info.sensor_id) {
-					printk("ov9281 i2c write id: 0x%x, sensor id: 0x%x, ver = 0x%x<0xB1=r2a,0xB0=r1a>\n",
+					pr_debug("ov9281 i2c write id: 0x%x, sensor id: 0x%x, ver = 0x%x<0xB1=r2a,0xB0=r1a>\n",
 						imgsensor.i2c_write_id, *sensor_id, read_cmos_sensor(0x302A));
 					return ERROR_NONE;
 				}
-				printk("ov9281 Read sensor id fail,write_id:0x%x, id: 0x%x\n", imgsensor.i2c_write_id, *sensor_id);
+				pr_debug("ov9281 Read sensor id fail,write_id:0x%x, id: 0x%x\n", imgsensor.i2c_write_id, *sensor_id);
 				retry--;
 			} while (retry > 0);
 			i++;
@@ -1087,7 +1087,7 @@ static kal_uint32 open(void)
 	kal_uint8 retry = 2;
 	kal_uint32 sensor_id = 0;
 
-	printk("ov9281 open E\n");
+	pr_debug("ov9281 open E\n");
 	/* sensor have two i2c address 0x6c 0x6d & 0x21 0x20, we should detect the module used i2c address */
 	while (imgsensor_info.i2c_addr_table[i] != 0xff) {
 		spin_lock(&imgsensor_drv_lock);
@@ -1096,7 +1096,7 @@ static kal_uint32 open(void)
 		do {
 			sensor_id = ((read_cmos_sensor(0x300A) << 8) | read_cmos_sensor(0x300B));
 			if (sensor_id == imgsensor_info.sensor_id) {
-				printk("===wys==open==ov9281 i2c write id: 0x%x, sensor id: 0x%x\n",
+				pr_debug("===wys==open==ov9281 i2c write id: 0x%x, sensor id: 0x%x\n",
 					imgsensor.i2c_write_id, sensor_id);
 				break;
 			}
@@ -1178,7 +1178,7 @@ static kal_uint32 close(void)
 {
 	LOG_INF("E\n");
 
-	printk("===ov9281===close===");
+	pr_debug("===ov9281===close===");
 	scan_led_laser_ctrl(0);
 	scan_3v3_switch_ctrl_function(0);
 	/*No Need to implement this function */

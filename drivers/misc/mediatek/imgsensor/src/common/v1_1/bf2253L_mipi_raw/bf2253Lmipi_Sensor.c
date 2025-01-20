@@ -1073,7 +1073,7 @@ static void set_shutter_frame_length(kal_uint16 shutter,
 	write_cmos_sensor( 0x6b, (shutter >> 8) & 0x3f );
 	write_cmos_sensor( 0x6c, (shutter     ) & 0xff );
 
-	printk("Exit! shutter =%d, framelength =%d\n", shutter,imgsensor.frame_length);
+	pr_debug("Exit! shutter =%d, framelength =%d\n", shutter,imgsensor.frame_length);
 }/* set_shutter_frame_length */
 static kal_uint32 bf2253L_ana_gain_table[] = {
      1024,	1088,	 1150,	1214, 

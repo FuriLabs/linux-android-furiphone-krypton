@@ -674,10 +674,10 @@ static void sensor_init(void)
 	
 	wrtie_eeprom(0x0100, data, size);
 	//read_eeprom(0x0000, data2, size);
-	//printk("final data2 ");
+	//pr_debug("final data2 ");
 	//for(j=0;j<size;j++)
-	//	printk(" %d\n",data2[j]);
-	printk("\n");
+	//	pr_debug(" %d\n",data2[j]);
+	pr_debug("\n");
 #endif
 
 	write_cmos_sensor_8(0x301e, 0x00);
@@ -3594,18 +3594,18 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 {
 	kal_uint8 i = 0;
 	kal_uint8 retry = 2;
-        printk("[ov16880_camera_sensor ] imgsensor_info.sensor_id:%x\n",imgsensor_info.sensor_id);
+        pr_debug("[ov16880_camera_sensor ] imgsensor_info.sensor_id:%x\n",imgsensor_info.sensor_id);
 	//sensor have two i2c address 0x6c 0x6d & 0x21 0x20, we should detect the module used i2c address
 	while (imgsensor_info.i2c_addr_table[i] != 0xff) {
 		spin_lock(&imgsensor_drv_lock);
-                printk("[ov16880_camera_sensor ] imgsensor_info.i2c_addr_table[i]:%x\n",imgsensor_info.i2c_addr_table[i]);
+                pr_debug("[ov16880_camera_sensor ] imgsensor_info.i2c_addr_table[i]:%x\n",imgsensor_info.i2c_addr_table[i]);
 		imgsensor.i2c_write_id = imgsensor_info.i2c_addr_table[i];
 		spin_unlock(&imgsensor_drv_lock);
 		do {	
 			*sensor_id = (read_cmos_sensor_8(0x300A) << 16) | (read_cmos_sensor_8(0x300B)<<8) | read_cmos_sensor_8(0x300C);
-                        printk("[ov16880_camera_sensor ] get_imgsensor_id :%x\n",*sensor_id);
+                        pr_debug("[ov16880_camera_sensor ] get_imgsensor_id :%x\n",*sensor_id);
 			if (*sensor_id == imgsensor_info.sensor_id) {
-                                printk("[ov16880_camera_sensor]i2c write id: 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id, *sensor_id);
+                                pr_debug("[ov16880_camera_sensor]i2c write id: 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id, *sensor_id);
 				return ERROR_NONE;
 			}
 			LOG_INF("Read sensor id fail, write id:0x%x ,sensor Id:0x%x\n", imgsensor.i2c_write_id,*sensor_id);

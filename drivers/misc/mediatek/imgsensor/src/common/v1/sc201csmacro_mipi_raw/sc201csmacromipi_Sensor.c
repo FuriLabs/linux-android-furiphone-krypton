@@ -935,7 +935,7 @@ static void slim_video_setting(void)
 static kal_uint32 set_test_pattern_mode(kal_uint32 modes,
 	struct SET_SENSOR_PATTERN_SOLID_COLOR *pdata)
 {
-	printk("set_test_pattern_mode modes: %d\n", modes);
+	pr_debug("set_test_pattern_mode modes: %d\n", modes);
 
 	if (modes) {
 		write_cmos_sensor(0x4501, 0xac);
@@ -962,7 +962,7 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 	kal_uint8 i = 0;
 	kal_uint8 retry = 2;
 	if(curr_sensor_id  != 2) {
-		printk("curr sensor idx mismatch physics camera ,so return error");
+		pr_debug("curr sensor idx mismatch physics camera ,so return error");
 		*sensor_id = 0xFFFFFFFF;
 		return ERROR_SENSOR_CONNECT_FAIL;
 	}
@@ -973,10 +973,10 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 		do {
 			*sensor_id = return_sensor_id();
 			if (*sensor_id == imgsensor_info.sensor_id) {
-				printk("i2c write id: 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id, *sensor_id);
+				pr_debug("i2c write id: 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id, *sensor_id);
 				return ERROR_NONE;
 			}
-			printk("Read sensor id fail, write id: 0x%x, id: 0x%x\n", imgsensor.i2c_write_id, *sensor_id);
+			pr_debug("Read sensor id fail, write id: 0x%x, id: 0x%x\n", imgsensor.i2c_write_id, *sensor_id);
 			retry--;
 		} while (retry > 0);
 		i++;
@@ -998,7 +998,7 @@ static kal_uint32 open(void)
 
 	LOG_1;
 	if(curr_sensor_id  != 2) {
-		printk("curr sensor idx mismatch physics camera ,so return error");
+		pr_debug("curr sensor idx mismatch physics camera ,so return error");
 		return ERROR_SENSOR_CONNECT_FAIL;
 	}
 	while (imgsensor_info.i2c_addr_table[i] != 0xff) {
@@ -1446,7 +1446,7 @@ static kal_uint32 get_default_framerate_by_scenario(enum MSDK_SCENARIO_ID_ENUM s
 }
 static kal_uint32 streaming_control(kal_bool enable)
 {
-	printk("streaming_enable(0=Sw Standby,1=streaming): %d\n", enable);
+	pr_debug("streaming_enable(0=Sw Standby,1=streaming): %d\n", enable);
 	if (enable) {
 		write_cmos_sensor(0x0100,0x01); // stream on
 	} else {

@@ -51,7 +51,7 @@
 
 /****************************Modify Following Strings for Debug****************************/
 #define PFX "S5KHM2"
-#define LOG_INF(format, args...) printk(PFX "[%s] " format, __func__, ##args)
+#define LOG_INF(format, args...) pr_debug(PFX "[%s] " format, __func__, ##args)
 /****************************   Modify end    *******************************************/
 
 static DEFINE_SPINLOCK(imgsensor_drv_lock);

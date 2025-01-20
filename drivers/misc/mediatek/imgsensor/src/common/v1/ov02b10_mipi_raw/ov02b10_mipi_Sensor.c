@@ -677,7 +677,7 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 		}
 	}
 	else {
-		printk("curr sensor idx is not match physical sensor idx,so return fail \n");
+		pr_debug("curr sensor idx is not match physical sensor idx,so return fail \n");
 		*sensor_id = 0xFFFFFFFF;
 		return ERROR_SENSOR_CONNECT_FAIL;
 	}
@@ -1374,7 +1374,7 @@ static void set_shutter_frame_length(kal_uint16 shutter,
 	write_cmos_sensor(0x0e, (shutter >> 8) & 0xFF);
 	write_cmos_sensor(0x0f, (shutter) & 0xFF);
 
-	printk("Exit! shutter =%d, framelength =%d\n", shutter,imgsensor.frame_length);
+	pr_debug("Exit! shutter =%d, framelength =%d\n", shutter,imgsensor.frame_length);
 }/* set_shutter_frame_length */
 
 /*prize  add  for dual camera   stagnancy by zhuzhengjiang    20201114-end*/
@@ -1382,7 +1382,7 @@ static void set_shutter_frame_length(kal_uint16 shutter,
 /*prize modified by zhaopengge-20200909--start*/
 static kal_uint32 set_test_pattern_mode(kal_bool enable)
 {
-  printk("0v02b10 enable: %d\n", enable);
+  pr_debug("0v02b10 enable: %d\n", enable);
 
   if (enable)
   {

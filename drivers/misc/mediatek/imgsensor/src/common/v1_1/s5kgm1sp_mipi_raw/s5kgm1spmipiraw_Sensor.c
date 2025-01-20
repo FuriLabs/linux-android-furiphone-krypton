@@ -6457,7 +6457,7 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 	/*prize add by zhuzhengjiang for search camera 2019622 end*/
 //prize add by lipengpeng 20200722 start
 	zxy_module_id = read_module_id_zxy();
-	printk("111LPP,zxy_module_id=%x",zxy_module_id);
+	pr_debug("111LPP,zxy_module_id=%x",zxy_module_id);
 	if(zxy_module_id !=0x28){
 		
 		 return ERROR_SENSOR_CONNECT_FAIL;
@@ -6469,7 +6469,7 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 		spin_unlock(&imgsensor_drv_lock);
 		do {
 			*sensor_id = ((read_cmos_sensor_8(0x0000) << 8) | read_cmos_sensor_8(0x0001));
-			printk("s5kgm1sp sensor id is %d\n",*sensor_id);
+			pr_debug("s5kgm1sp sensor id is %d\n",*sensor_id);
 			pr_err("read_0x0000=0x%x, 0x0001=0x%x,0x0000_0001=0x%x\n",read_cmos_sensor_8(0x0000),read_cmos_sensor_8(0x0001),read_cmos_sensor(0x0000));
 			if (*sensor_id == imgsensor_info.sensor_id) {
 				#ifdef VENDOR_EDIT
@@ -6529,7 +6529,7 @@ static kal_uint32 open(void)
 	/*sensor have two i2c address 0x6c 0x6d & 0x21 0x20,
 	 *we should detect the module used i2c address
 	 */
-	printk("s5kgm1_open_start");
+	pr_debug("s5kgm1_open_start");
 	while (imgsensor_info.i2c_addr_table[i] != 0xff) {
 		spin_lock(&imgsensor_drv_lock);
 		imgsensor.i2c_write_id = imgsensor_info.i2c_addr_table[i];
@@ -6570,7 +6570,7 @@ static kal_uint32 open(void)
 	imgsensor.test_pattern = KAL_FALSE;
 	imgsensor.current_fps = imgsensor_info.pre.max_framerate;
 	spin_unlock(&imgsensor_drv_lock);
-    printk("s5kgm1_open_end");
+    pr_debug("s5kgm1_open_end");
 	return ERROR_NONE;
 } /* open */
 

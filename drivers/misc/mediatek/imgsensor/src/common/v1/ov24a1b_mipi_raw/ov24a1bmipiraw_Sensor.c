@@ -429,7 +429,7 @@ static void ihdr_write_shutter_gain(kal_uint16 le,
 #if 0
 static void set_mirror_flip(kal_uint8 image_mirror)
 {
-	printk("image_mirror = %d\n", image_mirror);
+	pr_debug("image_mirror = %d\n", image_mirror);
 
 	spin_lock(&imgsensor_drv_lock);
 	imgsensor.mirror = image_mirror;
@@ -462,7 +462,7 @@ static void set_mirror_flip(kal_uint8 image_mirror)
 		write_cmos_sensor(0x3821, ((read_cmos_sensor(0x3821) & 0xFB) | 0x00));
 		break;
 	default:
-		printk("Error image_mirror setting\n");
+		pr_debug("Error image_mirror setting\n");
 	}
 
 }
@@ -17185,7 +17185,7 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 		spin_unlock(&imgsensor_drv_lock);
 		do {
 			*sensor_id = return_sensor_id();
-			printk("return_sensor_id = 0x%x\n",return_sensor_id());
+			pr_debug("return_sensor_id = 0x%x\n",return_sensor_id());
 			if (*sensor_id == imgsensor_info.sensor_id ) {
 				cam_pr_debug("i2c write id: 0x%x, sensor id: 0x%x\n",
 					imgsensor.i2c_write_id, *sensor_id);

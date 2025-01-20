@@ -1560,7 +1560,7 @@ static kal_uint32 get_default_framerate_by_scenario(
 static kal_uint32 set_test_pattern_mode(kal_uint32 modes,
 	struct SET_SENSOR_PATTERN_SOLID_COLOR *pdata)
 {
-	printk("modes: %d\n", modes);
+	pr_debug("modes: %d\n", modes);
 	if (modes) {
 		if (modes == 5 && (pdata != NULL)) {
 			write_cmos_sensor(0x3510, 0x00);

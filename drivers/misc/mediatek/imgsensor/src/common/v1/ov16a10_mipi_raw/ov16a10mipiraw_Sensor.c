@@ -3081,11 +3081,11 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 		*sensor_id = 0xFFFFFFFF;
 		return ERROR_SENSOR_CONNECT_FAIL;		
 	}
-        printk("[ov16a10_camera_sensor ] imgsensor_info.sensor_id:%x\n",imgsensor_info.sensor_id);
+        pr_debug("[ov16a10_camera_sensor ] imgsensor_info.sensor_id:%x\n",imgsensor_info.sensor_id);
 	while (imgsensor_info.i2c_addr_table[i] != 0xff) {
 		spin_lock(&imgsensor_drv_lock);
 		imgsensor.i2c_write_id = imgsensor_info.i2c_addr_table[i];
-                printk("[ov16a10_camera_sensor ] imgsensor_info.i2c_addr_table[i]:%x\n",imgsensor_info.i2c_addr_table[i]);
+                pr_debug("[ov16a10_camera_sensor ] imgsensor_info.i2c_addr_table[i]:%x\n",imgsensor_info.i2c_addr_table[i]);
 		spin_unlock(&imgsensor_drv_lock);
 		do {	
 			*sensor_id = (read_cmos_sensor_8(0x300A) << 16) | (read_cmos_sensor_8(0x300B)<<8) | read_cmos_sensor_8(0x300C);
@@ -3093,13 +3093,13 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
                         gms_otp_value = read_eeprom_module_id(0x0000);
                         gms_otp_value2 = read_eeprom_module_id(0x0001);
                         gms_otp_value3 = read_eeprom_module_id(0x0002);
-                        printk("[ov16a10_camera_sensor ] otp val:0x%x,0x%x,0x%x",gms_otp_value,gms_otp_value2,gms_otp_value3);
+                        pr_debug("[ov16a10_camera_sensor ] otp val:0x%x,0x%x,0x%x",gms_otp_value,gms_otp_value2,gms_otp_value3);
                         if(gms_otp_value == 0x55 && gms_otp_value2 == 0x55 && gms_otp_value3 == 0x55 )
                         {
                                 *sensor_id = *sensor_id+1;
                         }
 
-                        printk("[ov16a10_camera_sensor ] get_imgsensor_id :%x\n",*sensor_id);
+                        pr_debug("[ov16a10_camera_sensor ] get_imgsensor_id :%x\n",*sensor_id);
 			if (*sensor_id == imgsensor_info.sensor_id) {
 				*sensor_id = OV16A10_SENSOR_ID;
 				LOG_INF("i2c write id: 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id,*sensor_id);
@@ -3163,7 +3163,7 @@ static kal_uint32 open(void)
             gms_otp_value = read_eeprom_module_id(0x0000);
             gms_otp_value2 = read_eeprom_module_id(0x0001);
             gms_otp_value3 = read_eeprom_module_id(0x0002);
-            printk("[ov16A10_camera_sensor ] otp val:0x%x,0x%x,0x%x",gms_otp_value,gms_otp_value2,gms_otp_value3);
+            pr_debug("[ov16A10_camera_sensor ] otp val:0x%x,0x%x,0x%x",gms_otp_value,gms_otp_value2,gms_otp_value3);
             if(gms_otp_value == 0x55 && gms_otp_value2 == 0x55 && gms_otp_value3 == 0x55 )
             {
                     sensor_id = sensor_id+1;

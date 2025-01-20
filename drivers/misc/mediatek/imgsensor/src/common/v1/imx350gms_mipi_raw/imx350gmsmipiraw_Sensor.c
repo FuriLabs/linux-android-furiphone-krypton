@@ -484,7 +484,7 @@ static kal_uint32 return_lot_id_from_otp(void)
 	}
 	sensor_id = ((read_cmos_sensor(0x0A22) << 4) | read_cmos_sensor(0x0A23) >> 4);
 	module_id = read_eeprom_module_id(0x0004);
-	printk("rmodule_id=%d\n",module_id);
+	pr_debug("rmodule_id=%d\n",module_id);
 	if(module_id == 0x69)
 	{
 		sensor_id = sensor_id+2;

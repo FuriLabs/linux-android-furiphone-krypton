@@ -677,7 +677,7 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 		}
 	}
 	else {
-		printk("curr sensor idx is not match physical sensor idx,so return fail \n");
+		pr_debug("curr sensor idx is not match physical sensor idx,so return fail \n");
 		*sensor_id = 0xFFFFFFFF;
 		return ERROR_SENSOR_CONNECT_FAIL;
 	}
@@ -1318,7 +1318,7 @@ static kal_uint32 get_default_framerate_by_scenario(
 /*prize modified by zhaopengge-20200909--start*/
 static kal_uint32 set_test_pattern_mode(kal_bool enable)
 {
-  printk("0v02b10 enable: %d\n", enable);
+  pr_debug("0v02b10 enable: %d\n", enable);
 
   if (enable)
   {

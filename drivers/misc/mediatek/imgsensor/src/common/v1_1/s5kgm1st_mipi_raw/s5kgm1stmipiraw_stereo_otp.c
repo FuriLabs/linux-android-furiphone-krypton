@@ -52,7 +52,7 @@ static bool selective_read_eeprom(kal_uint16 addr, BYTE *data);
 static void disable_write_protection(void)
 {
    //char i2c_send_cmd_1[3] = {(char)0x1F/*addr >> 8*/, (char)0x40/*addr & 0xff*/, (char)0x00/*value*/};
-   // printk(PFX "disable software write protection\n");
+   // pr_debug(PFX "disable software write protection\n");
     //iWriteRegI2C(i2c_send_cmd_1, 3, 0xA2);
     write_cmos_sensor_byte(0x8000,0x00);
     msleep(10);
@@ -63,7 +63,7 @@ static void disable_write_protection(void)
 static void enable_write_protection(void)
 {
     //char i2c_send_cmd_1[3] = {(char)0x1F/*addr >> 8*/, (char)0x40/*addr & 0xff*/, (char)0x0e/*value*/};
-    //printk(PFX "enable software write protection\n");
+    //pr_debug(PFX "enable software write protection\n");
    // iWriteRegI2C(i2c_send_cmd_1, 3, 0xA2);
    write_cmos_sensor_byte(0x8000,0x0E);
     msleep(10);
@@ -98,15 +98,15 @@ static bool write_eeprom(kal_uint16 addr, kal_uint16 size, BYTE *data)
         
         do {
             if(selective_read_eeprom(offset, &data_R) != true) {
-                printk("read data error, offset: %x\n", offset);
+                pr_debug("read data error, offset: %x\n", offset);
                 return false;
             } else {
-//                printk("data-R %x data: %x\n",(u32)data_R, (u32)*(data + i));
+//                pr_debug("data-R %x data: %x\n",(u32)data_R, (u32)*(data + i));
                 if (data_R == *(data + i)) {
-//                    printk("write addr 0x%0x data 0x%0x",offset,(u32)*(data + i));
+//                    pr_debug("write addr 0x%0x data 0x%0x",offset,(u32)*(data + i));
                     break;
                 } else {
-                    printk("try to write offset(%x) retry: %d\n", offset, retry);
+                    pr_debug("try to write offset(%x) retry: %d\n", offset, retry);
                     write_cmos_sensor_byte((u16)offset, (u32) * (data + i));
                     delay += 5;
                     mdelay(delay);
@@ -121,7 +121,7 @@ static bool write_eeprom(kal_uint16 addr, kal_uint16 size, BYTE *data)
     if (count == size)
         return true;
 
-    printk("Eeprom write failed");
+    pr_debug("Eeprom write failed");
 
     return false;
 }
@@ -132,12 +132,12 @@ static bool read_eeprom_cali( kal_uint16 addr, BYTE *data, kal_uint32 size)
     int i = 0;
     int offset = addr;
 
-    printk("Read eeprom calibration data, size = %d\n", size);
+    pr_debug("Read eeprom calibration data, size = %d\n", size);
 
     for(i = 0; i < size; i++) {
         if(!selective_read_eeprom(offset, &data[i]))
             return false;
-//        printk("read_eeprom 0x%0x 0x%0x\n",offset, data[i]);
+//        pr_debug("read_eeprom 0x%0x 0x%0x\n",offset, data[i]);
         offset++;
     }
     return true;
@@ -152,36 +152,36 @@ static uint32_t read_dualcam_cali_data(void)
 
     fp = filp_open(PATH_CALI_SD, O_RDWR, 0666);
     if (IS_ERR(fp)) {
-        printk("faile to open file cali data error\n");
+        pr_debug("faile to open file cali data error\n");
         return -1;
     }
 
     data_size = vfs_llseek(fp, 0, SEEK_END);
-    printk("Binary data size is %d bytes \n", data_size);
+    pr_debug("Binary data size is %d bytes \n", data_size);
 
     if(data_size > 0) {
         if(bin_buffer == NULL) {
             bin_buffer = kzalloc(data_size, GFP_KERNEL);
             if (bin_buffer == NULL) {
-                printk("[Error]malloc memery failed \n");
+                pr_debug("[Error]malloc memery failed \n");
                 goto close;
             }
         }
         set_fs(KERNEL_DS);
         pos = 0;
         vfs_read(fp, bin_buffer, data_size, &pos);
-        printk("Read new calibration data done!\n");
+        pr_debug("Read new calibration data done!\n");
 
         filp_close(fp, NULL);
         set_fs(fs);
         return data_size;
     } else
-        printk("[Error] Get calibration data failed\n");
+        pr_debug("[Error] Get calibration data failed\n");
 
 close:
     filp_close(fp, NULL);
     set_fs(fs);
-    printk("read dualcam cali data exit\n");
+    pr_debug("read dualcam cali data exit\n");
     return 0;
 }
 
@@ -191,13 +191,13 @@ static int write_eeprom_memory(BYTE *data, uint32_t size, BYTE checkSum)
 
     rc = write_eeprom(CALI_DATA_OFFESET, size, data);
     if(!rc) {
-        printk("%s: write eeprom failed\n", __func__);
+        pr_debug("%s: write eeprom failed\n", __func__);
         return -1;
     }
 
     rc = write_eeprom(CALI_DATA_CHECKSUM_OFFSET, 1, &checkSum);
     if(!rc) {
-        printk("%s: write dual cali checkSum failed\n", __func__);
+        pr_debug("%s: write dual cali checkSum failed\n", __func__);
         return -1;
     }
 
@@ -214,7 +214,7 @@ static int get_verify_flag(void)
     if(!selective_read_eeprom(CALI_DATA_FLAG_OFFSET, &flag))
         return -1;
 
-    printk("Get verify flag data 0x%x\n", flag);
+    pr_debug("Get verify flag data 0x%x\n", flag);
 
     return flag;
 }
@@ -228,7 +228,7 @@ static int set_verify_flag(void)
     if(!selective_read_eeprom(CALI_DATA_FLAG_OFFSET, &flag))
         return rc;
 
-    printk("Get verify flag data 0x%x\n", flag);
+    pr_debug("Get verify flag data 0x%x\n", flag);
 
     if ( flag != CALI_DATA_FLAG_VALUE){
 	        write_cmos_sensor_byte(CALI_DATA_FLAG_OFFSET, CALI_DATA_FLAG_VALUE);
@@ -236,7 +236,7 @@ static int set_verify_flag(void)
 		} 
 	else 
 		{
-        	printk("Verify flag is already set\n");
+        	pr_debug("Verify flag is already set\n");
 		}
 
     return 0;
@@ -250,20 +250,20 @@ int write_dualcam_cali_flag_file_s5kgm1st(void)
     mm_segment_t fs = get_fs();
     loff_t pos;
 
-    printk("Need to read cali flag to flag file, %s", __func__);
+    pr_debug("Need to read cali flag to flag file, %s", __func__);
     cali_flag = get_verify_flag();
-    printk("cali_flag:%d to flag dir, %s", cali_flag, __func__);
+    pr_debug("cali_flag:%d to flag dir, %s", cali_flag, __func__);
     eeprom_file = filp_open(PATH_CALI_FLAG_SD, O_RDWR | O_CREAT, 0644);
     if (IS_ERR(eeprom_file)) {
-        printk("open epprom file error");
+        pr_debug("open epprom file error");
         return -1;
     }
     set_fs(KERNEL_DS);
     pos = 0;
-    printk("eeprom_file: %p, cali_flag: %d, %s\n", eeprom_file, cali_flag, __func__);
+    pr_debug("eeprom_file: %p, cali_flag: %d, %s\n", eeprom_file, cali_flag, __func__);
     err = vfs_write(eeprom_file, &cali_flag, sizeof(cali_flag), &pos);
     if (err < 0)
-        printk("write epprom data error");
+        pr_debug("write epprom data error");
     filp_close(eeprom_file, NULL);
     set_fs(fs);
 
@@ -278,18 +278,18 @@ int write_dualcam_cali_result_flag_file_s5kgm1st(int result)
     mm_segment_t fs = get_fs();
     loff_t pos;
 
-    printk("cali_result_flag:%d to flag file, %s", result, __func__);
+    pr_debug("cali_result_flag:%d to flag file, %s", result, __func__);
     result_file = filp_open(PATH_CALI_WRITE_RESULT_FLAG_SD, O_RDWR | O_CREAT, 0644);
     if (IS_ERR(result_file)) {
-        printk("open epprom file error");
+        pr_debug("open epprom file error");
         return -1;
     }
     set_fs(KERNEL_DS);
     pos = 0;
-    printk("write_calibraion_result_file: %p, result_flag: %d, %s\n", result_file, result, __func__);
+    pr_debug("write_calibraion_result_file: %p, result_flag: %d, %s\n", result_file, result, __func__);
     err = vfs_write(result_file, (char *)&result, sizeof(result), &pos);
     if (err < 0)
-        printk("write calibration result file error");
+        pr_debug("write calibration result file error");
     filp_close(result_file, NULL);
     set_fs(fs);
 
@@ -305,22 +305,22 @@ int dump_dualcam_cali_flag_file_s5kgm1st(void)
     mm_segment_t fs = get_fs();
     loff_t pos;
 
-    printk("Need to read cali flag to flag dir, %s", __func__);
+    pr_debug("Need to read cali flag to flag dir, %s", __func__);
     cali_flag = get_verify_flag();
-    printk("cali_flag:%d to flag dir, %s", cali_flag, __func__);
+    pr_debug("cali_flag:%d to flag dir, %s", cali_flag, __func__);
     eeprom_file = filp_open(PATH_CALI_FLAG, O_RDWR | O_CREAT, 0644);
 
     if (IS_ERR(eeprom_file)) {
-        printk("open epprom file error");
+        pr_debug("open epprom file error");
         return -1;
     }
 
     set_fs(KERNEL_DS);
     pos = 0;
-    printk("eeprom_file: %p, cali_flag: %d, %s\n", eeprom_file, cali_flag, __func__);
+    pr_debug("eeprom_file: %p, cali_flag: %d, %s\n", eeprom_file, cali_flag, __func__);
     err = vfs_write(eeprom_file, &cali_flag, sizeof(cali_flag), &pos);
     if (err < 0)
-        printk("write epprom data error");
+        pr_debug("write epprom data error");
     filp_close(eeprom_file, NULL);
     set_fs(fs);
 
@@ -336,20 +336,20 @@ int dump_dualcam_cali_result_flag_file_s5kgm1st(int result)
     mm_segment_t fs = get_fs();
     loff_t pos;
 
-    printk("dump_result_flag:%d to flag dir, %s", result, __func__);
+    pr_debug("dump_result_flag:%d to flag dir, %s", result, __func__);
     result_file = filp_open(PATH_CALI_READ_RESULT_FLAG, O_RDWR | O_CREAT, 0644);
 
     if (IS_ERR(result_file)) {
-        printk("open epprom file error");
+        pr_debug("open epprom file error");
         return -1;
     }
 
     set_fs(KERNEL_DS);
     pos = 0;
-    printk("write dump_result_file: %p, result_flag: %d, %s\n", result_file, result, __func__);
+    pr_debug("write dump_result_file: %p, result_flag: %d, %s\n", result_file, result, __func__);
     err = vfs_write(result_file, (char *)&result, sizeof(result), &pos);
     if (err < 0)
-        printk("write dump result file error");
+        pr_debug("write dump result file error");
     filp_close(result_file, NULL);
     set_fs(fs);
 
@@ -366,12 +366,12 @@ int store_dualcam_cali_data_s5kgm1st(void)
 	int i = 0;
 	#endif
 
-    printk("enter store_dualcam_cali_data, %s\n", __func__);
+    pr_debug("enter store_dualcam_cali_data, %s\n", __func__);
 
     size = read_dualcam_cali_data();
 
     if (size < 0) {
-        printk("Fail to get new calibration data, /sdcard/.ArcSoftCali/mcal.bin file need %s\n", __func__);
+        pr_debug("Fail to get new calibration data, /sdcard/.ArcSoftCali/mcal.bin file need %s\n", __func__);
         //return -1;
         ret = 0;
     }
@@ -383,13 +383,13 @@ int store_dualcam_cali_data_s5kgm1st(void)
 		//printf("read dual camera cali_buffer data[%d]=0x%x\r\n",i,dual_camera[i]);
 		//printf("read dual camera cali_buffer data[%d]=0x%x\r\n",i,dual_camera[i]);
 		//bin_buffer[i] = i % 256;
-		printk("write dual camera cali_buffer data[%d]=0x%x\r\n",i,bin_buffer[i]);
+		pr_debug("write dual camera cali_buffer data[%d]=0x%x\r\n",i,bin_buffer[i]);
 	}
 	#endif
     checkSum = calcCheckSum(bin_buffer, CALI_DATA_NUM);
     rc = write_eeprom_memory(bin_buffer, size, checkSum);
     if (rc < 0) {
-        printk("%s: failed to write_eeprom_memory ,need camera opend and /sdcard/.ArcSoftCali/mcal.bin file \n", __func__);
+        pr_debug("%s: failed to write_eeprom_memory ,need camera opend and /sdcard/.ArcSoftCali/mcal.bin file \n", __func__);
         //return -1;
         ret = 0;
     }
@@ -397,21 +397,21 @@ int store_dualcam_cali_data_s5kgm1st(void)
 #if 0
     rc = set_verify_flag();
     if (rc < 0) {
-        printk("%s: failed to set_verify_flag\n", __func__);
+        pr_debug("%s: failed to set_verify_flag\n", __func__);
         return -1;
     }
     rc = write_dualcam_cali_flag_file_s5kgm1st();
     if (rc < 0) {
-        printk("%s: failed to write_dualcam_cali_flag_file\n", __func__);
+        pr_debug("%s: failed to write_dualcam_cali_flag_file\n", __func__);
         return -1;
     }
 #endif
 
- 	printk(" store_dualcam_cali_data %s, %s\n", (ret == 1 ? "sucess":"failed"), __func__);
+ 	pr_debug(" store_dualcam_cali_data %s, %s\n", (ret == 1 ? "sucess":"failed"), __func__);
 
     rc = write_dualcam_cali_result_flag_file_s5kgm1st(ret);
     if (rc < 0) {
-        printk("%s: failed to write_dualcam_cali_result_flag_file\n", __func__);
+        pr_debug("%s: failed to write_dualcam_cali_result_flag_file\n", __func__);
         return -1;
     }
 
@@ -428,35 +428,35 @@ int dump_dualcam_cali_data_s5kgm1st(void)
 	#if 1
 	int i = 0;
 	#endif
-    printk("Need to read cali data to data dir, %s\n", __func__);
+    pr_debug("Need to read cali data to data dir, %s\n", __func__);
 
     if(cali_buffer == NULL) {
         cali_buffer = kzalloc(CALI_DATA_NUM, GFP_KERNEL);
         if (cali_buffer == NULL) {
-            printk("[Error]malloc memery failed \n");
+            pr_debug("[Error]malloc memery failed \n");
             //return -1;
             ret2 = 0;
         }
     }
 
-    printk("Need to read cali data to data dir, %s\n", __func__);
+    pr_debug("Need to read cali data to data dir, %s\n", __func__);
     ret = read_eeprom_cali(CALI_DATA_OFFESET, cali_buffer, CALI_DATA_NUM);
     if (!ret) {
-        printk("fail to read calibration data from eeprom\n");
+        pr_debug("fail to read calibration data from eeprom\n");
         //return -1;
         ret2 = 0;
     }
 
     fs = get_fs();
     if(!selective_read_eeprom((u16)CALI_DATA_CHECKSUM_OFFSET, (BYTE *)&checkSum)) {
-        printk("%s: read check sum failed!\n", __func__);
+        pr_debug("%s: read check sum failed!\n", __func__);
         //return -1;
         ret2 = 0;
     }
     checkSum_R = calcCheckSum(cali_buffer, CALI_DATA_NUM);
-    printk("[%s] checkSum: %x, checkSum_R: %x\n", __func__, checkSum, checkSum_R);
+    pr_debug("[%s] checkSum: %x, checkSum_R: %x\n", __func__, checkSum, checkSum_R);
     if(checkSum != checkSum_R) {
-        printk("%s: fail to check sum, contact the  vendor to check\n", __func__);
+        pr_debug("%s: fail to check sum, contact the  vendor to check\n", __func__);
         //return -1;
         ret2 = 0;
     }
@@ -467,12 +467,12 @@ int dump_dualcam_cali_data_s5kgm1st(void)
 		//printf("read dual camera cali_buffer data[%d]=0x%x\r\n",i,dual_camera[i]);
 		//printf("read dual camera cali_buffer data[%d]=0x%x\r\n",i,dual_camera[i]);
 		//dual_camera[i] = i % 256;
-		printk("read dual camera cali_buffer data[%d]=0x%x\r\n",i,cali_buffer[i]);
+		pr_debug("read dual camera cali_buffer data[%d]=0x%x\r\n",i,cali_buffer[i]);
 	}
 	#endif
     eeprom_file = filp_open(PATH_CALI, O_RDWR | O_CREAT, 0644);
     if (IS_ERR(eeprom_file)) {
-        printk("open epprom file error, /sdcard/.ArcSoftCali/ dir need %s", __func__);
+        pr_debug("open epprom file error, /sdcard/.ArcSoftCali/ dir need %s", __func__);
         //return -1;
         ret2 = 0;
     }
@@ -480,10 +480,10 @@ int dump_dualcam_cali_data_s5kgm1st(void)
 
     set_fs(KERNEL_DS);
     pos = 0;
-    printk("eeprom_file: %p, cali_buffer: %p\n", eeprom_file, cali_buffer);
+    pr_debug("eeprom_file: %p, cali_buffer: %p\n", eeprom_file, cali_buffer);
     err = vfs_write(eeprom_file, cali_buffer, CALI_DATA_NUM, &pos);
     if (err < 0){
-        printk("write epprom data error, , %s", __func__);
+        pr_debug("write epprom data error, , %s", __func__);
 
 		ret2 = 0;
     }
@@ -494,16 +494,16 @@ int dump_dualcam_cali_data_s5kgm1st(void)
     err = dump_dualcam_cali_flag_file_s5kgm1st();
 
     if (err < 0) {
-        printk("%s: failed to write_dualcam_cali_flag_file\n", __func__);
+        pr_debug("%s: failed to write_dualcam_cali_flag_file\n", __func__);
         return -1;
     }
 #endif
 
- 	printk(" dump_dualcam_cali_data %s, %s\n", (ret2 == 1 ? "sucess":"failed"), __func__);
+ 	pr_debug(" dump_dualcam_cali_data %s, %s\n", (ret2 == 1 ? "sucess":"failed"), __func__);
 
     err = dump_dualcam_cali_result_flag_file_s5kgm1st(ret2);
     if (err < 0) {
-        printk("%s: failed to write_dualcam_cali_flag_file\n", __func__);
+        pr_debug("%s: failed to write_dualcam_cali_flag_file\n", __func__);
         //return -1;
         ret2 = -1;
     }

@@ -526,7 +526,7 @@ static int write_cmos_sensor(kal_uint32 addr, kal_uint32 para)
 static void set_dummy(void)
 {
 	/*
-	 * printk("dummyline = %d, dummypixels = %d\n",
+	 * pr_debug("dummyline = %d, dummypixels = %d\n",
 	 * imgsensor.dummy_line, imgsensor.dummy_pixel);
 	 */
 
@@ -676,7 +676,7 @@ static void set_shutter_frame_length(
 	spin_lock_irqsave(&imgsensor_drv_lock, flags);
 	imgsensor.shutter = shutter;
 	spin_unlock_irqrestore(&imgsensor_drv_lock, flags);
-	/* printk("shutter =%d, frame_time =%d\n", shutter, frame_time); */
+	/* pr_debug("shutter =%d, frame_time =%d\n", shutter, frame_time); */
 
 	/* 0x3500, 0x3501, 0x3502 will increase VBLANK
 	 * to get exposure larger than frame exposure
@@ -1701,7 +1701,7 @@ static void slim_video_setting(void)
 
 static void custom1_setting(void)
 {
-	printk("%s E\n", __func__);
+	pr_debug("%s E\n", __func__);
 #if MULTI_WRITE
 	imx486gms_table_write_cmos_sensor(
 		addr_data_pair_preview_imx486gms,
@@ -1870,7 +1870,7 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 	kal_uint16 imx486gmsmodule_id = 0;
    
 	imx486gmsmodule_id = read_imx486gmsmodule_id();
-	printk("tangcong,imx486gmsmodule_id=%x",imx486gmsmodule_id);
+	pr_debug("tangcong,imx486gmsmodule_id=%x",imx486gmsmodule_id);
 	if(imx486gmsmodule_id ==0x69){
 		
 		 return ERROR_SENSOR_CONNECT_FAIL;
@@ -2759,7 +2759,7 @@ static kal_uint32 feature_control(MSDK_SENSOR_FEATURE_ENUM feature_id,
 	MSDK_SENSOR_REG_INFO_STRUCT *sensor_reg_data =
 		(MSDK_SENSOR_REG_INFO_STRUCT *) feature_para;
 
-	/* printk("feature_id = %d\n", feature_id); */
+	/* pr_debug("feature_id = %d\n", feature_id); */
 
 	switch (feature_id) {
 	case SENSOR_FEATURE_GET_PERIOD:

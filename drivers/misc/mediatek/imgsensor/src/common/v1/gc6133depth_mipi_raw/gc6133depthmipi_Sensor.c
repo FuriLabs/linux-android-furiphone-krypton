@@ -1040,7 +1040,7 @@ static void set_shutter_frame_length(kal_uint16 shutter,
 	write_cmos_sensor( 0x6b, (shutter >> 8) & 0xff );
 	write_cmos_sensor( 0x6c, (shutter     ) & 0xff );
 
-	printk("Exit! shutter =%d, framelength =%d\n", shutter,imgsensor.frame_length);
+	pr_debug("Exit! shutter =%d, framelength =%d\n", shutter,imgsensor.frame_length);
 }/* set_shutter_frame_length */
 
 /*prize  add  for dual camera   stagnancy by zhuzhengjiang    20200902-end*/

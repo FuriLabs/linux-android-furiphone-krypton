@@ -56,15 +56,15 @@
 /* static uint8_t deviceInfo_register_value = 0x00; */
 
 /* #define LOG_WRN(format, args...)
- * xlog_printk(ANDROID_LOG_WARN ,PFX, "[%S] " format, __FUNCTION__, ##args)
+ * xlog_pr_debug(ANDROID_LOG_WARN ,PFX, "[%S] " format, __FUNCTION__, ##args)
  */
 
 /* #defineLOG_INF(format, args...)
- * xlog_printk(ANDROID_LOG_INFO ,PFX, "[%s] " format, __FUNCTION__, ##args)
+ * xlog_pr_debug(ANDROID_LOG_INFO ,PFX, "[%s] " format, __FUNCTION__, ##args)
  */
 
 /* #define LOG_DBG(format, args...)
- * xlog_printk(ANDROID_LOG_DEBUG ,PFX, "[%S] " format, __FUNCTION__, ##args)
+ * xlog_pr_debug(ANDROID_LOG_DEBUG ,PFX, "[%S] " format, __FUNCTION__, ##args)
  */
 #define LOG_INF(format, args...) pr_debug(PFX "[%s] " format, __func__, ##args)
 static DEFINE_SPINLOCK(imgsensor_drv_lock);
@@ -1350,10 +1350,10 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 				read_cmos_sensor_8(0x0000),
 				read_cmos_sensor_8(0x0001),
 				read_cmos_sensor(0x0000));
-			printk("lens_id i2c write id: 0x%x, sensor id: 0x%x\n",
+			pr_debug("lens_id i2c write id: 0x%x, sensor id: 0x%x\n",
 					imgsensor.i2c_write_id, *sensor_id);
 			if (*sensor_id == imgsensor_info.sensor_id) {
-				printk("i2c write id: 0x%x, sensor id: 0x%x\n",
+				pr_debug("i2c write id: 0x%x, sensor id: 0x%x\n",
 					imgsensor.i2c_write_id, *sensor_id);
 
 			/*zhaozhengtao 2016/02/19,modify for different module*/
@@ -1361,12 +1361,12 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 				lens_id = read_lens_id();
 				if(lens_id == 0x01)
 				{
-					printk("lens_id success(0x%x) module_id(0x%x)",lens_id,imgsensor_info.module_id);
+					pr_debug("lens_id success(0x%x) module_id(0x%x)",lens_id,imgsensor_info.module_id);
 					return ERROR_NONE;
 				}
 				else
 				{
-					printk("lens_id fail(0x%x) module_id(0x%x)",lens_id,imgsensor_info.module_id);
+					pr_debug("lens_id fail(0x%x) module_id(0x%x)",lens_id,imgsensor_info.module_id);
 					*sensor_id = 0xFFFFFFFF;
 					return ERROR_SENSOR_CONNECT_FAIL;
 				}

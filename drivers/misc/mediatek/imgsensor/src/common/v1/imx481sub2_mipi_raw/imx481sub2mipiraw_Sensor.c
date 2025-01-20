@@ -322,7 +322,7 @@ static kal_uint32 return_mod_id_from_otp(void)
 	}
 	
 	mid_val = read_cmos_sensor(0x0A3D);
-	printk("IMX481SUB2 read otp MID 0x%x\n",mid_val);
+	pr_debug("IMX481SUB2 read otp MID 0x%x\n",mid_val);
 
 	/* Check with Mud'mail */
 	return  mid_val;

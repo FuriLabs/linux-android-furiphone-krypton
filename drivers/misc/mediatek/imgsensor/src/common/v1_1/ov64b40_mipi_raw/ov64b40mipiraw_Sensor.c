@@ -663,7 +663,7 @@ static int read_gms_module_flag(void)
 	kal_uint16 ret;
 	imgsensor.i2c_write_id = 0xa0;
 	ret = read_cmos_sensor(0x3);
-	printk("liaojie OV64B40 gms read  eeprom 0x3 = 0x%x\n",ret);
+	pr_debug("liaojie OV64B40 gms read  eeprom 0x3 = 0x%x\n",ret);
 	if(ret == 0x77)
 		return 1;
 	else

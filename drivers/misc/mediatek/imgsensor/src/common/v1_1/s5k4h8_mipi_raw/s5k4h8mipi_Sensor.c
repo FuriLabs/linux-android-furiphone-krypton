@@ -1064,10 +1064,10 @@ static kal_uint32 get_imgsensor_id(UINT32 *sensor_id)
 			*sensor_id = ((read_cmos_sensor(0x0000) << 8) | read_cmos_sensor(0x0001));
 			//*sensor_id = imgsensor_info.sensor_id;
             if (*sensor_id == imgsensor_info.sensor_id) {               
-                printk("s5k4h8-i2c write id: 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id,*sensor_id);      
+                pr_debug("s5k4h8-i2c write id: 0x%x, sensor id: 0x%x\n", imgsensor.i2c_write_id,*sensor_id);      
                 return ERROR_NONE;
             }   
-            printk("s5k4h8-Read sensor id fail, write id: 0x%x, sensor id = 0x%x\n", imgsensor.i2c_write_id,*sensor_id);
+            pr_debug("s5k4h8-Read sensor id fail, write id: 0x%x, sensor id = 0x%x\n", imgsensor.i2c_write_id,*sensor_id);
             retry--;
         } while(retry > 0);
         i++;

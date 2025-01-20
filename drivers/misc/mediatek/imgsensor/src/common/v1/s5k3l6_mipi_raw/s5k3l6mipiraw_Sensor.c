@@ -34,7 +34,7 @@
 /****************************Modify Following Strings for Debug****************************/
 #define PFX "S5K3L6"
 #define LOG_INF_NEW(format, args...)    pr_debug(PFX "[%s] " format, __FUNCTION__, ##args)
-#define LOG_INF printk
+#define LOG_INF pr_debug
 
 #define LOG_1 LOG_INF("S5K3L6,MIPI 4LANE\n")
 #define S5K3L6_MIRROR_FLIP 0
