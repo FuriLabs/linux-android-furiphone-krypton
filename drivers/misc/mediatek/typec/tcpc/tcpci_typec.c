@@ -341,7 +341,7 @@ static int typec_alert_attach_state_change(struct tcpc_device *tcpc)
 
 //prize add by lipengpeng 20200315 start
 #ifdef CONFIG_PRIZE_TYPEC_POSITIVE_NEGATIVE
-	printk("lpp---cc1=%d,cc2=%d  tcpc->typec_attach_new=%d\n",typec_get_cc1(),typec_get_cc2(),tcpc->typec_attach_new);
+	pr_debug("lpp---cc1=%d,cc2=%d  tcpc->typec_attach_new=%d\n",typec_get_cc1(),typec_get_cc2(),tcpc->typec_attach_new);
 /*if(tcpc->typec_attach_new==2)
 {
 	if(typec_get_cc1()==0&&typec_get_cc2()==2)
@@ -351,7 +351,7 @@ static int typec_alert_attach_state_change(struct tcpc_device *tcpc)
 		}	
 	else{
 			otgdetection= -1;
-			printk("lpp----otg typec not detection\n");
+			pr_debug("lpp----otg typec not detection\n");
 		}
 	}
 	*/
@@ -364,7 +364,7 @@ if(tcpm_inquire_typec_attach_state(tcpc) == TYPEC_ATTACHED_SRC)
 	    otgdetection=0;
 	else{
 		  otgdetection= -1;
-		  printk("lpp----otg typec not detection\n");
+		  pr_debug("lpp----otg typec not detection\n");
 	  }
 }
 //prize add by lipengpeng 20220223 end 
@@ -383,7 +383,7 @@ if(tcpm_inquire_typec_attach_state(tcpc) == TYPEC_ATTACHED_SRC)
 		}	
 	else{
 			typeccharge_det= -1;
-			printk("lpp----typeccharge typec not detection\n");
+			pr_debug("lpp----typeccharge typec not detection\n");
 		}
 	}
 
@@ -406,7 +406,7 @@ if ((tcpm_inquire_typec_attach_state(tcpc) == TYPEC_ATTACHED_SNK) ||
 	    typeccharge_det=0;
 	else{
 		  typeccharge_det= -1;
-		  printk("lpp----typeccharge typec not detection\n");
+		  pr_debug("lpp----typeccharge typec not detection\n");
 	  }
 	
 }
@@ -2548,7 +2548,7 @@ int tcpc_typec_handle_timeout(struct tcpc_device *tcpc, uint32_t timer_id)
 //prize add by huarui, cc controller sgm7220, start
 #if defined(CONFIG_TCPC_SGM7220)||defined(CONFIG_TCPC_WUSB3801)
 	case TYPEC_TIMER_VBUS_CHECK:
-		printk("HH %s: vbus:%d\n",__func__,battery_get_vbus());
+		pr_debug("HH %s: vbus:%d\n",__func__,battery_get_vbus());
 		if (battery_get_vbus() > 3500){
 			tcpc_typec_handle_ps_change(tcpc, TCPC_VBUS_VALID);
 		}
