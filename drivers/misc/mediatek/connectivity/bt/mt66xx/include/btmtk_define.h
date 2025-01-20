@@ -113,7 +113,7 @@ extern uint8_t btmtk_log_lvl;
 #define BTMTK_ERR(fmt, ...)	 \
 	do { if (btmtk_log_lvl >= BTMTK_LOG_LVL_ERR) pr_err("[btmtk_err] ***"fmt"***\n", ##__VA_ARGS__); } while (0)
 #define BTMTK_WARN(fmt, ...)	\
-	do { if (btmtk_log_lvl >= BTMTK_LOG_LVL_WARN) pr_warn("[btmtk_warn] "fmt"\n", ##__VA_ARGS__); } while (0)
+	do { if (btmtk_log_lvl >= BTMTK_LOG_LVL_WARN) pr_debug("[btmtk_warn] "fmt"\n", ##__VA_ARGS__); } while (0)
 #define BTMTK_INFO(fmt, ...)	\
 	do { if (btmtk_log_lvl >= BTMTK_LOG_LVL_INFO) pr_debug("[btmtk_info] "fmt"\n", ##__VA_ARGS__); } while (0)
 #define BTMTK_DBG(fmt, ...)	 \
@@ -134,9 +134,9 @@ extern uint8_t btmtk_log_lvl;
 			}	\
 			raw_buf[5*cnt_] = '\0';	\
 			if (l <= HCI_SNOOP_MAX_BUF_SIZE) {	\
-				pr_cont("[btmtk_info] "fmt"%s\n", ##__VA_ARGS__, raw_buf);	\
+				pr_debug("[btmtk_info] "fmt"%s\n", ##__VA_ARGS__, raw_buf);	\
 			} else {	\
-				pr_cont("[btmtk_info] "fmt"%s (prtail)\n", ##__VA_ARGS__, raw_buf);	\
+				pr_debug("[btmtk_info] "fmt"%s (prtail)\n", ##__VA_ARGS__, raw_buf);	\
 			}	\
 		}	\
 	} while (0)
@@ -156,9 +156,9 @@ extern uint8_t btmtk_log_lvl;
 			}	\
 			raw_buf[5*cnt_] = '\0';	\
 			if (l <= HCI_SNOOP_MAX_BUF_SIZE) {	\
-				pr_cont("[btmtk_debug] "fmt"%s\n", ##__VA_ARGS__, raw_buf);	\
+				pr_debug("[btmtk_debug] "fmt"%s\n", ##__VA_ARGS__, raw_buf);	\
 			} else {	\
-				pr_cont("[btmtk_debug] "fmt"%s (prtail)\n", ##__VA_ARGS__, raw_buf); \
+				pr_debug("[btmtk_debug] "fmt"%s (prtail)\n", ##__VA_ARGS__, raw_buf); \
 			}	\
 		}	\
 	} while (0)
