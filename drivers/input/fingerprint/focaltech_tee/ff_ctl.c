@@ -552,7 +552,7 @@ static long ff_ctl_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
         //err = ff_ctl_reset_device();
         uint32_t reset_level = 0;
         //if (copy_from_user(&reset_level, (uint32_t *)arg, sizeof(uint32_t))) {
-        if (copy_from_user(&reset_level, (uint32_t)arg, sizeof(uint32_t))) {
+        if (copy_from_user(&reset_level, (const void __user *)arg, sizeof(uint32_t))) {
             FF_LOGE("copy_from_user(..) failed.");
             err = (-EFAULT);
             break;
