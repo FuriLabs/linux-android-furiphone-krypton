@@ -161,7 +161,7 @@ static int hf_manager_report_event(struct hf_client *client,
 	/*awinic bob add start*/
 	if (event->sensor_type == SENSOR_TYPE_SAR) {
 		if (event->word[0] == 0xff) {
-			pr_info("sar %s event->byte[0] == 0xff\n", __func__);
+			pr_debug("sar %s event->byte[0] == 0xff\n", __func__);
 			return 0;
 		}
 	}
@@ -1101,7 +1101,7 @@ static int hf_manager_drive_device(struct hf_client *client,
 			sensor_type, cmd->data, cmd->length);
 
 		/*awinic bob add start*/
-		pr_info("sar data[0]:0x%x, data[1]:0x%x, data[2]:0x%x\n",
+		pr_debug("sar data[0]:0x%x, data[1]:0x%x, data[2]:0x%x\n",
 				awinic_debug_data[0], awinic_debug_data[1], awinic_debug_data[2]);
 		/*awinic bob add end*/
 
@@ -1523,7 +1523,7 @@ static long hf_manager_ioctl(struct file *filp,
 		break;
 	/*awinic bob add start*/
 	case HF_AW_MANAGER_REQUEST_READ_STATUS:
-		pr_info("sar HF_AW_MANAGER_REQUEST_READ_STATUS enter\n");
+		pr_debug("sar HF_AW_MANAGER_REQUEST_READ_STATUS enter\n");
 		if (copy_from_user(&aw_sar_sensor_data,
 				(struct SAR_SENSOR_DATA __user *)arg,
 				sizeof(aw_sar_sensor_data))) {
