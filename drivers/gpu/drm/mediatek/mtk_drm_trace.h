@@ -17,6 +17,7 @@ extern int hwc_pid;
 
 /* MTK_DRM FTRACE */
 extern bool g_trace_log;
+#ifdef CONFIG_TRACING
 #define mtk_drm_trace_begin(fmt, args...) do { \
 	if (g_trace_log) { \
 		preempt_disable(); \
@@ -60,6 +61,13 @@ extern bool g_trace_log;
 		preempt_enable();\
 	} \
 } while (0)
+#else
+#define mtk_drm_trace_begin(fmt, args...) do { } while (0)
+#define mtk_drm_trace_end() do { } while (0)
+#define mtk_drm_trace_async_begin(fmt, args...) do { } while (0)
+#define mtk_drm_trace_async_end(fmt, args...) do { } while (0)
+#define mtk_drm_trace_c(fmt, args...) do { } while (0)
+#endif
 
 unsigned long mtk_drm_get_tracing_mark(void);
 void drm_trace_tag_start(const char *tag);

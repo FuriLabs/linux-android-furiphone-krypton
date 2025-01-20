@@ -26,6 +26,7 @@ unsigned long mtk_drm_get_tracing_mark(void)
 	return addr;
 }
 
+#ifdef CONFIG_TRACING
 static void drm_print_trace(const char *tag, int value)
 {
 	preempt_disable();
@@ -81,6 +82,15 @@ void mtk_drm_refresh_tag_end(struct mtk_ddp_comp *ddp_comp)
 	mtk_drm_trace_c("%d|DISP:CRTC-%d-Refresh|%d",
 		hwc_pid, crtc_idx, 0);
 }
+#else
+static inline void drm_print_trace(const char *tag, int value) { }
+void drm_trace_tag_start(const char *tag) { }
+void drm_trace_tag_end(const char *tag) { }
+void drm_trace_tag_mark(const char *tag) { }
+void mtk_drm_refresh_tag_start(struct mtk_ddp_comp *ddp_comp) { }
+void mtk_drm_refresh_tag_end(struct mtk_ddp_comp *ddp_comp) { }
+
+#endif
 
 #ifdef DRM_MMPATH
 int get_HWC_gpid(struct mtk_ddp_comp *ddp_comp)
