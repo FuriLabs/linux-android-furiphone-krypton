@@ -59,7 +59,7 @@ extern int accdet_auxadc_get_val(void);
 int typec_accdet_mic_detect(void){
 	//static int sel_pin_state = 0;
 	unsigned int accdet_val;
-	printk(KERN_INFO"typec_accdet typec_eint_pending(%d)\n",typec_eint_pending);
+	pr_debug(KERN_INFO"typec_accdet typec_eint_pending(%d)\n",typec_eint_pending);
 	if (!typec_eint_pending){	//check if typec headset event
 		return 0;
 	}
@@ -75,14 +75,14 @@ int typec_accdet_mic_detect(void){
 		
 		if (accdet_val <= mic_detect_thr){
 			if (gpio_get_value(mic_select_pin)){
-			//	printk("lpp-000--gpio_get_value(mic_select_pin)=%d\n",gpio_get_value(mic_select_pin));
+			//	pr_debug("lpp-000--gpio_get_value(mic_select_pin)=%d\n",gpio_get_value(mic_select_pin));
 				gpio_direction_output(mic_select_pin,0);
 			}else{
-			//	printk("lpp-111--gpio_get_value(mic_select_pin)=%d\n",gpio_get_value(mic_select_pin));
+			//	pr_debug("lpp-111--gpio_get_value(mic_select_pin)=%d\n",gpio_get_value(mic_select_pin));
 				gpio_direction_output(mic_select_pin,1);
 			}
 		}
-		printk(KERN_INFO"typec_accdet AccdetVolt(%d) mic_pin reverse thr(%d)\n",accdet_val,mic_detect_thr);
+		pr_debug(KERN_INFO"typec_accdet AccdetVolt(%d) mic_pin reverse thr(%d)\n",accdet_val,mic_detect_thr);
 	}
 	return 0;
 }
@@ -107,7 +107,7 @@ static int audio_tcp_notifier_call(struct notifier_block *nb,
 
 	case TCP_NOTIFY_TYPEC_STATE:
 		if (noti->typec_state.old_state == TYPEC_UNATTACHED && noti->typec_state.new_state == TYPEC_ATTACHED_AUDIO){
-			pr_info("%s audio accessory Plug in, pol = %d\n", __func__,	noti->typec_state.polarity);
+			pr_debug("%s audio accessory Plug in, pol = %d\n", __func__,	noti->typec_state.polarity);
 			typec_eint_pending = 1;
 			accdet_eint_func_extern(EINT_PIN_PLUG_IN);
 //prize add by lipengpeng 20191129 for Wireless charging is not possible when the headset is plugged in(jira AS-2284) start
@@ -117,12 +117,12 @@ static int audio_tcp_notifier_call(struct notifier_block *nb,
 #endif
 //prize add by lipengpeng 20191129 for jira AS-2284 end
 		}else if(noti->typec_state.old_state == TYPEC_ATTACHED_AUDIO && noti->typec_state.new_state == TYPEC_UNATTACHED){
-			pr_info("%s audio accessory Plug out\n", __func__);
+			pr_debug("%s audio accessory Plug out\n", __func__);
 			accdet_eint_func_extern(EINT_PIN_PLUG_OUT);
 		}
 		break;
 	default:
-		//printk("HH event %u,oldstate %d,newstate %d\n",event,noti->typec_state.old_state,noti->typec_state.new_state);
+		//pr_debug("HH event %u,oldstate %d,newstate %d\n",event,noti->typec_state.old_state,noti->typec_state.new_state);
 		break;
 	};
 	return NOTIFY_OK;
@@ -139,18 +139,18 @@ static int typec_accdet_probe(struct platform_device *pdev)
 	if (!IS_ERR(accdet_pinctrl)){
 		pin_default = pinctrl_lookup_state(accdet_pinctrl,"typec_accdet_default");
 		if (IS_ERR(pin_default)){
-			printk(KERN_ERR"typec_accdet get pinctrl state typec_accdet_default fail %d\n",PTR_ERR(pin_default));
+			pr_debug(KERN_ERR"typec_accdet get pinctrl state typec_accdet_default fail %d\n",PTR_ERR(pin_default));
 		}
 		alp_state_h = pinctrl_lookup_state(accdet_pinctrl,"typec_accdet_alp_h");
 		if (IS_ERR(alp_state_h)){
-			printk(KERN_ERR"typec_accdet get pinctrl state alp_h fail %d\n",PTR_ERR(alp_state_h));
+			pr_debug(KERN_ERR"typec_accdet get pinctrl state alp_h fail %d\n",PTR_ERR(alp_state_h));
 		}
 		alp_state_l = pinctrl_lookup_state(accdet_pinctrl,"typec_accdet_alp_l");
 		if (IS_ERR(alp_state_l)){
-			printk(KERN_ERR"typec_accdet get pinctrl state alp_l fail %d\n",PTR_ERR(alp_state_l));
+			pr_debug(KERN_ERR"typec_accdet get pinctrl state alp_l fail %d\n",PTR_ERR(alp_state_l));
 		}
 	}else{
-		printk(KERN_ERR"typec_accdet get pinctrl fail %d\n",PTR_ERR(accdet_pinctrl));
+		pr_debug(KERN_ERR"typec_accdet get pinctrl fail %d\n",PTR_ERR(accdet_pinctrl));
 		return -EINVAL;
 	}
 	if (!IS_ERR(pin_default)){
@@ -165,17 +165,17 @@ static int typec_accdet_probe(struct platform_device *pdev)
 		ret = of_property_read_u32(node,"mic_detect_thr",&mic_detect_thr);
 		if (ret){
 			mic_detect_thr = 230;
-			printk(KERN_ERR"typec_accdet get mic_detect_thr fail %d, user default 300\n",ret);
+			pr_debug(KERN_ERR"typec_accdet get mic_detect_thr fail %d, user default 300\n",ret);
 		}
 		
 		//mic_select_pin
 		mic_select_pin = of_get_named_gpio(node,"mic_select_pin",0);
 		if (mic_select_pin < 0){
-			printk(KERN_ERR"typec_accdet get mic_select_pin fail %d\n",mic_select_pin);
+			pr_debug(KERN_ERR"typec_accdet get mic_select_pin fail %d\n",mic_select_pin);
 		}else{
 			ret = gpio_request(mic_select_pin,"mic_select_pin");
 			if (ret < 0){
-				printk(KERN_ERR"typec_accdet gpio_request fail %d\n",ret);
+				pr_debug(KERN_ERR"typec_accdet gpio_request fail %d\n",ret);
 				mic_select_pin = -1;
 			}else{
 				if (gpio_get_value(mic_select_pin)){
@@ -200,7 +200,7 @@ static int typec_accdet_probe(struct platform_device *pdev)
 		return -EINVAL;
 	}
 
-	pr_info("%s Done!!\n", __func__);
+	pr_debug("%s Done!!\n", __func__);
 	return ret;
 }
 

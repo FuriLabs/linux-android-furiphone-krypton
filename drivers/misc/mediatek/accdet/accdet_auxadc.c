@@ -39,12 +39,12 @@ int accdet_auxadc_get_val(void){
 	#if defined(CONFIG_SC27XX_ADC)
 		ret = iio_write_channel_attribute(lcm_channel, 1, 0, IIO_CHAN_INFO_SCALE);//0:0~1.2, 1:0~
 		if (ret < 0) {
-			printk("%s:set channel attribute big failed! %d\n", __func__, ret);
+			pr_debug("%s:set channel attribute big failed! %d\n", __func__, ret);
 		}
 	#endif
 		ret = iio_read_channel_processed(lcm_channel, &val);
 		if (ret < 0) {
-			printk("%s:Busy/Timeout, IIO ch read failed %d\n", __func__, ret);
+			pr_debug("%s:Busy/Timeout, IIO ch read failed %d\n", __func__, ret);
 			return ret;
 		}
 		iio_channel_release(lcm_channel);
@@ -60,7 +60,7 @@ int accdet_auxadc_get_val(void){
 	#endif
 	}else{
 		ret = PTR_ERR(lcm_channel);
-		printk("[%s] fail to get auxadc iio ch0: %d, %p\n", __func__, ret, lcm_channel);
+		pr_debug("[%s] fail to get auxadc iio ch0: %d, %p\n", __func__, ret, lcm_channel);
 	}
 	return ret;
 }
