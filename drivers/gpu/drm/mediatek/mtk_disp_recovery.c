@@ -492,7 +492,7 @@ done:
 static esd_status;
 int prize_esd_check_status(void)
 {
-	printk("pzp prize_esd_check_status\n");
+	pr_debug("pzp prize_esd_check_status\n");
 	return esd_status;
 }
 //prize-ldo1.8v off when esd-pengzhipeng-20220822-end
