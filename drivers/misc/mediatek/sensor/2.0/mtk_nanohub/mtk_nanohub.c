@@ -1687,7 +1687,7 @@ int mtk_nanohub_set_cmd_to_hub(uint8_t sensor_id,
 
 	err = mtk_nanohub_req_send(&req);
 	if (err < 0) {
-		pr_err("set_cust fail!\n");
+		pr_debug("set_cust fail!\n");
 		return -1;
 	}
 	if (sensor_id != req.get_data_rsp.sensorType
@@ -1777,7 +1777,7 @@ static void mtk_nanohub_get_devinfo(void)
 		info.sensor_type = sensor;
 		if (mtk_nanohub_set_cmd_to_hub(id,
 				CUST_ACTION_GET_SENSOR_INFO, &hubinfo) < 0) {
-			pr_err("type(%d) not registered\n", sensor);
+			pr_debug("type(%d) not registered\n", sensor);
 			find_sensor = false;
 		} else {
 			find_sensor = true;
@@ -1818,7 +1818,7 @@ static void sensorHub_get_hardware_info(void)
 	}
 	else
 	{
-		pr_err("sensor:%x chip:%s id:%s more:%s vendor:%s \n", sensor, info.chip, info.id, info.more, info.vendor);
+		pr_debug("sensor:%x chip:%s id:%s more:%s vendor:%s \n", sensor, info.chip, info.id, info.more, info.vendor);
 		switch(id)
 		{	
 		  #if defined(CONFIG_PRIZE_HARDWARE_INFO)
@@ -1970,7 +1970,7 @@ void mtk_nanohub_power_up_loop(void *data)
 		READ_ONCE(scp_system_ready) && READ_ONCE(scp_chre_ready));
 	if (ret)
 		return;
-	pr_info("SCP power up\n");
+	pr_debug("SCP power up\n");
 	spin_lock_irqsave(&scp_state_lock, flags);
 	WRITE_ONCE(scp_chre_ready, false);
 	WRITE_ONCE(scp_system_ready, false);
@@ -2908,7 +2908,7 @@ static int mtk_nanohub_probe(struct platform_device *pdev)
 		goto exit_attr;
 	}
 
-	pr_info("init done, data_unit_t:%d, SCP_SENSOR_HUB_DATA:%d\n",
+	pr_debug("init done, data_unit_t:%d, SCP_SENSOR_HUB_DATA:%d\n",
 		(int)sizeof(struct data_unit_t),
 		(int)sizeof(union SCP_SENSOR_HUB_DATA));
 	return 0;
