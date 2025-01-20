@@ -107,7 +107,7 @@ static int mtk_typec_mux_set(struct typec_mux *mux, int state)
 	struct mtk_typec_mux *typec_mux;
 	int ret = 0;
 
-	dev_info(mux_sw->dev, "%s %d %d\n", __func__,
+	dev_dbg(mux_sw->dev, "%s %d %d\n", __func__,
 		 mux_sw->state, state);
 
 	if (mux_sw->state == state)
@@ -186,7 +186,7 @@ static int mtk_typec_switch_set(struct typec_switch *sw,
 	struct mtk_typec_switch *typec_sw;
 	int ret = 0;
 
-	dev_info(mux_sw->dev, "%s %d %d\n", __func__,
+	dev_dbg(mux_sw->dev, "%s %d %d\n", __func__,
 		 mux_sw->orientation, orientation);
 
 	if (mux_sw->orientation == orientation)
@@ -223,7 +223,7 @@ static int typec_mux_switch_probe(struct platform_device *pdev)
 	struct typec_mux_desc mux_desc;
 	int ret = 0;
 
-	dev_info(dev, "%s\n", __func__);
+	dev_dbg(dev, "%s\n", __func__);
 
 	mux_sw = kzalloc(sizeof(*mux_sw), GFP_KERNEL);
 	if (!mux_sw)
@@ -237,7 +237,7 @@ static int typec_mux_switch_probe(struct platform_device *pdev)
 
 	mux_sw->sw = typec_switch_register(dev, &sw_desc);
 	if (IS_ERR(mux_sw->sw)) {
-		dev_info(dev, "error registering typec switch: %ld\n",
+		dev_dbg(dev, "error registering typec switch: %ld\n",
 			PTR_ERR(mux_sw->sw));
 		return PTR_ERR(mux_sw->sw);
 	}
@@ -249,7 +249,7 @@ static int typec_mux_switch_probe(struct platform_device *pdev)
 	mux_sw->mux = typec_mux_register(dev, &mux_desc);
 	if (IS_ERR(mux_sw->mux)) {
 		typec_switch_unregister(mux_sw->sw);
-		dev_info(dev, "error registering typec mux: %ld\n",
+		dev_dbg(dev, "error registering typec mux: %ld\n",
 			PTR_ERR(mux_sw->mux));
 		return PTR_ERR(mux_sw->mux);
 	}
@@ -258,7 +258,7 @@ static int typec_mux_switch_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, mux_sw);
 
-	dev_info(dev, "%s done\n", __func__);
+	dev_dbg(dev, "%s done\n", __func__);
 	return ret;
 }
 

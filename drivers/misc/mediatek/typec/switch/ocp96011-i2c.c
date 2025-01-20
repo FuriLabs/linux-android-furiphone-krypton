@@ -79,7 +79,7 @@ u32 ocp96011_get_headset_status(void)
 	u32 reg17 = 0;
 	usleep_range(100*1000, 150*1000);
 	regmap_read(fsa_priv->regmap, 0x17, &reg17);
-	dev_info(fsa_priv->dev, "%s: reg17 = %d\n", __func__, reg17);
+	dev_dbg(fsa_priv->dev, "%s: reg17 = %d\n", __func__, reg17);
 	return reg17;
 }
 
@@ -464,7 +464,7 @@ static int ocp96011_probe(struct i2c_client *i2c,
 //	rc = power_supply_reg_notifier(&fsa_priv->psy_nb);
 //#endif
 //	if (rc) {
-//		dev_info(fsa_priv->dev, "%s: power supply reg failed: %d\n",
+//		dev_dbg(fsa_priv->dev, "%s: power supply reg failed: %d\n",
 //			__func__, rc);
 //		goto err_supply;
 //	}

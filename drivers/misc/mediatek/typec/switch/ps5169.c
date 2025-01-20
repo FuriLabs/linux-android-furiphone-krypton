@@ -40,7 +40,7 @@ static int ps5169_switch_set(struct typec_switch *sw,
 {
 	struct ps5169 *ps = typec_switch_get_drvdata(sw);
 
-	dev_info(ps->dev, "%s %d\n", __func__, orientation);
+	dev_dbg(ps->dev, "%s %d\n", __func__, orientation);
 
 	switch (orientation) {
 	case TYPEC_ORIENTATION_NONE:
@@ -79,7 +79,7 @@ static int ps5169_pinctrl_init(struct ps5169 *ps)
 	ps->pinctrl = devm_pinctrl_get(dev);
 	if (IS_ERR(ps->pinctrl)) {
 		ret = PTR_ERR(ps->pinctrl);
-		dev_info(dev, "failed to get pinctrl, ret=%d\n", ret);
+		dev_dbg(dev, "failed to get pinctrl, ret=%d\n", ret);
 		return ret;
 	}
 
@@ -87,19 +87,19 @@ static int ps5169_pinctrl_init(struct ps5169 *ps)
 		pinctrl_lookup_state(ps->pinctrl, "enable");
 
 	if (IS_ERR(ps->enable)) {
-		dev_info(dev, "Can *NOT* find enable\n");
+		dev_dbg(dev, "Can *NOT* find enable\n");
 		ps->enable = NULL;
 	} else
-		dev_info(dev, "Find enable\n");
+		dev_dbg(dev, "Find enable\n");
 
 	ps->disable =
 		pinctrl_lookup_state(ps->pinctrl, "disable");
 
 	if (IS_ERR(ps->disable)) {
-		dev_info(dev, "Can *NOT* find disable\n");
+		dev_dbg(dev, "Can *NOT* find disable\n");
 		ps->disable = NULL;
 	} else
-		dev_info(dev, "Find disable\n");
+		dev_dbg(dev, "Find disable\n");
 
 	return ret;
 }
@@ -124,7 +124,7 @@ static int ps5169_probe(struct i2c_client *client)
 
 	ps->sw = mtk_typec_switch_register(dev, &sw_desc);
 	if (IS_ERR(ps->sw)) {
-		dev_info(dev, "error registering typec switch: %ld\n",
+		dev_dbg(dev, "error registering typec switch: %ld\n",
 			PTR_ERR(ps->sw));
 		return PTR_ERR(ps->sw);
 	}
@@ -138,7 +138,7 @@ static int ps5169_probe(struct i2c_client *client)
 	/* switch off after init done */
 	ps5169_switch_set(ps->sw, TYPEC_ORIENTATION_NONE);
 
-	dev_info(dev, "%s done\n", __func__);
+	dev_dbg(dev, "%s done\n", __func__);
 	return ret;
 }
 

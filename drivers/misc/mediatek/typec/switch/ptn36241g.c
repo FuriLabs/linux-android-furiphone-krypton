@@ -29,7 +29,7 @@ static int ptn36241g_switch_set(struct typec_switch *sw,
 {
 	struct ptn36241g *ptn = typec_switch_get_drvdata(sw);
 
-	dev_info(ptn->dev, "%s %d\n", __func__, orientation);
+	dev_dbg(ptn->dev, "%s %d\n", __func__, orientation);
 
 	switch (orientation) {
 	case TYPEC_ORIENTATION_NONE:
@@ -62,7 +62,7 @@ static int ptn36241g_pinctrl_init(struct ptn36241g *ptn)
 	ptn->pinctrl = devm_pinctrl_get(dev);
 	if (IS_ERR(ptn->pinctrl)) {
 		ret = PTR_ERR(ptn->pinctrl);
-		dev_info(dev, "failed to get pinctrl, ret=%d\n", ret);
+		dev_dbg(dev, "failed to get pinctrl, ret=%d\n", ret);
 		return ret;
 	}
 
@@ -70,37 +70,37 @@ static int ptn36241g_pinctrl_init(struct ptn36241g *ptn)
 		pinctrl_lookup_state(ptn->pinctrl, "c1_active");
 
 	if (IS_ERR(ptn->c1_active)) {
-		dev_info(dev, "Can *NOT* find c1_active\n");
+		dev_dbg(dev, "Can *NOT* find c1_active\n");
 		ptn->c1_active = NULL;
 	} else
-		dev_info(dev, "Find c1_active\n");
+		dev_dbg(dev, "Find c1_active\n");
 
 	ptn->c1_sleep =
 		pinctrl_lookup_state(ptn->pinctrl, "c1_sleep");
 
 	if (IS_ERR(ptn->c1_sleep)) {
-		dev_info(dev, "Can *NOT* find c1_sleep\n");
+		dev_dbg(dev, "Can *NOT* find c1_sleep\n");
 		ptn->c1_sleep = NULL;
 	} else
-		dev_info(dev, "Find c1_sleep\n");
+		dev_dbg(dev, "Find c1_sleep\n");
 
 	ptn->c2_active =
 		pinctrl_lookup_state(ptn->pinctrl, "c2_active");
 
 	if (IS_ERR(ptn->c2_active)) {
-		dev_info(dev, "Can *NOT* find c2_active\n");
+		dev_dbg(dev, "Can *NOT* find c2_active\n");
 		ptn->c2_active = NULL;
 	} else
-		dev_info(dev, "Find c2_active\n");
+		dev_dbg(dev, "Find c2_active\n");
 
 	ptn->c2_sleep =
 		pinctrl_lookup_state(ptn->pinctrl, "c2_sleep");
 
 	if (IS_ERR(ptn->c2_sleep)) {
-		dev_info(dev, "Can *NOT* find c2_sleep\n");
+		dev_dbg(dev, "Can *NOT* find c2_sleep\n");
 		ptn->c2_sleep = NULL;
 	} else
-		dev_info(dev, "Find c2_sleep\n");
+		dev_dbg(dev, "Find c2_sleep\n");
 
 	ptn36241g_switch_set(ptn->sw, TYPEC_ORIENTATION_NONE);
 
@@ -126,7 +126,7 @@ static int ptn36241g_probe(struct platform_device *pdev)
 
 	ptn->sw = mtk_typec_switch_register(dev, &sw_desc);
 	if (IS_ERR(ptn->sw)) {
-		dev_info(dev, "error registering typec switch: %ld\n",
+		dev_dbg(dev, "error registering typec switch: %ld\n",
 			PTR_ERR(ptn->sw));
 		return PTR_ERR(ptn->sw);
 	}
@@ -137,7 +137,7 @@ static int ptn36241g_probe(struct platform_device *pdev)
 	if (ret < 0)
 		mtk_typec_switch_unregister(ptn->sw);
 
-	dev_info(dev, "%s done\n", __func__);
+	dev_dbg(dev, "%s done\n", __func__);
 	return ret;
 }
 

@@ -79,7 +79,7 @@ static int ptn36043a_switch_set(struct typec_switch *sw,
 {
 	struct ptn36043a *fusb = typec_switch_get_drvdata(sw);
 
-	dev_info(fusb->dev, "%s %d\n", __func__, orientation);
+	dev_dbg(fusb->dev, "%s %d\n", __func__, orientation);
 
 	switch (orientation) {
 	case TYPEC_ORIENTATION_NONE:
@@ -122,7 +122,7 @@ static int ptn36043a_pinctrl_init(struct ptn36043a *fusb)
 	fusb->pinctrl = devm_pinctrl_get(dev);
 	if (IS_ERR(fusb->pinctrl)) {
 		ret = PTR_ERR(fusb->pinctrl);
-		dev_info(dev, "failed to get pinctrl, ret=%d\n", ret);
+		dev_dbg(dev, "failed to get pinctrl, ret=%d\n", ret);
 		return ret;
 	}
 
@@ -130,19 +130,19 @@ static int ptn36043a_pinctrl_init(struct ptn36043a *fusb)
 		pinctrl_lookup_state(fusb->pinctrl, "sel_up");
 
 	if (IS_ERR(fusb->sel_up)) {
-		dev_info(dev, "Can *NOT* find sel_up\n");
+		dev_dbg(dev, "Can *NOT* find sel_up\n");
 		fusb->sel_up = NULL;
 	} else
-		dev_info(dev, "Find sel_up\n");
+		dev_dbg(dev, "Find sel_up\n");
 
 	fusb->sel_down =
 		pinctrl_lookup_state(fusb->pinctrl, "sel_down");
 
 	if (IS_ERR(fusb->sel_down)) {
-		dev_info(dev, "Can *NOT* find sel_down\n");
+		dev_dbg(dev, "Can *NOT* find sel_down\n");
 		fusb->sel_down = NULL;
 	} else
-		dev_info(dev, "Find sel_down\n");
+		dev_dbg(dev, "Find sel_down\n");
 
 	
 
@@ -170,7 +170,7 @@ static int ptn36043a_probe(struct platform_device *pdev)
 
 	fusb->sw = mtk_typec_switch_register(dev, &sw_desc);
 	if (IS_ERR(fusb->sw)) {
-		dev_info(dev, "error registering typec switch: %ld\n",
+		dev_dbg(dev, "error registering typec switch: %ld\n",
 			PTR_ERR(fusb->sw));
 		return PTR_ERR(fusb->sw);
 	}
@@ -181,7 +181,7 @@ static int ptn36043a_probe(struct platform_device *pdev)
 	if (ret < 0)
 		mtk_typec_switch_unregister(fusb->sw);
 
-	dev_info(dev, "%s done\n", __func__);
+	dev_dbg(dev, "%s done\n", __func__);
 	return ret;
 }
 
