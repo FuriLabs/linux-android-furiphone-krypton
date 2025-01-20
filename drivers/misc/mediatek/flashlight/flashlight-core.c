@@ -726,7 +726,7 @@ static long _flashlight_ioctl(
 			flashlight_get_ct_index(fl_arg.ct_id));
 	mutex_unlock(&fl_mutex);
 	if (!fdev) {
-		pr_debug_ratelimited("Find no flashlight device\n");
+		pr_debug("Find no flashlight device\n");
 		return -EINVAL;
 	}
 
