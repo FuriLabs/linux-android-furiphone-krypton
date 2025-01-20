@@ -3639,7 +3639,7 @@ int mtk_dsi_esd_cmp(struct mtk_ddp_comp *comp, void *handle, void *slot)
 
 		if (gcore_esd_is_fail())
 		{
-			printk("[DSI]gcore_esd_is_fail=%d\n",gcore_esd_is_fail());
+			pr_debug("[DSI]gcore_esd_is_fail=%d\n",gcore_esd_is_fail());
 			ret = -1;
 			return ret;
 		}
@@ -7145,7 +7145,7 @@ static int mtk_dsi_probe(struct platform_device *pdev)
  	strncpy((char *)mtkfb_lcm_name, dsi->dev_for_PM->name,
  				sizeof(mtkfb_lcm_name));
   	mtkfb_lcm_name[strlen(dsi->dev_for_PM->name)] = '\0';
-  	printk("pzp mtkfb_lcm_name=%s\n", mtkfb_lcm_name);
+  	pr_debug("pzp mtkfb_lcm_name=%s\n", mtkfb_lcm_name);
   	//prize-add-pengzhipeng-20220708-end
 	return component_add(&pdev->dev, &mtk_dsi_component_ops);
 error:
