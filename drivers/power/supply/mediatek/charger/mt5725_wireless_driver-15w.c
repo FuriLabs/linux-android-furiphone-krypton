@@ -516,7 +516,7 @@ static u8 MT5725_otp_write_check(u32 flagaddr) {
             return FALSE;
         }
     }
-    printk("[%s] MT5725 OTP Flag has been written",__func__);
+    pr_debug("[%s] MT5725 OTP Flag has been written",__func__);
 	kfree(otpwrite_flagread);
     return TRUE;
 }
@@ -550,7 +550,7 @@ static u8 MT5725_otp_verify(u32 addr,u8 * data,u32 len) {
         }
     }/**/
     kfree(otp_read_temp);
-    printk("[%s]  success",__func__);
+    pr_debug("[%s]  success",__func__);
     return TRUE;
 }
 
@@ -865,7 +865,7 @@ static DEVICE_ATTR(gettxflag, 0644, gettx_flag_show, NULL);
 	gpio_direction_output(chip->otgen_gpio,0);
 	atomic_set(&mte->is_tx_mode,0);
 	mutex_unlock(&chip->ops_mutex);
-	printk(KERN_INFO"mt5725 disable_tx\n");
+	pr_debug(KERN_INFO"mt5725 disable_tx\n");
 	return sprintf(buf, "%d", 1);
 }
 static DEVICE_ATTR(disabletx, 0644, disable_tx_show, NULL);
@@ -885,33 +885,33 @@ static ssize_t enable_tx_store(struct device* dev, struct device_attribute* attr
 	//struct MT5725_dev *chip = i2c_get_clientdata(client);
 
     error = kstrtouint(buf, 10, &temp);
-	printk("LPP---enable_tx_store temp=%d\n",temp);
+	pr_debug("LPP---enable_tx_store temp=%d\n",temp);
 
     if (error)
         return error;
     if(temp==1) {
 			//mutex_lock(&chip->ops_mutex);
 			mt_vbus_revere_off();
-			printk(KERN_INFO"mt5725 111 enable tx\n");
+			pr_debug(KERN_INFO"mt5725 111 enable tx\n");
 			mdelay(3);
-			printk(KERN_INFO"mt5725 222 enable tx\n");
+			pr_debug(KERN_INFO"mt5725 222 enable tx\n");
 			turn_on_otg_charge_mode(0);  //GPIO109---->high  //prize add by lipengpeng 20210408  GPIO ---> low.
-			printk(KERN_INFO"mt5725 333 enable tx\n");
+			pr_debug(KERN_INFO"mt5725 333 enable tx\n");
 			turn_on_rever_5725(0);//OD5-->high  //GPIO88
-			printk(KERN_INFO"mt5725 444 enable tx\n");
+			pr_debug(KERN_INFO"mt5725 444 enable tx\n");
 			set_otg_gpio(0);//OD7--->low    2541-->OTG low  //GPIO87
 			mte->tx_count=0;
-			printk(KERN_INFO"mt5725 555 enable tx\n");
+			pr_debug(KERN_INFO"mt5725 555 enable tx\n");
 			atomic_set(&mte->is_tx_mode,1);
-			printk(KERN_INFO"mt5725 666 enable tx\n");
+			pr_debug(KERN_INFO"mt5725 666 enable tx\n");
 			revere_mode=1;
-			printk(KERN_INFO"mt5725 777 enable tx\n");
+			pr_debug(KERN_INFO"mt5725 777 enable tx\n");
 			mt_vbus_revere_on();// open vbus
 //#if defined (CONFIG_PRIZE_REVERE_CHARGING_MODE)
 			mt_vbus_reverse_on_limited_current();  // prize add by lipengpeng 20210322 set otg voltage  5.4V
 //#endif
 			//mutex_unlock(&chip->ops_mutex);
-			printk(KERN_INFO"mt5725 888 enable tx\n");
+			pr_debug(KERN_INFO"mt5725 888 enable tx\n");
     }else{
 			turn_on_otg_charge_mode(0);//GPIO109--->low
 			turn_off_rever_5725(0);//OD5-->low  //GPIO88
@@ -923,7 +923,7 @@ static ssize_t enable_tx_store(struct device* dev, struct device_attribute* attr
 			mt_vbus_revere_off();
             atomic_set(&mte->is_tx_mode,0);
 			revere_mode=0;
-			printk(KERN_INFO"mt5725 disable_tx\n");
+			pr_debug(KERN_INFO"mt5725 disable_tx\n");
 	}
     return count;
 }
@@ -1006,7 +1006,7 @@ void En_Dis_add_current(int i){
 	vuc protocol;
 	protocol.ptr[0] = i;
 	protocol.ptr[1] = 6;//default value in Firmware IIC address REG_CURFUNC+1
-	printk(" En_Dis_add_current i=%d  protocol.ptr[0]=%02x\n",i,protocol.ptr[0]);
+	pr_debug(" En_Dis_add_current i=%d  protocol.ptr[0]=%02x\n",i,protocol.ptr[0]);
 	MT5725_write_buffer(mte, REG_CURFUNC, protocol.ptr,1);
 }
 EXPORT_SYMBOL(En_Dis_add_current);
@@ -1089,19 +1089,19 @@ static void MT5725_add_current(void){
 		if(mte->input_current > maxchargecurrent)  mte->input_current= maxchargecurrent;
 		mte->charge_current = (powertemp / 6 * 1000)-100000;
 	
-		//printk("lpp---tmp=%d\n",battery_get_bat_temperature());
+		//pr_debug("lpp---tmp=%d\n",battery_get_bat_temperature());
 		//if(battery_get_bat_temperature() >= 45)
 		//{
 
 		//    mte->input_current= 1100000;
 		//	mte->charge_current = 2500000;
-		//	printk("lpp-1111--mte->input_current=%d\n",mte->input_current);
+		//	pr_debug("lpp-1111--mte->input_current=%d\n",mte->input_current);
 
 		//}else if(battery_get_bat_temperature() <= 42){
 		//
 		//	if(mte->input_current > maxchargecurrent)  mte->input_current= maxchargecurrent;
 		//	mte->charge_current = powertemp / 4 * 1000;
-		//	printk("lpp-2222--mte->input_current=%d\n",mte->input_current);
+		//	pr_debug("lpp-2222--mte->input_current=%d\n",mte->input_current);
 		//}
 //prize add by lipengpeng 20210305 start
 #if defined(CONFIG_PRIZE_ONLY5W_DISPLAY_15W)
@@ -1166,7 +1166,7 @@ int set_rx_vout(uint16_t vout)
 	uint16_t pre_vout=0;
 	MT5725_read_buffer(mte, REG_VOUTSET, temp.ptr, 2);
     pre_vout= temp.value;
-	printk("set_rx_vout pre_vout=%d vout=%d\n", pre_vout, vout);
+	pr_debug("set_rx_vout pre_vout=%d vout=%d\n", pre_vout, vout);
 	if (pre_vout == vout) {
 		return -1; /*vout already set or vout set running*/
 	}
@@ -1179,7 +1179,7 @@ int set_rx_vout(uint16_t vout)
 	//prize-Solve the problem that the probabilistic boost is less than 9V, because the 9V boost requires a delay when writing register commands-pengzhipeng-20220616-start
 	mdelay(100);
 	MT5725_read_buffer(mte, REG_VOUTSET, temp.ptr, 2);
-	printk("set_rx_vout 2121vout=%d\n", temp.value);
+	pr_debug("set_rx_vout 2121vout=%d\n", temp.value);
 	//prize-Solve the problem that the probabilistic boost is less than 9V, because the 9V boost requires a delay when writing register commands-pengzhipeng-20220616-end
 
 	return 0;
@@ -1209,19 +1209,19 @@ void MT5725_irq_handle(void) {
         return;
     }
     MT5725_read_buffer(mte,REG_FW_VER,temp.ptr,2);
-	printk("%s: fw_ver %x\n",__func__,temp.ptr[0]);
+	pr_debug("%s: fw_ver %x\n",__func__,temp.ptr[0]);
 //prize add by lipengpeng 20210831 start
 	//0x84:1100 86 :1100  88:1200 8a :1500 8c :1600
 	MT5725_read_buffer(mte,FODTHLD0,fod0.ptr,2);
-	printk("%s: FODTHLD0 %x %x\n",__func__,fod0.ptr[0],fod0.ptr[1]);
+	pr_debug("%s: FODTHLD0 %x %x\n",__func__,fod0.ptr[0],fod0.ptr[1]);
 	MT5725_read_buffer(mte,FODTHLD1,fod1.ptr,2);
-	printk("%s: FODTHLD1 %x %x\n",__func__,fod1.ptr[0],fod1.ptr[1]);
+	pr_debug("%s: FODTHLD1 %x %x\n",__func__,fod1.ptr[0],fod1.ptr[1]);
 	MT5725_read_buffer(mte,FODTHLD2,fod2.ptr,2);
-	printk("%s: FODTHLD2 %x %x\n",__func__,fod2.ptr[0],fod2.ptr[1]);
+	pr_debug("%s: FODTHLD2 %x %x\n",__func__,fod2.ptr[0],fod2.ptr[1]);
 	MT5725_read_buffer(mte,FODTHLD3,fod3.ptr,2);
-	printk("%s: FODTHLD3 %x %x\n",__func__,fod3.ptr[0],fod3.ptr[1]);
+	pr_debug("%s: FODTHLD3 %x %x\n",__func__,fod3.ptr[0],fod3.ptr[1]);
 	MT5725_read_buffer(mte,FODTHLD4,fod4.ptr,2);
-	printk("%s: FODTHLD4 %x %x\n",__func__,fod4.ptr[0],fod4.ptr[1]);
+	pr_debug("%s: FODTHLD4 %x %x\n",__func__,fod4.ptr[0],fod4.ptr[1]);
 //prize add by lipengpeng 20210831 end
 
 //prize add by lipengpeng 20210820 start
@@ -1357,9 +1357,9 @@ void MT5725_irq_handle(void) {
 		MT5725_write_buffer(mte, FODTHLD4, fod4.ptr, 2);
 //prize add by lipengpeng 20210901 start
 		MT5725_read_buffer(mte,TX_LIN,lin.ptr,2);
-		printk("%s: TX_LIN %x %x\n",__func__,lin.ptr[0],lin.ptr[1]);
+		pr_debug("%s: TX_LIN %x %x\n",__func__,lin.ptr[0],lin.ptr[1]);
 		MT5725_read_buffer(mte,TX_VIN,vin.ptr,2);
-		printk("%s: TX_VIN %x %x\n",__func__,vin.ptr[0],vin.ptr[1]);
+		pr_debug("%s: TX_VIN %x %x\n",__func__,vin.ptr[0],vin.ptr[1]);
 //prize add by lipengpeng 20210901 end
 //prize add by lipengpeng 20210831 end
         MT5725_read_buffer(mte, REG_INTFLAG, val.ptr, 2);
@@ -1368,9 +1368,9 @@ void MT5725_irq_handle(void) {
 //prize add by lipengpeng 20210408 if usb charger close otg start
 #if defined (CONFIG_PRIZE_REVERE_CHARGING_MODE)
 		if((val.value & INT_CHIP_DISABLE)&&(revere_mode==1)){
-           printk(KERN_INFO"lpp----disable otg charge111\n");
+           pr_debug(KERN_INFO"lpp----disable otg charge111\n");
 		   	mt_vbus_revere_off();
-		   printk(KERN_INFO"lpp----disable otg charge222\n");
+		   pr_debug(KERN_INFO"lpp----disable otg charge222\n");
             turn_on_otg_charge_mode(0);//GPIO109--->low
 			turn_off_rever_5725(0);//OD5-->low
 			set_otg_gpio(0);//OD7--->low
@@ -1798,17 +1798,17 @@ int turn_off_5725(int en){
     if (mte->otg_5725_ctl.gpio_otg_prepare) {
 		if (en) {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.wireless_5725_off); //high
-			printk("%s: set W_OTG_EN2 to hight\n", __func__);
+			pr_debug("%s: set W_OTG_EN2 to hight\n", __func__);
 			ret =0;
 		}
 		else {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.wireless_5725_on);//low
-			printk("%s: set W_OTG_EN2 to low\n", __func__);
+			pr_debug("%s: set W_OTG_EN2 to low\n", __func__);
 			ret =0;
 		}
 	}
 	else {
-		printk("%s:, error, gpio otg not prepared\n", __func__);
+		pr_debug("%s:, error, gpio otg not prepared\n", __func__);
 		ret =-1;
 	}
 	return ret;
@@ -1824,17 +1824,17 @@ int turn_on_otg_charge_mode(int en){
     if (mte->otg_5725_ctl.charger_otg_mode_on) {
 		if (en) {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.charger_otg_mode_on);//
-			printk("%s: set W_OTG_EN2 to hight\n", __func__);
+			pr_debug("%s: set W_OTG_EN2 to hight\n", __func__);
 			ret =0;
 		}
 		else {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.charger_otg_mode_off);//
-			printk("%s: set W_OTG_EN2 to low\n", __func__);
+			pr_debug("%s: set W_OTG_EN2 to low\n", __func__);
 			ret =0;
 		}
 	}
 	else {
-		printk("%s:, error, gpio otg not prepared\n", __func__);
+		pr_debug("%s:, error, gpio otg not prepared\n", __func__);
 		ret =-1;
 	}
 	return ret;
@@ -1858,17 +1858,17 @@ int turn_on_rever_5725(int en){
     if (mte->otg_5725_ctl.gpio_otg_prepare) {
 		if (en) {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.wireless_5725_on);//GPOD5  low
-			printk("%s: set W_OTG_EN2 to hight\n", __func__);
+			pr_debug("%s: set W_OTG_EN2 to hight\n", __func__);
 			ret =0;
 		}
 		else {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.wireless_5725_off);//GPOD5  high
-			printk("%s: set W_OTG_EN2 to low\n", __func__);
+			pr_debug("%s: set W_OTG_EN2 to low\n", __func__);
 			ret =0;
 		}
 	}
 	else {
-		printk("%s:, error, gpio otg not prepared\n", __func__);
+		pr_debug("%s:, error, gpio otg not prepared\n", __func__);
 		ret =-1;
 	}
 	return ret;
@@ -1893,17 +1893,17 @@ int turn_off_rever_5725(int en){
     if (mte->otg_5725_ctl.gpio_otg_prepare) {
 		if (en) {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.wireless_5725_off);//GPOD5  high
-			printk("%s: set W_OTG_EN2 to hight\n", __func__);
+			pr_debug("%s: set W_OTG_EN2 to hight\n", __func__);
 			ret =0;
 		}
 		else {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.wireless_5725_on);//GPOD5  low
-			printk("%s: set W_OTG_EN2 to low\n", __func__);
+			pr_debug("%s: set W_OTG_EN2 to low\n", __func__);
 			ret =0;
 		}
 	}
 	else {
-		printk("%s:, error, gpio otg not prepared\n", __func__);
+		pr_debug("%s:, error, gpio otg not prepared\n", __func__);
 		ret =-1;
 	}
 	return ret;
@@ -1929,17 +1929,17 @@ int set_otg_gpio(int en){
     if (mte->otg_5725_ctl.gpio_otg_prepare) {
 		if (en) {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.charger_otg_on);
-			printk("%s: set w_otg_en PIN to high\n", __func__);
+			pr_debug("%s: set w_otg_en PIN to high\n", __func__);
 			ret =0;
 		}
 		else {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.charger_otg_off);
-			printk("%s: set w_otg_en PIN to low\n", __func__);
+			pr_debug("%s: set w_otg_en PIN to low\n", __func__);
 			ret =0;
 		}
 	}
 	else {
-		printk("%s:, error, gpio otg not prepared\n", __func__);
+		pr_debug("%s:, error, gpio otg not prepared\n", __func__);
 		ret =-1;
 	}
 	return ret;
@@ -1956,12 +1956,12 @@ int test_gpio(int en){
     if (mte->otg_5725_ctl.gpio_otg_prepare) {
 		if (en) {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.test_gpio_on);
-			printk("%s: set test gpio  to hight\n", __func__);
+			pr_debug("%s: set test gpio  to hight\n", __func__);
 			ret =0;
 		}
 		else {
 			pinctrl_select_state(mte->otg_5725_ctl.pinctrl_gpios, mte->otg_5725_ctl.test_gpio_off);
-			printk("%s: set test gpio  to low\n", __func__);
+			pr_debug("%s: set test gpio  to low\n", __func__);
 			ret =0;
 		}
 	}
@@ -1991,13 +1991,13 @@ static int mt5725_parse_charging_node(struct MT5725_dev *chip){
 	}
 
 	if ((strcmp(algorithm_name, "SwitchCharging") == 0) ) {
-		dev_err(chip->dev, "%s: SwitchCharging\n",__func__);
+		dev_dbg(chip->dev, "%s: SwitchCharging\n",__func__);
 
 			chip->select_charging_current = switch_charging_select_charging_current;
 		
 #if defined(CONFIG_MTK_DUAL_CHARGER_SUPPORT)
 	}else if (strcmp(algorithm_name, "DualSwitchCharging") == 0){
-		dev_err(chip->dev, "%s: DualSwitchCharging\n",__func__);
+		dev_dbg(chip->dev, "%s: DualSwitchCharging\n",__func__);
 		chip->select_charging_current = dual_switch_charging_select_charging_current;
 	}else{
 #endif
@@ -2007,7 +2007,7 @@ static int mt5725_parse_charging_node(struct MT5725_dev *chip){
 	//prize-modify-pengzhipeng-20220616-start
 	if (strcmp(algorithm_name, "SwitchCharging2") == 0)
 	{
-		dev_err(chip->dev, "%s: SwitchCharging %s\n",__func__, algorithm_name);
+		dev_dbg(chip->dev, "%s: SwitchCharging %s\n",__func__, algorithm_name);
 		chip->select_charging_current = switch_charging_select_charging_current2;
 	}
 	//prize-modify-pengzhipeng-20220616-end
@@ -2194,12 +2194,12 @@ static int __init mt5725_wireless_init(void)
 {
     int ret = 0;
 
-    printk("mt5725 wireless driver init start");
+    pr_debug("mt5725 wireless driver init start");
     ret = i2c_add_driver(&MT5725_driver);
     if ( ret != 0 ) {
-        printk("mt5725 wireless driver init failed!");
+        pr_debug("mt5725 wireless driver init failed!");
     }
-    printk("mt5725 wireless driver init end");
+    pr_debug("mt5725 wireless driver init end");
     return ret;
 }
 
