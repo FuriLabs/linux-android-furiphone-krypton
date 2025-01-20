@@ -93,7 +93,7 @@ static void lcm_dcs_write(struct lcm *ctx, const void *data, size_t len)
 	else
 		ret = mipi_dsi_generic_write(dsi, data, len);
 	if (ret < 0) {
-		dev_info(ctx->dev, "error %zd writing seq: %ph\n", ret, data);
+		dev_dbg(ctx->dev, "error %zd writing seq: %ph\n", ret, data);
 		ctx->error = ret;
 	}
 }
@@ -109,7 +109,7 @@ static int lcm_dcs_read(struct lcm *ctx, u8 cmd, void *data, size_t len)
 
 	ret = mipi_dsi_dcs_read(dsi, cmd, data, len);
 	if (ret < 0) {
-		dev_info(ctx->dev, "error %d reading dcs seq:(%#x)\n",
+		dev_dbg(ctx->dev, "error %d reading dcs seq:(%#x)\n",
 		ret, cmd);
 		ctx->error = ret;
 	}
@@ -124,7 +124,7 @@ static void lcm_panel_get_data(struct lcm *ctx)
 
 	if (ret == 0) {
 		ret = lcm_dcs_read(ctx,  0x0A, buffer, 1);
-		dev_info(ctx->dev, "return %d data(0x%08x) to dsi engine\n",
+		dev_dbg(ctx->dev, "return %d data(0x%08x) to dsi engine\n",
 			ret, buffer[0] | (buffer[1] << 8));
 	}
 }
@@ -137,7 +137,7 @@ static void lcm_panel_init(struct lcm *ctx)
 	ctx->reset_gpio =
 		devm_gpiod_get(ctx->dev, "reset", GPIOD_OUT_HIGH);
 	if (IS_ERR(ctx->reset_gpio)) {
-		dev_info(ctx->dev, "%s: cannot get reset-gpios %ld\n",
+		dev_dbg(ctx->dev, "%s: cannot get reset-gpios %ld\n",
 			__func__, PTR_ERR(ctx->reset_gpio));
 		return;
 	}
@@ -755,7 +755,7 @@ static int ili_lcm_unprepare(struct drm_panel *panel)
 //prize-Solve TP leakage problem-pengzhipeng-20220805-start
 	prize_ili_sleep_handler();
 	mdelay(5);
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 	lcm_dcs_write_seq_static(ctx, 0x28);
 	mdelay(5);
 	lcm_dcs_write_seq_static(ctx, 0x10);
@@ -789,10 +789,10 @@ static int ili_lcm_unprepare(struct drm_panel *panel)
 //prize-add gpio ldo1.8v-pengzhipeng-20220514-start
 	if(prize_esd_check_status())
 	{
-		pr_info("pzp %s prize_esd_check_status\n", __func__);
+		pr_debug("pzp %s prize_esd_check_status\n", __func__);
 		ctx->ldo18_gpio = devm_gpiod_get(ctx->dev, "ldo18", GPIOD_OUT_HIGH);
 		if (IS_ERR(ctx->ldo18_gpio)) {
-			dev_info(ctx->dev, "cannot get ldo18-gpios %ld\n",
+			dev_dbg(ctx->dev, "cannot get ldo18-gpios %ld\n",
 				PTR_ERR(ctx->ldo18_gpio));
 			return PTR_ERR(ctx->ldo18_gpio);
 		}
@@ -801,7 +801,7 @@ static int ili_lcm_unprepare(struct drm_panel *panel)
 		udelay(1000);
 	}
 //prize-add gpio ldo1.8v-pengzhipeng-20220514-end
-	pr_info("%s ok\n", __func__);
+	pr_debug("%s ok\n", __func__);
 
 	return 0;
 }
@@ -811,14 +811,14 @@ static int ili_lcm_prepare(struct drm_panel *panel)
 	struct lcm *ctx = panel_to_lcm(panel);
 	int ret;
 
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 	if (ctx->prepared)
 		return 0;
 
 //prize-add gpio ldo1.8v-pengzhipeng-20220514-start
 	ctx->ldo18_gpio = devm_gpiod_get(ctx->dev, "ldo18", GPIOD_OUT_HIGH);
 	if (IS_ERR(ctx->ldo18_gpio)) {
-		dev_info(ctx->dev, "cannot get ldo18-gpios %ld\n",
+		dev_dbg(ctx->dev, "cannot get ldo18-gpios %ld\n",
 			PTR_ERR(ctx->ldo18_gpio));
 		return PTR_ERR(ctx->ldo18_gpio);
 	}
@@ -862,7 +862,7 @@ static int ili_lcm_prepare(struct drm_panel *panel)
 #ifdef PANEL_SUPPORT_READBACK
 	lcm_panel_get_data(ctx);
 #endif
-	pr_info("%s ret=%d\n", __func__, ret);
+	pr_debug("%s ret=%d\n", __func__, ret);
 	return ret;
 }
 
@@ -996,7 +996,7 @@ static int ili_panel_ext_reset(struct drm_panel *panel, int on)
 	ctx->reset_gpio =
 		devm_gpiod_get(ctx->dev, "reset", GPIOD_OUT_HIGH);
 	if (IS_ERR(ctx->reset_gpio)) {
-		dev_info(ctx->dev, "%s: cannot get reset-gpios %ld\n",
+		dev_dbg(ctx->dev, "%s: cannot get reset-gpios %ld\n",
 			__func__, PTR_ERR(ctx->reset_gpio));
 		return PTR_ERR(ctx->reset_gpio);
 	}
@@ -1008,7 +1008,7 @@ static int ili_panel_ext_reset(struct drm_panel *panel, int on)
 
 static int ili_panel_ata_check(struct drm_panel *panel)
 {
-	pr_info("%s success\n", __func__);
+	pr_debug("%s success\n", __func__);
 	return 1;
 }
 
@@ -1092,7 +1092,7 @@ static int ili_lcm_get_modes(struct drm_panel *panel)
 
 	mode_120 = drm_mode_duplicate(panel->drm, &performance_mode_120);
 	if (!mode_120) {
-		dev_info(panel->drm->dev, "failed to add mode_120 %ux%ux@%u\n",
+		dev_dbg(panel->drm->dev, "failed to add mode_120 %ux%ux@%u\n",
 			performance_mode_120.hdisplay, performance_mode_120.vdisplay,
 			performance_mode_120.vrefresh);
 		return -ENOMEM;
@@ -1150,14 +1150,14 @@ static int ili_lcm_probe(struct mipi_dsi_device *dsi)
 		if (endpoint) {
 			remote_node = of_graph_get_remote_port_parent(endpoint);
 			if (!remote_node) {
-				pr_info("No panel connected,skip probe lcm\n");
+				pr_debug("No panel connected,skip probe lcm\n");
 				return -ENODEV;
 			}
-			pr_info("device node name:%s\n", remote_node->name);
+			pr_debug("device node name:%s\n", remote_node->name);
 		}
 	}
 	if (remote_node != dev->of_node) {
-		pr_info("%s+ skip probe due to not current lcm\n", __func__);
+		pr_debug("%s+ skip probe due to not current lcm\n", __func__);
 		return -ENODEV;
 	}
 
@@ -1188,7 +1188,7 @@ static int ili_lcm_probe(struct mipi_dsi_device *dsi)
 
 	ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
 	if (IS_ERR(ctx->reset_gpio)) {
-		dev_info(dev, "cannot get reset-gpios %ld\n",
+		dev_dbg(dev, "cannot get reset-gpios %ld\n",
 			PTR_ERR(ctx->reset_gpio));
 		return PTR_ERR(ctx->reset_gpio);
 	}
@@ -1196,7 +1196,7 @@ static int ili_lcm_probe(struct mipi_dsi_device *dsi)
 //prize-add gpio ldo1.8v-pengzhipeng-20220514-start
 	ctx->ldo18_gpio = devm_gpiod_get(dev, "ldo18", GPIOD_OUT_HIGH);
 	if (IS_ERR(ctx->ldo18_gpio)) {
-		dev_info(dev, "cannot get ldo18-gpios %ld\n",
+		dev_dbg(dev, "cannot get ldo18-gpios %ld\n",
 			PTR_ERR(ctx->ldo18_gpio));
 		return PTR_ERR(ctx->ldo18_gpio);
 	}
