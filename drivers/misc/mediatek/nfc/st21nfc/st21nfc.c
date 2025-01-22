@@ -6,7 +6,7 @@
  * Copyright (C) 2010 Trusted Logic S.A.
  */
 
-#define DEBUG
+//#define DEBUG
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/fs.h>
