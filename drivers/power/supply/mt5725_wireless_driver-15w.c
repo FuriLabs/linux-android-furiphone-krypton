@@ -178,11 +178,8 @@ struct MT5725_dev {
 	int one_pin_ctl;
 	int rx_power_cap;
 	int chipen_gpio;	//sgm2541 en pn, active low, low:auto high:slave mode
-/* Prize HanJiuping added 20210706 for GIGASET customized charge restriction feature start */
-#if defined(CONFIG_PRIZE_GIGASET_CHARGE_RESTRICTION)
 	/* The flag indicate if wireless charge is stopped due to full battery by userspace */
 	bool full_bat_disable_wireless;
-#endif /*CONFIG_PRIZE_GIGASET_CHARGE_RESTRICTION*/
 /* Prize HanJiuping added 20210706 for GIGASET customized charge restriction feature end */
 };
 
@@ -1034,8 +1031,6 @@ void print_curfunc_info(void){
         pr_debug("%s: statu_gpio is low\n",__func__);
 	}
 }
-/* Prize HanJiuping added 20210706 for GIGASET customized charge restriction feature start */
-#if defined(CONFIG_PRIZE_GIGASET_CHARGE_RESTRICTION)
 /**
  * @brief      Sets the wireless disable flag for full battery
  *
@@ -1052,8 +1047,6 @@ void set_wireless_disable_flag(bool flag)
 	pr_debug("%s: flag = %d\n", __func__, flag);
 }
 EXPORT_SYMBOL(set_wireless_disable_flag);
-#endif /*CONFIG_PRIZE_GIGASET_CHARGE_RESTRICTION*/
-/* Prize HanJiuping added 20210706 for GIGASET customized charge restriction feature end */
 
 //prize add by lipengpeng 20210419 start 
 #if defined(CONFIG_PRIZE_MT5725_SUPPORT_15W)
@@ -1545,14 +1538,10 @@ static int MT5725_parse_dt(struct i2c_client *client, struct MT5725_dev *mt5725)
 
 int turn_off_5725(int en){
 	int ret =0;
-/* Prize HanJiuping added 20210706 for GIGASET customized charge restriction feature start */
-#if defined(CONFIG_PRIZE_GIGASET_CHARGE_RESTRICTION)
 	/* If the flag is set, turning wireless on would be ignored */
 	if (mte->full_bat_disable_wireless == true)
 		en = 1;
-#endif /*CONFIG_PRIZE_GIGASET_CHARGE_RESTRICTION*/
-/* Prize HanJiuping added 20210706 for GIGASET customized charge restriction feature end */
-	
+
 	if (mte->one_pin_ctl){
 		if (gpio_is_valid(mte->otgen_gpio)){
 			if (en){
@@ -1757,11 +1746,8 @@ static int MT5725_probe(struct i2c_client *client, const struct i2c_device_id *i
 	mte->input_current = 0;
 	mte->charge_current = 0;
 
-/* Prize HanJiuping added 20210706 for GIGASET customized charge restriction feature start */
-#if defined(CONFIG_PRIZE_GIGASET_CHARGE_RESTRICTION)
 	mte->full_bat_disable_wireless = false;
-#endif /*CONFIG_PRIZE_GIGASET_CHARGE_RESTRICTION*/
-/* Prize HanJiuping added 20210706 for GIGASET customized charge restriction feature end */
+
     INIT_DELAYED_WORK(&chip->eint_work, MT5725_eint_work);
 	INIT_DELAYED_WORK(&chip->add_current_work, MT5725_add_current_work);
     rc = MT5725_parse_dt(client, chip);

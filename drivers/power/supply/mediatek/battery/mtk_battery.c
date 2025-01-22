@@ -4028,9 +4028,7 @@ extern int get_6370_ibat_interface(void);
 #endif
 //end add by sunshuai 2019-04-03 for charge  current  show
 
-#if defined (CONFIG_PRIZE_GIGASET_CHARGE_RESTRICTION)
 extern bool get_cmd_charge_disable(void);
-#endif
 
 
 //======prize-add-PrizeFactoryTest_Charge-by-liup-20150413-start==========
@@ -4070,14 +4068,11 @@ static ssize_t show_charging_current_value(struct device *dev,struct device_attr
        if(battery_main.BAT_STATUS == POWER_SUPPLY_STATUS_FULL)
 		   ret_value = 0;
 
-#if defined (CONFIG_PRIZE_GIGASET_CHARGE_RESTRICTION)
 	   if(get_cmd_charge_disable() == true){
 	   	   ret_value = 0;
 		   bm_debug(" cmd_discharging  is true\n");
 	   	}
-#endif
-
-	}	
+	}
 	return sprintf(buf, "%u\n", ret_value);
 #else
 	int ichg = pmic_get_charging_current();

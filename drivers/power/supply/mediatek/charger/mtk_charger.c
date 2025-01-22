@@ -3132,13 +3132,11 @@ static ssize_t store_cmd_charge_disable(struct device *dev,
 static DEVICE_ATTR(cmd_charge_disable, 0664, show_cmd_charge_disable,
 		store_cmd_charge_disable);
 
-#if defined (CONFIG_PRIZE_GIGASET_CHARGE_RESTRICTION)
 bool get_cmd_charge_disable(void){
    pr_debug("[charge] %s cmd_discharging =%d \n", __func__,pinfo->cmd_discharging);
    return pinfo->cmd_discharging;
 }
 EXPORT_SYMBOL(get_cmd_charge_disable);
-#endif
 //prize add by lvyuanchuan for controlling charger --end
 //prize add by lipengpeng 20211013  start
 #if defined(CONFIG_MTK_DUAL_CHARGER_SUPPORT) || defined(CONFIG_MTK_PUMP_EXPRESS_50_SUPPORT)
@@ -3414,13 +3412,6 @@ static int mtk_charger_setup_files(struct platform_device *pdev)
 			goto _out;
 #endif
 //add by lipengpeng 20211013  start
-//prize-add GIGASET CHARGE RESTRICTION-pengzhipeng-20220509-start
-#if defined (CONFIG_PRIZE_GIGASET_CHARGE_RESTRICTION)
-  			ret = device_create_file(&(pdev->dev), &dev_attr_cmd_charge_disable);
-  			if (ret)
- 			   goto _out;
-#endif
-//prize-add GIGASET CHARGE RESTRICTION-pengzhipeng-20220509-end
 //prize added by sunshuai, 5725 Wireless charging type identification 20200805-start
 #if defined (CONFIG_PRIZE_MT5725_SUPPORT_15W)
 			ret = device_create_file(&(pdev->dev), &dev_attr_wireless_status);
