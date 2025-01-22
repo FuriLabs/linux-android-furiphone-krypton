@@ -3178,7 +3178,7 @@ static ssize_t show_wireless_status(struct device *dev,
 	return sprintf(buf, "%d\n",type);
 }
 
-static DEVICE_ATTR(wireless_status, 0664, show_wireless_status,NULL);
+static DEVICE_ATTR(wireless_status, 0444, show_wireless_status,NULL);
 #endif
 //prize added by sunshuai, 5725 Wireless charging type identification 20200805-end
 
@@ -3198,7 +3198,7 @@ static ssize_t show_wireless_status(struct device *dev,
 	return sprintf(buf, "%d\n",type);
 }
 
-static DEVICE_ATTR(wireless_status, 0664, show_wireless_status,NULL);
+static DEVICE_ATTR(wireless_status, 0444, show_wireless_status,NULL);
 #endif
 //prize added by sunshuai, 5725 Wireless charging type identification 20200805-end
 
