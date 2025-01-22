@@ -1631,7 +1631,7 @@ static ssize_t flashlight_torch_store(struct device *dev,
 	temp[len] = '\0';
 	for(; j< len-1;j++) {
 		temp[j] = *(buf +j) - '0';
-		printk("temp buff [%d]=%d \n",j,temp[j]);
+		pr_debug("temp buff [%d]=%d \n",j,temp[j]);
 		flashlight_state = flashlight_state * 10 + temp[j];
 	}
 	torch_duty = temp[1];
@@ -1684,7 +1684,7 @@ static ssize_t flashlight_torch_store(struct device *dev,
 			torch_duty = 2;
 		}
 		fl_dev_arg.arg = prize_torch_level[torch_duty];
-		printk("led1 duty=%d \n",fl_dev_arg.arg);
+		pr_debug("led1 duty=%d \n",fl_dev_arg.arg);
 		mutex_lock(&fl_mutex);
 		ret = fl_set_level(fdev, fl_dev_arg.arg);
 		mutex_unlock(&fl_mutex);
@@ -1748,7 +1748,7 @@ static ssize_t flashlight_torch_store(struct device *dev,
 			//FLASH_IOC_SET_DUTY
 			//fl_dev_arg.arg = FLASHLIGHT_CHANNEL2_TORCH_DUTY;
 			fl_dev_arg.arg = torch_duty;
-			printk("led1 duty=%d \n",fl_dev_arg.arg);
+			pr_debug("led1 duty=%d \n",fl_dev_arg.arg);
 			mutex_lock(&fl_mutex);
 			ret = fl_set_level(fdev2, fl_dev_arg.arg);
 			mutex_unlock(&fl_mutex);
@@ -1792,7 +1792,7 @@ static ssize_t flashlight_irtorch_store(struct device *dev,
 	int ret;
 	
 	ret = sscanf(buf,"%d",&flashlight_irstate);
-	printk("flashlight_irtorch_store entry  flashlight_irstate=%d *buf=%d  decouple =%d, ret=%d\n",flashlight_irstate,*buf,decouple,ret);
+	pr_debug("flashlight_irtorch_store entry  flashlight_irstate=%d *buf=%d  decouple =%d, ret=%d\n",flashlight_irstate,*buf,decouple,ret);
 
 	/* find flashlight device */
 	// led1
