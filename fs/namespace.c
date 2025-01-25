@@ -968,8 +968,10 @@ vfs_kern_mount(struct file_system_type *type, int flags, const char *name, void 
 	if (flags & SB_KERNMOUNT)
 		mnt->mnt.mnt_flags = MNT_INTERNAL;
 
+	printk(KERN_ERR, "boutta call into mount_fs\n");
 	root = mount_fs(type, flags, name, &mnt->mnt, data);
 	if (IS_ERR(root)) {
+		printk(KERN_ERR, "mount_fs was erroR! %ld\n", PTR_ERR(root));
 		mnt_free_id(mnt);
 		free_vfsmnt(mnt);
 		return ERR_CAST(root);
