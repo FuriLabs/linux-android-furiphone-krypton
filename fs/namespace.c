@@ -2509,6 +2509,8 @@ static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
 	struct vfsmount *mnt;
 	int err;
 
+	printk(KERN_ERR "I am in do_new_mount\n");
+
 	if (!fstype)
 		return -EINVAL;
 
@@ -2525,8 +2527,10 @@ static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
 	}
 
 	put_filesystem(type);
-	if (IS_ERR(mnt))
+	if (IS_ERR(mnt)) {
+		printk(KERN_ERR "Error in do_new_mount: %ld\n", PTR_ERR(mnt));
 		return PTR_ERR(mnt);
+	}
 
 	if (mount_too_revealing(mnt, &mnt_flags)) {
 		mntput(mnt);
@@ -2776,6 +2780,8 @@ long do_mount(const char *dev_name, const char __user *dir_name,
 	struct path path;
 	unsigned int mnt_flags = 0, sb_flags;
 	int retval = 0;
+
+	printk(KERN_ERR "I am in do_mount\n");
 
 	/* Discard magic */
 	if ((flags & MS_MGC_MSK) == MS_MGC_VAL)
