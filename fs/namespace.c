@@ -2476,7 +2476,9 @@ static int do_add_mount(struct mount *newmnt, struct path *path, int mnt_flags)
 	}
 
 	/* Refuse the same filesystem on the same mount point */
+	printk(KERN_ERR "1 Current error: %d\n", err);
 	err = -EBUSY;
+	printk(KERN_ERR "2 Current error: %d\n", err);
 	if (path->mnt->mnt_sb == newmnt->mnt.mnt_sb &&
 	    path->mnt->mnt_root == path->dentry)
 		goto unlock;
@@ -2489,6 +2491,7 @@ static int do_add_mount(struct mount *newmnt, struct path *path, int mnt_flags)
 	err = graft_tree(newmnt, parent, mp);
 
 unlock:
+	printk(KERN_ERR "3 Current error: %d\n", err);
 	unlock_mount(mp);
 	return err;
 }
