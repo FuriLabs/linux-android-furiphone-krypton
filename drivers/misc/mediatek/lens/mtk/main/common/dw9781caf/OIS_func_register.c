@@ -166,6 +166,7 @@ static int i2c_block_read_reg(kal_uint16 a_u2Addr, kal_uint16 *a_puBuff, kal_uin
 void set_OIS_Standby(void)
 {
 	LOG_INF("[dw9781c_standby]\n");
+	write_reg_16bit_value_16bit(0x7015, 0x0001);
 	return;
 	/* release all protection */
 	write_reg_16bit_value_16bit(0xFAFA, 0x98AC);
@@ -179,10 +180,6 @@ void set_OIS_ENABLE(int enable)
 	LOG_INF("[set_OIS_ENABLE] enable =%d \n",enable);
 	if(enable == 0)
 		write_reg_16bit_value_16bit(0x7015, 0x0000); /* Servo controller on,OIS on*/
-	else if(enable == 1)
-		write_reg_16bit_value_16bit(0x7015, 0x0001); /* Servo controller on,Ois off */
-	else
-		write_reg_16bit_value_16bit(0x7015, 0x0002); /* Servo controller off,OIS off*/
 	mdelay(4);
 	read_reg_16bit_value_16bit(0x7015,&ret);
 	LOG_INF("[dw9781c] set_OIS_ENABLE reg_0x7015 value:0x%04x\r\n",  ret);
