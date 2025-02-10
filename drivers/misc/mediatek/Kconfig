@@ -567,11 +567,6 @@ source "drivers/misc/mediatek/vow/Kconfig"
 source "drivers/misc/mediatek/sda/Kconfig"
 source "drivers/misc/mediatek/freqhopping/Kconfig"
 
-
-#/*prize add by zhuzhengjiang for sham dual camera  20201208 start*/
-source "drivers/misc/mediatek/prize_dual_camera/Kconfig"
-#/*prize add by zhuzhengjiang for sham dual camera  20201208 end*/
-
 #prize add by zhaopengge 20201113------start
 source "drivers/misc/mediatek/hardware_info/Kconfig"
 #prize add by zhaopengge 20201113------end
