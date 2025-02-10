@@ -32,7 +32,7 @@
 extern int __init nanohub_init(void);
 /* begin, prize-lifenfen-20181126, add for sensorhub hardware info */
 #if defined(CONFIG_PRIZE_HARDWARE_INFO)
-#include "../../../prize/hardware_info/hardware_info.h"
+#include "../../hardware_info/hardware_info.h"
 extern struct hardware_info current_msensor_info;
 extern struct hardware_info current_alsps_info;
 extern struct hardware_info current_gsensor_info;
