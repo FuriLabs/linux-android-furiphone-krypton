@@ -1,7 +1,0 @@
-config PRIZE_DUAL_HALL_AS1800
-	bool "PRIZE HALL AS1800"
-	default n
-	help
-		prize dual hall as1800 driver
-
-

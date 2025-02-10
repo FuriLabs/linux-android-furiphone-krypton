@@ -567,13 +567,8 @@ source "drivers/misc/mediatek/vow/Kconfig"
 source "drivers/misc/mediatek/sda/Kconfig"
 source "drivers/misc/mediatek/freqhopping/Kconfig"
 
-#prize add by zhaopengge 20201113------start
 source "drivers/misc/mediatek/hardware_info/Kconfig"
-#prize add by zhaopengge 20201113------end
-#prize-add-zhaopengge-20200827-start
-source "drivers/misc/mediatek/hall_as1800/Kconfig"
-source "drivers/misc/mediatek/aw9203/Kconfig"
-#prize-add-zhaopengge-20200827-end
+
 endmenu # Debug
 menu "Misc"
 source "drivers/misc/mediatek/ext_gic/Kconfig"
