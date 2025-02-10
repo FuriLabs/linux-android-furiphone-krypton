@@ -576,13 +576,6 @@ source "drivers/misc/mediatek/aw9203/Kconfig"
 source "drivers/misc/mediatek/base_charger/Kconfig"
 #prize-add-zhaopengge-20200827-end
 endmenu # Debug
-#prize add by wangyongsheng 20210104------start
-source "drivers/misc/mediatek/uhf/Kconfig"
-#prize add by wangyongsheng 20210104------end
-#prize add by lipengpeng 20211012 start
-source "drivers/misc/mediatek/ttm/Kconfig"
-source "drivers/misc/mediatek/ttmdev/Kconfig"
-#prize add by lipengpeng 20211012 end 
 menu "Misc"
 source "drivers/misc/mediatek/ext_gic/Kconfig"
 source "drivers/misc/mediatek/cirq/Kconfig"

@@ -1,4 +1,0 @@
-config PRIZE_UHF
-	bool "UHF for UHF"
-	help
-	  It support UHF control.

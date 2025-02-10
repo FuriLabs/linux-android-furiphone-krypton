@@ -224,12 +224,4 @@ obj-$(CONFIG_PRIZE_DUAL_HALL_AS1800) += hall_as1800/
 obj-$(CONFIG_PRIZE_BASE_CHARGER) += base_charger/
 #prize-add prize-zhaopengge-20200827-end
 
-#prize add by wangyongsheng 20210104------start
-obj-$(CONFIG_PRIZE_UHF) += uhf/
-#prize add by wangyongsheng 20210104------end
-#prize add by lipengpeng 20211012 start
-obj-$(CONFIG_PRIZE_TTM) += ttm/
-obj-$(CONFIG_PRIZE_TTMDEV) += ttmdev/
-#prize add by lipengpeng 20211012 end 
-
 obj-$(CONFIG_MTK_FPSGO_V3) += fpsgo_cus/
