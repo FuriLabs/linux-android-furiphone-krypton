@@ -1,7 +1,0 @@
-config PRIZE_BASE_CHARGER
-	bool "PRIZE BASE CHARGER"
-	default n
-	help
-		prize base charger sysfs driver
-
-

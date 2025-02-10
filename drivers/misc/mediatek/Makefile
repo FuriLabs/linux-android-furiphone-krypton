@@ -221,7 +221,6 @@ obj-$(CONFIG_PRIZE_DUAL_CAMERA_ENABLE) += prize_dual_camera/
 #prize-add prize-zhaopengge-20200827-start
 obj-$(CONFIG_PRIZE_AW9203) += aw9203/
 obj-$(CONFIG_PRIZE_DUAL_HALL_AS1800) += hall_as1800/
-obj-$(CONFIG_PRIZE_BASE_CHARGER) += base_charger/
 #prize-add prize-zhaopengge-20200827-end
 
 obj-$(CONFIG_MTK_FPSGO_V3) += fpsgo_cus/

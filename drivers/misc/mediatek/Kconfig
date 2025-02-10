@@ -573,7 +573,6 @@ source "drivers/misc/mediatek/hardware_info/Kconfig"
 #prize-add-zhaopengge-20200827-start
 source "drivers/misc/mediatek/hall_as1800/Kconfig"
 source "drivers/misc/mediatek/aw9203/Kconfig"
-source "drivers/misc/mediatek/base_charger/Kconfig"
 #prize-add-zhaopengge-20200827-end
 endmenu # Debug
 menu "Misc"
