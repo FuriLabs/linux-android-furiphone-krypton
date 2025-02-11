@@ -283,7 +283,6 @@ config MTK_TEE_GP_SUPPORT
 
 source "drivers/misc/mediatek/trusted_mem/Kconfig"
 source "drivers/misc/mediatek/geniezone/Kconfig"
-source "drivers/misc/mediatek/tee_sanity/Kconfig"
 source "drivers/misc/mediatek/masp/Kconfig"
 endmenu # Security
 
@@ -387,15 +386,6 @@ endmenu # TinySys
 
 menu "Debug, log, trace"
 
-config MTK_ATF_LOGGER
-	tristate "atf logger kernel driver"
-	depends on HAVE_ARM_SMCCC && ARCH_MEDIATEK && OF
-	default n
-	help
-	  ARM Trusted Firmwear Logger which is designed by Mediatek.
-	  The logger provide a /proc interface for reading from
-	  user space.
-
 config MTK_AMMS
 	bool "Support Mediatek AP and Modem Sharing Memory techonology"
 	help
@@ -455,8 +445,6 @@ source "drivers/misc/mediatek/cameraisp/Kconfig"
 source "drivers/misc/mediatek/mcupm/Kconfig"
 source "drivers/misc/mediatek/rt-regmap/Kconfig"
 source "drivers/misc/mediatek/vow/Kconfig"
-source "drivers/misc/mediatek/sda/Kconfig"
-source "drivers/misc/mediatek/freqhopping/Kconfig"
 
 source "drivers/misc/mediatek/hardware_info/Kconfig"
 
