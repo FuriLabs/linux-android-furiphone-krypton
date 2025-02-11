@@ -77,19 +77,10 @@ obj-$(CONFIG_MTK_CM_MGR) += cm_mgr/
 endif
 endif
 endif
-ifneq ($(CONFIG_MTK_BASE_POWER), y)
-obj-$(CONFIG_MTK_PPM) += ppm_v3/
-endif
-ifneq (y, $(filter y, $(CONFIG_MACH_MT6761) $(CONFIG_MACH_MT6779)))
-obj-$(CONFIG_MTK_PPM) += ppm_v3/
-endif
 
 obj-$(CONFIG_MTK_COMBO) += connectivity/
 obj-$(CONFIG_MTK_BTIF) += btif/
 obj-$(CONFIG_MTK_CONN_MD) += conn_md/
-ifneq ($(CONFIG_MACH_MT6779), y)
-obj-$(CONFIG_MTK_DCM_COMMON) += dcm/
-endif
 obj-$(CONFIG_MTK_SMI) += smi/
 obj-$(CONFIG_MTK_SMI_VARIANT) += smi/
 obj-$(CONFIG_MTK_LOW_POWER_MODULE) += lpm/

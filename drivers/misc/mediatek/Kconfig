@@ -91,8 +91,6 @@ config MTK_CLKBUF_NFC
 	  this config is not set, XO_NFC will be disabled when
 	  driver is probed.
 
-source "drivers/misc/mediatek/dcm/Kconfig"
-
 config MTK_QOS_FRAMEWORK
 	tristate "MTK QOS FRAMEWORK"
 	depends on MTK_TINYSYS_SSPM_SUPPORT
@@ -137,7 +135,6 @@ config MTK_UNIFY_POWER
 	  If unsure, say Y.
 
 source "drivers/misc/mediatek/lpm/Kconfig"
-source "drivers/misc/mediatek/ppm_v3/Kconfig"
 source "drivers/misc/mediatek/apusys/Kconfig"
 source "drivers/misc/mediatek/base/power/Kconfig"
 source "drivers/misc/mediatek/pmic/Kconfig"

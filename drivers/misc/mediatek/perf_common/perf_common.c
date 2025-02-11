@@ -49,8 +49,6 @@ bool hit_long_check(void)
 
 void perf_common(u64 wallclock)
 {
-	long mm_available = -1, mm_free = -1;
-
 	if (!perf_do_check(wallclock))
 		return;
 
